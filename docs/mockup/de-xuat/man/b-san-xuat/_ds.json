@@ -1,0 +1,139 @@
+[
+  {
+    "stt": "15",
+    "key": "prod-list",
+    "title": "Sản xuất / đóng gói",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "16",
+    "key": "prod-order",
+    "title": "Lệnh sản xuất: công thức, nguyên liệu theo gram, ủ",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "17",
+    "key": "prod-done",
+    "title": "Lệnh hoàn thành: lô thành phẩm, chai lưu mẫu",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "18",
+    "key": "labels",
+    "title": "Gán bù / hủy tem: quét tem đầu, tem cuối của đoạn tem rời",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "23",
+    "key": "products",
+    "title": "Sản phẩm: công thức, hạn dùng, cách dùng",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "24",
+    "key": "prod-owner",
+    "title": "Tạo lệnh sản xuất: công thức, cỡ mẻ",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "26",
+    "key": "plots-lots",
+    "title": "Lô thành phẩm · mẫu lưu · thu hồi",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "06b",
+    "key": "ingr-receipt",
+    "title": "Nhập phụ liệu (gram, số lô, COA)",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-list"
+  },
+  {
+    "stt": "14b",
+    "key": "ingr-stock",
+    "title": "Tồn kho phụ liệu",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "inv-kk"
+  },
+  {
+    "stt": "16b",
+    "key": "cure-list",
+    "title": "Mẻ đang ủ",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "prod-order"
+  },
+  {
+    "stt": "16c",
+    "key": "cure-detail",
+    "title": "Mẻ đang ủ: lắc chai, ngửi kiểm tra, hoàn thành",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "cure-list"
+  },
+  {
+    "stt": "16d",
+    "key": "cure-smell",
+    "title": "Ngửi kiểm tra: Đạt hoặc ủ thêm",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "cure-detail"
+  },
+  {
+    "stt": "16e",
+    "key": "cure-result",
+    "title": "Nhập kết quả: số kg, số chai, tạo lô",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "cure-smell"
+  },
+  {
+    "stt": "23b",
+    "key": "recipe-list",
+    "title": "Công thức",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "products"
+  },
+  {
+    "stt": "23c",
+    "key": "recipe-edit",
+    "title": "Khai công thức (thành phần theo gram)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "recipe-list"
+  },
+  {
+    "stt": "26b",
+    "key": "lot-detail",
+    "title": "Chi tiết mẻ (sổ ghi lô)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "plots-lots"
+  },
+  {
+    "stt": "26c",
+    "key": "retain-list",
+    "title": "Mẫu lưu · lô chưa lưu mẫu",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "lot-detail"
+  },
+  {
+    "stt": "26d",
+    "key": "scent-trial",
+    "title": "Thử lưu hương 28 ngày",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "retain-list"
+  }
+]

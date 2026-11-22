@@ -1,0 +1,23 @@
+# Chỉ STAGING (project `vyc-staging`, cùng VPS prod): dùng mạng ngoài vyc-staging (172.29.0.0/24,
+# tạo một lần bằng tay) để Caddy của prod gắn vào được, và volume media ngoài để Caddy mount chỉ đọc.
+# Dùng: compose.yml + compose.prod.yml + compose.staging.yml. Không có Caddy, không `ports:` ra host.
+# Alias riêng để tên `backend`/`frontend` không nhập nhằng ở Caddy (van-hanh.md 2.2).
+services:
+  backend:
+    networks:
+      default:
+        aliases: [backend-staging]
+  frontend:
+    networks:
+      default:
+        aliases: [frontend-staging]
+
+networks:
+  default:
+    name: vyc-staging
+    external: true
+
+volumes:
+  media:
+    name: vyc-staging_media
+    external: true

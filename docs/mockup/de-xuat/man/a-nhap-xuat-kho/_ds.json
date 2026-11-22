@@ -1,0 +1,165 @@
+[
+  {
+    "stt": "02",
+    "key": "home-shop",
+    "title": "Trang chủ xưởng (5 ô lớn, việc cần làm)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "03",
+    "key": "receipt-1",
+    "title": "Phiếu cân — bước 1: chọn người bán",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "04",
+    "key": "receipt-2",
+    "title": "Phiếu cân — đang thêm dòng (đồi, hạng, số cân)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "05",
+    "key": "receipt-3",
+    "title": "Phiếu cân — đã lưu, tự in phiếu + tem lô",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "06",
+    "key": "receipt-list",
+    "title": "Phiếu nhập hôm nay (sửa / hủy trong ngày)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "07",
+    "key": "issue-menu",
+    "title": "Xuất hàng — lối dự phòng (trang chủ đã có Bán quế khô, Bán thành phẩm)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "08",
+    "key": "issue-dry",
+    "title": "Bán quế khô — quét tem lô, gõ số cân lúc bán",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "09",
+    "key": "issue-product",
+    "title": "Đơn hàng — quét tem, người mua cũ tự nhận, quà tặng, báo quét trùng",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "10",
+    "key": "issue-list",
+    "title": "Danh sách đơn hàng (tên, SĐT đã che)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "11",
+    "key": "issue-detail",
+    "title": "Chi tiết đơn hàng",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "12",
+    "key": "inv-nl",
+    "title": "Tồn kho nguyên liệu (xưởng không thấy giá)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "13",
+    "key": "inv-tp",
+    "title": "Tồn kho thành phẩm",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "14",
+    "key": "inv-kk",
+    "title": "Kiểm kê kho (quét tem, bấm Kiểm tra)",
+    "group": "Xưởng",
+    "kind": "app"
+  },
+  {
+    "stt": "03b",
+    "key": "receipt-newsup",
+    "title": "Phiếu cân — người bán mới (mặc định hàng chung)",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-1"
+  },
+  {
+    "stt": "04b",
+    "key": "receipt-warn",
+    "title": "Phiếu cân — giá lệch hơn 20%, chưa có giá hôm nay",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-2"
+  },
+  {
+    "stt": "04c",
+    "key": "receipt-chung",
+    "title": "Phiếu cân — người bán hàng chung (thương lái)",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-warn"
+  },
+  {
+    "stt": "05b",
+    "key": "receipt-print",
+    "title": "Phiếu cân — hộp thoại in phiếu nhập + tem lô",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-3"
+  },
+  {
+    "stt": "09b",
+    "key": "issue-product-san",
+    "title": "Đơn hàng — kênh sàn (bắt buộc tên + tỉnh)",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "issue-product"
+  },
+  {
+    "stt": "09c",
+    "key": "issue-product-moi",
+    "title": "Đơn hàng — người mua mới (SĐT chưa có)",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "issue-product-san"
+  },
+  {
+    "stt": "09d",
+    "key": "issue-product-loi",
+    "title": "Đơn hàng — lỗi thiếu tên / SĐT kênh Website",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "issue-product-moi"
+  },
+  {
+    "stt": "06c",
+    "key": "receipt-cancel",
+    "title": "Hủy phiếu nhập — hộp xác nhận «Giữ lại / Hủy phiếu»",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "receipt-list"
+  },
+  {
+    "stt": "14c",
+    "key": "inv-kk-reset",
+    "title": "Kiểm kê — hộp xác nhận «Làm lại»",
+    "group": "Xưởng",
+    "kind": "app",
+    "sau": "inv-kk"
+  }
+]

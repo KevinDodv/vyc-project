@@ -1,0 +1,95 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>In tem · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+/* UX cụm C (#37): khối dùng riêng trong cụm C, chờ chuyển vào app.css chung */
+.todo{display:grid;gap:.6rem;margin:1rem 0}
+.todo-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:12px;background:var(--warn-soft);border:1px solid #f0d58a;font-weight:600}
+.todo-item.info{background:#eef4fb;border-color:#c9dbef}
+.todo-item .btn{margin-left:auto;min-height:48px;flex:0 0 auto}
+.range-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.range-btns .choice{min-height:56px;min-width:120px}
+.cta{display:flex;width:100%;min-height:72px;font-size:1.3rem;justify-content:center;align-items:center;gap:.6rem;text-decoration:none}
+.sub-note{font-size:1rem;color:var(--muted);margin:.2rem 0 0;font-weight:400}
+/* Bộ toàn trình: lô nguyên liệu → mẻ → lô thành phẩm → dải serial */
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.5rem 0 .8rem}
+.chain .nd{background:#fff;border:1px solid #c9b7a3;border-radius:10px;padding:.35rem .7rem;font-weight:700;font-size:1rem}
+.chain .nd small{display:block;font-weight:400;color:var(--muted);font-size:1rem}
+.chain .ar{color:var(--que);font-weight:800;font-size:1.2rem}
+.lot-row{border:1px solid #e3d6c6;border-radius:12px;padding:1rem;margin:.8rem 0;background:#fff}
+.lot-row h3{margin:0 0 .2rem;font-size:1.15rem}
+.lock{display:inline-block;background:#f1e6d8;border-radius:8px;padding:.1rem .6rem;font-size:1rem;font-weight:600;color:#6b4a2b}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body>
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">In tem</div>
+  <div class="who">Thủ kho (mẫu) · Thủ kho<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<section class="card">
+  <div class="step-title">Lô cần in tem</div>
+  <p class="muted" style="margin-top:0">Bấm một nút: máy tạo đúng số tem của lô, in ra và gán luôn cho lô đó. Không phải quét tem đầu, tem cuối. Máy ghi lại ai in và lúc nào.</p>
+
+  <div class="lot-row">
+    <h3>Lô QC2-261023-01 · Tinh dầu Quế Cam đậm đà 10 ml · 90 chai chưa có tem</h3>
+    <div class="chain" aria-label="Bộ toàn trình của lô"><span class="nd"><small>Lô nguyên liệu</small>NL-2611-0004</span><span class="ar">→</span><span class="nd"><small>Mẻ</small>LSX-2610-002</span><span class="ar">→</span><span class="nd"><small>Lô thành phẩm</small>QC2-261023-01</span><span class="ar">→</span><span class="nd"><small>Dải serial</small>chưa in (sẽ là 90 tem)</span></div>
+    <a class="btn primary cta" id="print-lot" href="/in/tem-me?lo=QC2-261023-01">🖨 In 90 tem cho lô này</a>
+    <div class="sub-note">Tem 50 × 30 mm: QR, mã lô, NSX, HSD. Dán một tem lên mỗi chai.</div>
+  </div>
+
+  <div class="lot-row">
+    <h3>Lô Q100-261120-02 · Tinh dầu quế Văn Yên 10 ml · 200 chai, đã có 150 tem</h3>
+    <div class="chain" aria-label="Bộ toàn trình của lô"><span class="nd"><small>Lô nguyên liệu</small>NL-2611-0004</span><span class="ar">→</span><span class="nd"><small>Mẻ</small>LSX-2611-002</span><span class="ar">→</span><span class="nd"><small>Lô thành phẩm</small>Q100-261120-02</span><span class="ar">→</span><span class="nd"><small>Dải serial</small>tem 1–150 · còn thiếu 50</span></div>
+    <details open>
+      <summary style="min-height:56px;display:flex;align-items:center;font-size:1.1rem;font-weight:700">+ In bổ sung tem cho lô này (thiếu 50 tem)</summary>
+      <p class="muted" style="margin:.2rem 0 .6rem">Tem bổ sung nối tiếp dải serial của đúng lô này (151–200), không tạo lô mới. Máy ghi người in và lý do.</p>
+      <div class="row"><div style="flex:0 0 220px"><label>Số tem bổ sung</label><input type="number" inputmode="numeric" min="1" max="500" value="50" class="big-number"></div></div>
+      <label style="margin-top:.6rem">Lý do (bắt buộc)</label>
+      <div class="range-btns">
+        <button data-pick class="choice selected" type="button">Thiếu tem khi đóng chai</button>
+        <button data-pick class="choice" type="button">Tem hỏng, rách</button>
+        <button data-pick class="choice" type="button">Dán lệch, bóc ra</button>
+        <button data-pick class="choice" type="button">Khác…</button>
+      </div>
+      <a class="btn primary cta" id="print-extra" href="/in/tem-bo-sung?lo=Q100-261120-02&amp;n=50">🖨 In bổ sung 50 tem</a>
+      <div class="sub-note">Ghi lại: Thủ kho (mẫu) · lúc bấm in · lý do đã chọn. Tem đã in mà hỏng, rách cũng in bổ sung ở đây; tem cũ tự hủy.</div>
+    </details>
+  </div>
+  <div class="muted" style="margin-bottom:0">Mã QR dẫn tới quevanyen.vn. Tem đã in thì không đổi được. <details style="display:inline-block;vertical-align:top"><summary style="display:inline-flex;min-height:48px">ⓘ Chi tiết</summary><span class="muted">Đường dẫn trong QR: https://quevanyen.vn/q/&lt;mã&gt;. Khổ tem 50 × 30 mm. Tên miền chốt ở Cài đặt, khóa sau khi in cuộn đầu tiên (đã in ngày 20/11/2026).</span></details></div>
+</section>
+
+<section class="card" style="margin-top:1rem">
+  <div class="step-title">Lịch sử in tem theo lô</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Lô</th><th class="num">Tem</th><th>Người in</th><th>Lúc in</th><th>Lý do</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">Q100-261120-02</td><td class="num">1–150</td><td>Chủ DN</td><td>19:41 20/11/2026</td><td>In lần đầu</td></tr>
+      <tr><td class="mono">QC2-261023-01</td><td class="num">chưa in</td><td>—</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="card" data-role="OWNER" style="margin-top:1rem">
+  <div class="step-title">In cuộn tem tự do <span class="lock">🔒 Chỉ chủ</span></div>
+  <p class="muted" style="margin-top:0">Dùng khi cần in sẵn một cuộn dài, chưa gắn với lô nào. Thủ kho không thấy mục này; thủ kho in theo lô ở trên.</p>
+  <div class="row"><div style="flex:0 0 260px"><label>Số tem cần in</label><input id="n" type="number" inputmode="numeric" min="1" max="5000" value="500" class="big-number"></div></div>
+  <button data-go="#print-batch" class="primary cta" id="create" type="button" style="margin-top:.8rem">🖨 Tạo cuộn tem và in 500 tem</button>
+  <h2>Các cuộn tem đã tạo</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Cuộn</th><th>Ngày tạo</th><th class="num">Số tem</th><th>Trạng thái tem</th><th>Đã in</th><th></th></tr></thead>
+    <tbody id="rows">
+<tr><td class="mono">CT-2611-02</td><td>19:41:16 20/11/2026</td><td class="num">300</td><td><span style="margin-right: 0.3rem;"><span class="tag IN_STOCK">Trong kho: 145</span></span><span style="margin-right: 0.3rem;"><span class="tag ISSUED">Đã xuất: 5</span></span><span style="margin-right: 0.3rem;"><span class="tag UNASSIGNED">Chưa gán: 150</span></span></td><td><span class="tag ACTIVE">đã in 1–300</span></td><td><button data-go="#print-batch" class="small" type="button">🖨 In lại</button></td></tr><tr><td class="mono">CT-2611-01</td><td>19:40:42 20/11/2026</td><td class="num">50</td><td><span style="margin-right: 0.3rem;"><span class="tag RECALLED">Thu hồi: 20</span></span><span style="margin-right: 0.3rem;"><span class="tag UNASSIGNED">Chưa gán: 29</span></span><span style="margin-right: 0.3rem;"><span class="tag VOID">Đã hủy tem: 1</span></span></td><td><span class="tag ACTIVE">đã in 1–50</span></td><td><button data-go="#print-batch" class="small" type="button">🖨 In lại</button></td></tr><tr><td class="mono">CT-2611-03</td><td>10:05:30 21/11/2026</td><td class="num">100</td><td><span style="margin-right: 0.3rem;"><span class="tag UNASSIGNED">Chưa gán: 100</span></span></td><td><span class="tag warn">chưa in</span></td><td><button data-go="#print-batch" class="small primary" type="button">🖨 In 100 tem</button></td></tr></tbody></table></div>
+  <details class="card" style="margin-top:1rem"><summary>In lại một phần của cuộn (tem hỏng, rách)</summary>
+    <div class="row" style="align-items:flex-end;margin-top:.6rem"><div><label>Cuộn</label><select><option>CT-2611-02</option><option>CT-2611-01</option><option>CT-2611-03</option></select></div><div><label>Từ tem số</label><input type="number" inputmode="numeric" min="1" value="1"></div><div><label>Đến tem số</label><input type="number" inputmode="numeric" min="1" value="300"></div><div style="flex:0 0 auto"><button data-go="#print-batch" class="primary" type="button">🖨 In lại</button></div></div>
+  </details>
+</section>
+</main>
+<div id="toast"></div>
+</body></html>

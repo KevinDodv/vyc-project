@@ -1,0 +1,33 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Khách &amp; kênh bán · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Khách &amp; kênh bán</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Gõ tên hoặc số điện thoại để tìm" value=""></div>
+  <div style="flex:0 0 220px"><select id="kind"><option value="" selected="">Mọi kiểu khách</option><option>DN xuất khẩu</option><option>Đại lý</option><option>Quà tặng DN</option><option>Khách lẻ</option><option>Sàn</option></select></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto"><a class="btn primary" id="add" href="/quan-ly/danh-muc/khach-hang?moi=1">+ Thêm khách hàng</a></div>
+</div>
+<div id="note"><p class="muted">Đây là danh mục khách để chọn khi xuất hàng, khác màn «Khách hàng đã mua» (thống kê người mua cuối). Khách lẻ và mỗi sàn (Shopee, TikTok Shop, Lazada) có sẵn một khách.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table><thead id="thead"><tr><th>Mã</th><th>Tên</th><th>Kiểu</th><th>Số điện thoại</th><th>Địa bàn</th><th></th></tr></thead><tbody id="rows"><tr class="clickable"><td class="mono">KH-001</td><td>Khách lẻ <span class="tag">Có sẵn</span></td><td>Khách lẻ</td><td></td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td class="mono">KH-002</td><td>Shopee <span class="tag">Có sẵn</span></td><td>Sàn</td><td></td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td class="mono">KH-003</td><td>TikTok Shop <span class="tag">Có sẵn</span></td><td>Sàn</td><td></td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td class="mono">KH-004</td><td>Lazada <span class="tag">Có sẵn</span></td><td>Sàn</td><td></td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td class="mono">KH-005</td><td>Đại lý Hải Phòng (mẫu)</td><td>Đại lý</td><td>0912 345 678</td><td>Hải Phòng</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td class="mono">KH-006</td><td>Công ty XNK Hà Nội (mẫu)</td><td>DN xuất khẩu</td><td>0243 123 4567</td><td>Hà Nội</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+<dialog open=""><div class="dlg-head">Đại lý Hải Phòng (mẫu)<button data-go="#customer-dm" class="small" type="button">✕</button></div><div class="dlg-body"><div><div class="form-grid"><div><label>Mã (tự sinh)</label><input type="text" value="KH-005" readonly=""></div><div><label>Tên *</label><input type="text" value="Đại lý Hải Phòng (mẫu)"></div><div><label>Kiểu *</label><select><option value="EXPORTER">DN xuất khẩu</option><option value="AGENT" selected="">Đại lý</option><option value="CORPORATE">Quà tặng DN</option><option value="RETAIL">Khách lẻ</option><option value="MARKETPLACE">Sàn</option></select></div><div><label>Số điện thoại</label><input type="text" value="0912 345 678"></div><div><label>Tỉnh / thành</label><select><option>Hà Nội</option><option selected="">Hải Phòng</option><option>Lào Cai</option><option>TP. Hồ Chí Minh</option></select></div><div><label>Xã / phường</label><select><option value="">— Chọn xã / phường —</option><option>Phường Hồng Bàng</option><option selected="">Phường Lê Chân</option><option>Phường Ngô Quyền</option></select></div><div><label>Số nhà, đường</label><input type="text" value="12 Trần Nguyên Hãn"></div><div><label>Tình trạng</label><select><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option></select></div></div><p class="muted" style="margin:.4rem 0">Mã tự sinh theo dạng KH-&lt;số thứ tự&gt;, không sửa được. Khách lẻ và các sàn là khách có sẵn: không đổi kiểu, chỉ ngừng dùng được khi chủ DN không còn bán qua kênh đó.</p></div></div><div class="dlg-foot"><button data-go="#customer-dm" class="" type="button">Đóng</button><button data-go="#customer-dm" class="primary" type="button">Lưu</button></div></dialog></body></html>

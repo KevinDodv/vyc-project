@@ -1,0 +1,42 @@
+---
+import "../components/admin/admin.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const user = Astro.locals.user;
+const ROLE_LABEL = { OWNER: "Chủ doanh nghiệp", WORKSHOP: "Xưởng" } as const;
+---
+<!doctype html>
+<html lang="vi" data-theme="vyc">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} | Quản lý Quế Văn Yên</title>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <header class="navbar border-b border-base-300 bg-base-100">
+      <div class="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4">
+        <a href="/quan-ly" class="text-lg font-bold text-primary">Quản lý Quế Văn Yên</a>
+        {user && (
+          <div class="flex items-center gap-3">
+            <nav aria-label="Menu quản lý" class="flex gap-4">
+              {user.role === "OWNER" && <a href="/quan-ly/san-pham" class="link link-hover">Sản phẩm</a>}
+            </nav>
+            <span class="text-sm">{user.full_name} <span class="badge badge-ghost">{ROLE_LABEL[user.role]}</span></span>
+            <button type="button" class="btn btn-sm btn-ghost" data-logout>Đăng xuất</button>
+          </div>
+        )}
+      </div>
+    </header>
+    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+      <slot />
+    </main>
+    <script>
+      import "../scripts/admin/shell";
+    </script>
+  </body>
+</html>

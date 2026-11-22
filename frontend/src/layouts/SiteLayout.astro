@@ -1,0 +1,29 @@
+---
+import "../styles/site.css";
+import latin400 from "@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff2?url";
+import Footer from "../components/site/Footer.astro";
+import Header from "../components/site/Header.astro";
+import SeoHead from "../components/site/SeoHead.astro";
+import type { SeoProps } from "../lib/seo";
+
+type Props = SeoProps;
+
+const seo = Astro.props;
+---
+<!doctype html>
+<html lang="vi" data-theme="vyc">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={latin400} crossorigin />
+    <SeoHead {...seo} />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Header />
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

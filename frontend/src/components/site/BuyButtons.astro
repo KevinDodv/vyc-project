@@ -1,0 +1,28 @@
+---
+import { buyLinkLabel, withUtm } from "../../lib/buy";
+import type { PublicProductOut } from "../../lib/seo";
+
+interface Props {
+  links: PublicProductOut["buy_links"];
+  sku: string;
+}
+const { links, sku } = Astro.props;
+---
+{
+  links.length > 0 && (
+    <div class="flex flex-wrap gap-3">
+      {links.map((l) => (
+        <a
+          href={withUtm(l.url)}
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-channel={l.channel}
+          data-sku={sku}
+        >
+          Mua tại {buyLinkLabel(l.channel)}
+        </a>
+      ))}
+    </div>
+  )
+}

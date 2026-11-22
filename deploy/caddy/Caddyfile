@@ -1,0 +1,88 @@
+# Một Caddy duy nhất phục vụ prod và staging (docs/kien-truc/van-hanh.md mục 3).
+# Biến môi trường (compose.prod.yml truyền vào): SITE_ADDRESS, STAGING_ADDRESS, STAGING_BASIC_USER,
+# STAGING_BASIC_HASH, CSP_GTM_SCRIPT/CONNECT/IMG. Kiểm cú pháp: `caddy validate` (job CI `infra`).
+
+# Header an toàn dùng chung; tham số: {args[0]} = HSTS max-age (giây).
+(vyc_headers) {
+	header {
+		-Server
+		Strict-Transport-Security "max-age={args[0]}"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# img-src cho tile bản đồ Leaflet ở /quan-ly/vung-nguyen-lieu. CSP_GTM_* chỉ có giá trị khi
+		# GTM_ID có giá trị; trống thì không mở host nào. Hash script inline và style: xem notes #78.
+		Content-Security-Policy "default-src 'self'; script-src 'self' {$CSP_GTM_SCRIPT:}; img-src 'self' data: https://tile.openstreetmap.org https://*.tile.openstreetmap.org {$CSP_GTM_IMG:}; connect-src 'self' {$CSP_GTM_CONNECT:}; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	}
+}
+
+# Tham số: {args[0]} = host upstream backend, {args[1]} = host upstream frontend,
+# {args[2]} = thư mục media của môi trường, {args[3]} = HSTS max-age (giây).
+(vyc_site) {
+	encode zstd gzip
+
+	# Cache theo frontend-seo.md mục 2. Dấu `>` hoãn tới lúc ghi phản hồi để đè Cache-Control của upstream.
+	@astro_assets path /_astro/*
+	header @astro_assets >Cache-Control "public, max-age=31536000, immutable"
+	@prerender path /chinh-sach-bao-mat /chinh-sach-doi-tra /chinh-sach-van-chuyen /lien-he
+	header @prerender >Cache-Control "public, max-age=3600"
+
+	handle /api/* {
+		import vyc_headers {args[3]}
+		# Caddy mặc định GHI ĐÈ X-Forwarded-For bằng IP kết nối tới nó (không nối thêm giá trị khách gửi) vì
+		# không khai trusted_proxies; Django chỉ tin giá trị này (van-hanh.md mục 3, "Tin header IP").
+		reverse_proxy {args[0]}:8000
+	}
+
+	# Media công khai: phục vụ thẳng từ volume (chỉ đọc), không đi qua Django. CSP riêng chặn file tải
+	# lên (SVG/HTML giả ảnh) chạy như trang trong origin; header an toàn chung cố ý KHÔNG áp ở đây để
+	# chỉ có đúng một CSP (của /media/).
+	handle_path /media/* {
+		root * {args[2]}
+		file_server
+		header {
+			-Server
+			Strict-Transport-Security "max-age={args[3]}"
+			Cache-Control "public, max-age=2592000, immutable"
+			X-Content-Type-Options nosniff
+			Content-Security-Policy "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox"
+		}
+	}
+
+	handle {
+		import vyc_headers {args[3]}
+		reverse_proxy {args[1]}:4321
+	}
+
+	# Access log mặc định có IP khách; xoá trước khi ghi (thiết kế mục 11, backend.md 5.1).
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>remote_ip delete
+				request>client_ip delete
+				request>remote_port delete
+				request>headers>X-Forwarded-For delete
+				request>headers>X-Real-Ip delete
+				request>headers>Cookie delete
+				request>headers>Authorization delete
+				resp_headers>Set-Cookie delete
+			}
+		}
+	}
+}
+
+# Prod. Dùng alias riêng vì Caddy còn nằm trong mạng staging, nơi tên `backend`/`frontend` cũng tồn tại.
+{$SITE_ADDRESS} {
+	import vyc_site backend-prod frontend-prod /srv/media 31536000
+}
+
+# Staging cùng VPS (mặc định tắt: Caddy trả 502). Chặn hai lớp: basic auth và noindex.
+# Chưa cấu hình thì STAGING_ADDRESS rơi về http://staging.invalid (compose.prod.yml).
+{$STAGING_ADDRESS} {
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$STAGING_BASIC_USER} {$STAGING_BASIC_HASH}
+	}
+	import vyc_site backend-staging frontend-staging /srv/media-staging 300
+}

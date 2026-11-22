@@ -1,0 +1,60 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Xuất bán quế khô · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Bán quế khô</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<section class="card" id="step-cust">
+  <div class="step-title"><span class="n">1</span>Chọn người mua</div>
+  <div id="cust-selected" class=""><div class="row" style="align-items: center;"><div style="font-size: 1.3rem; font-weight: 800;">Công ty XNK Quế Việt (mẫu)</div><button style="flex: 0 0 auto;" data-pick>Đổi</button></div></div>
+  <div class="muted">Đã chọn sẵn người mua lần trước. Bấm «Đổi» để chọn người khác.</div>
+  <div id="cust-picker" class="hidden">
+    <input id="cust-q" placeholder="Gõ vài chữ đầu tên người mua…" autocomplete="off" data-scan-focus-ok="1" value="">
+    <div id="cust-results" class="choice-grid" style="margin-top:.8rem"><button type="button" class="choice" data-pick>Công ty XNK Quế Việt (mẫu)<span class="sub">Doanh nghiệp xuất khẩu</span></button><button type="button" class="choice" data-pick>Lazada<span class="sub">Sàn</span></button><button type="button" class="choice" data-pick>Shopee<span class="sub">Sàn</span></button><button type="button" class="choice" data-pick>TikTok Shop<span class="sub">Sàn</span></button><button type="button" class="choice" data-pick>Đại lý Hà Nội (mẫu)<span class="sub">Đại lý</span></button></div>
+  </div>
+</section>
+
+<section class="card" id="step-line">
+  <div class="step-title"><span class="n">2</span>Hàng bán</div>
+  <div id="materials" class="choice-grid"><button type="button" class="choice" data-id="1-1" data-pick>Vỏ quế loại 1<span class="sub">bán 60.000 đ/kg</span></button><button type="button" class="choice selected" data-id="1-2" data-pick>Vỏ quế loại 2<span class="sub">bán 50.000 đ/kg</span></button><button type="button" class="choice" data-id="1-3" data-pick>Vỏ quế loại 3<span class="sub">bán 40.000 đ/kg</span></button><button type="button" class="choice" data-id="2-1" data-pick>Quế vụn loại 1<span class="sub">bán 25.000 đ/kg</span></button><button type="button" class="choice" data-id="2-2" data-pick>Quế vụn loại 2<span class="sub">bán 20.000 đ/kg</span></button><button type="button" class="choice" data-id="2-3" data-pick>Quế vụn loại 3<span class="sub">bán 15.000 đ/kg</span></button></div>
+  <div id="picked" style="margin:.8rem 0"><div class="muted">Chưa chọn bao nào. Quét tem bao lấy hàng ở ô bên dưới; quét xong bao đã chọn hiện ở đây.</div></div>
+  <label for="scan">Quét tem bao lấy hàng</label>
+  <input id="scan" class="scan-input" placeholder="Quét tem NL-…" autocomplete="off" value="">
+  <details style="margin:.6rem 0"><summary>＋ Không quét được? Chọn lô trong danh sách</summary><div id="stock" class="choice-grid" style="margin-top:.6rem"><button type="button" class="choice" data-pick>NL-2611-0002<span class="sub">Loại 2 · 30 kg · 20/11/2026</span></button><button type="button" class="choice" data-pick>NL-2611-0007<span class="sub">Loại 1 · 120,5 kg · 20/11/2026</span><span class="tag" style="margin-top:.2rem">mua là loại 1</span></button><button type="button" class="choice" data-pick>NL-2611-0008<span class="sub">Loại 2 · 45 kg · 20/11/2026</span></button></div></details>
+  <div class="row">
+    <div><label for="kg">Số cân lúc bán (kg)</label><input id="kg" class="big-number" inputmode="decimal" placeholder="0" data-scan-focus-ok="1" value=""></div>
+    <div id="price-box"><label for="price">Đơn giá bán (đ/kg)</label><input id="price" class="big-number" inputmode="numeric" data-scan-focus-ok="1" value="50000"></div>
+    <div style="flex:0 0 auto"><button id="add" type="button" data-act="row-add">+ Thêm dòng</button></div>
+  </div>
+  <p class="muted">Gõ xong số cân thì bấm thẳng «Lưu và in» cũng được: dòng đang gõ tự được thêm vào phiếu.</p>
+  <div class="table-wrap" style="margin-top:1rem"><table>
+    <thead><tr><th>#</th><th>Hàng</th><th>Các lô</th><th class="num">Kg bán</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th><th></th></tr></thead>
+    <tbody id="lines" data-rows><tr class="clickable"><td>1</td><td>Vỏ quế Loại 2</td><td class="mono">NL-2611-0008</td><td class="num">42,5</td><td class="num">50.000 đ</td><td class="num">2.125.000 đ</td><td><button class="small" data-act="row-del">Bỏ</button></td></tr></tbody></table></div>
+</section>
+<section class="card hidden" id="saved"></section>
+
+<div class="totalbar">
+  <div class="figure"><span class="lbl">Tổng kg bán</span><span class="val" id="t-kg">42,5 kg</span></div>
+  <div class="figure"><span class="lbl">Tổng tiền</span><span class="val money" id="t-money">2.125.000 đ</span></div>
+  <div class="spacer"></div>
+  <button class="primary" id="save" data-go="/don-hang">💾 Lưu và in</button>
+</div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

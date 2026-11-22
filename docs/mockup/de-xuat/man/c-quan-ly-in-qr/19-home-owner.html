@@ -1,0 +1,59 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Trang chủ · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+/* UX cụm C (#37): khối dùng riêng trong cụm C, chờ chuyển vào app.css chung */
+.todo{display:grid;gap:.6rem;margin:1rem 0}
+.todo-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:12px;background:var(--warn-soft);border:1px solid #f0d58a;font-weight:600}
+.todo-item.info{background:#eef4fb;border-color:#c9dbef}
+.todo-item .btn{margin-left:auto;min-height:48px;flex:0 0 auto}
+.range-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.range-btns .choice{min-height:56px;min-width:120px}
+.cta{display:flex;width:100%;min-height:72px;font-size:1.3rem;justify-content:center;align-items:center;gap:.6rem}
+.sub-note{font-size:1rem;color:var(--muted);margin:.2rem 0 0;font-weight:400}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  
+  <div class="title">Quế Văn Yên</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="tiles">
+  <a class="tile primary" href="/nhap-hang"><span class="ico">⚖️</span>Nhập hàng</a>
+  <a class="tile" href="/xuat-hang/que-kho"><span class="ico">🪵</span>Bán quế khô</a>
+  <a class="tile" href="/xuat-hang/don-hang"><span class="ico">🧴</span>Bán thành phẩm</a>
+  <a class="tile" href="/san-xuat"><span class="ico">🏭</span>Sản xuất / đóng gói</a>
+  <a class="tile" href="/ton-kho"><span class="ico">📦</span>Xem tồn kho</a>
+</div>
+
+<h2>Việc cần xử lý</h2>
+<div class="todo" id="pending">
+  <div class="todo-item"><span>🔔 1 người bán chờ duyệt (xưởng vừa thêm)</span><a class="btn primary" href="/quan-ly/danh-muc/nguoi-ban?approved=0">Duyệt</a></div>
+  <div class="todo-item"><span>🧪 1 lô chưa lưu mẫu</span><a class="btn primary" href="/quan-ly/mau-luu">Lưu mẫu</a></div>
+  <div class="todo-item info"><span>⏳ 1 mẻ đang ủ: QC1-261117-01, còn 6 ngày</span><a class="btn" href="/san-xuat">Xem</a></div>
+</div>
+<h2>Hay dùng</h2>
+<div class="tiles small">
+  <a class="tile" href="/quan-ly/bang-gia"><span class="ico">💰</span>Giá hôm nay</a>
+  <a class="tile" href="/quan-ly/tra-cuu"><span class="ico">🔎</span>Tra cứu mã</a>
+  <a class="tile" href="/quan-ly/bao-cao"><span class="ico">📊</span>Báo cáo</a>
+  <a class="tile" href="/quan-ly"><span class="ico">⚙️</span>Quản lý khác</a>
+</div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+
+
+</body></html>

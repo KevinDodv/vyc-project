@@ -1,0 +1,23 @@
+---
+import { BRAND } from "../../lib/business";
+
+const links = [
+  { href: "/", label: "Trang chủ" },
+  { href: "/san-pham", label: "Sản phẩm" },
+  { href: "/truy-xuat", label: "Truy xuất nguồn gốc" },
+];
+---
+<header class="navbar bg-base-100 border-b border-base-300">
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-4">
+    <a href="/" class="text-xl font-bold text-primary">{BRAND}</a>
+    <nav aria-label="Menu chính" class="hidden gap-6 md:flex">
+      {links.map((l) => <a href={l.href} class="link link-hover">{l.label}</a>)}
+    </nav>
+    <details class="relative md:hidden">
+      <summary class="btn btn-ghost">Menu</summary>
+      <ul class="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-2 rounded-box border border-base-300 bg-base-100 p-3">
+        {links.map((l) => <li><a href={l.href} class="link link-hover">{l.label}</a></li>)}
+      </ul>
+    </details>
+  </div>
+</header>

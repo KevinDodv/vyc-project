@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bản xem trước — Hệ thống Quế Văn Yên</title>
+<style>
+  :root { --que:#8a3b12; --que-dark:#5e2709; --soft:#f6e7da; --bg:#efe9e2; --ink:#1f1a16; --muted:#6b625a; --line:#e0d5ca; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; }
+  body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; color:var(--ink); background:var(--bg);
+         display:grid; grid-template-columns: 300px 1fr; grid-template-rows: auto 1fr; }
+  header { grid-column: 1 / -1; background: var(--que-dark); color:#fff; padding: 10px 18px; display:flex; align-items:center; gap:14px; }
+  header .t { font-weight: 800; font-size: 17px; }
+  header .s { font-size: 13px; opacity: .85; }
+  header .sp { flex:1; }
+  header button { font: inherit; font-size: 14px; background: rgba(255,255,255,.15); color:#fff; border:0; border-radius:8px; padding:7px 12px; cursor:pointer; }
+  header button:hover { background: rgba(255,255,255,.28); }
+  nav { overflow:auto; background:#fff; border-right:1px solid var(--line); padding: 8px 0 30px; }
+  nav h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--que); margin: 16px 16px 6px; }
+  nav button { display:block; width:100%; text-align:left; border:0; background:none; font: inherit; font-size: 14px; padding: 7px 16px 7px 20px;
+               cursor:pointer; color: var(--ink); line-height: 1.35; border-left: 3px solid transparent; }
+  nav button:hover { background: var(--soft); }
+  nav button.on { background: var(--soft); border-left-color: var(--que); font-weight: 700; }
+  nav .n { color: var(--muted); font-size: 12px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .stage { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  .bar { display:flex; align-items:center; gap:10px; padding: 10px 16px; background:#faf6f1; border-bottom:1px solid var(--line); }
+  .bar .title { font-weight: 700; flex:1; }
+  .bar .grp { font-size: 12px; color:#fff; background: var(--que); padding: 2px 8px; border-radius: 99px; }
+  .bar button { font: inherit; font-size: 14px; border:1px solid var(--line); background:#fff; border-radius:8px; padding:6px 12px; cursor:pointer; }
+  .view { flex:1; min-height:0; position:relative; overflow:auto; }
+  .view iframe.app { width:100%; height:100%; border:0; background:#faf7f2; display:block; }
+  .phone-wrap { display:flex; justify-content:center; align-items:flex-start; padding: 24px; min-height:100%; }
+  .phone { width: 414px; border-radius: 44px; background:#1b1410; padding: 14px 12px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+  .phone iframe { width: 390px; height: 780px; border:0; border-radius: 32px; background:#faf6ef; display:block; }
+  .phone .notch { width: 120px; height: 6px; border-radius: 6px; background:#3a2d25; margin: 0 auto 8px; }
+  .hint { position: absolute; right: 18px; bottom: 18px; background: #1f1a16; color:#fff; font-size: 14px; padding: 10px 14px; border-radius: 10px; opacity:0; transition: opacity .2s; pointer-events:none; }
+  .hint.show { opacity: .92; }
+  .toast { position: absolute; right: 18px; top: 128px; background: #1e7b3a; color:#fff; font-size: 14px; font-weight: 700; padding: 10px 16px; border-radius: 10px; opacity:0; transition: opacity .2s; pointer-events:none; z-index: 6; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+  .toast.show { opacity: 1; }
+  @media (max-width: 900px) { body { grid-template-columns: 1fr; } nav { display:none; } body.menu nav { display:block; position:fixed; top:48px; left:0; bottom:0; width:300px; z-index:5; } }
+</style>
+</head>
+<body>
+<header>
+  <button id="menu" title="Danh sách màn hình">☰</button>
+  <div><div class="t">Hệ thống Quế Văn Yên — bản xem trước</div>
+  <div class="s">Ảnh chụp các màn hình của phần mềm GĐ1 + GĐ2 với dữ liệu mẫu. Link và nút thao tác đi tiếp theo luồng; nút chọn thì sáng lên tại chỗ. Nút chưa có màn đích báo “không chạy thật”.</div></div>
+  <div class="sp"></div>
+  <button id="prev">← Trước</button><button id="next">Sau →</button>
+</header>
+<nav id="nav"></nav>
+<section class="stage">
+  <div class="bar"><span class="grp" id="grp"></span><span class="title" id="title"></span><span id="pos" style="color:var(--muted);font-size:13px"></span></div>
+  <div class="view" id="view"></div>
+</section>
+<div class="hint" id="hint"></div>
+<div class="toast" id="toast" role="status"></div>
+<script type="application/json" id="data">@@DATA@@</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const S = D.screens, byKey = Object.fromEntries(S.map((s, i) => [s.key, i]));
+  let cur = 0;
+  const INJECT = `<script>
+    // Hành vi tại chỗ theo data-act (không hint): row-add | row-del | toggle | save | print | file.
+    function isList(n) { return n.tagName === "TBODY" || n.tagName === "UL" || n.tagName === "OL"; }
+    function listIn(root) { // phần tử chứa các dòng nằm trong root
+      if (isList(root)) return root;
+      if (root.tagName === "TABLE") return root.tBodies[root.tBodies.length - 1] || root;
+      if (root.querySelector(":scope > .row, :scope > li, :scope > tr")) return root;
+      return root.querySelector("tbody,ul,ol") || root;
+    }
+    function pickList(b) {
+      var m = b.closest("[data-rows]");
+      if (m) return listIn(m);
+      var own = b.closest("tbody,ul,ol");
+      if (own) return own;
+      var all = Array.prototype.filter.call(document.querySelectorAll("tbody,ul,ol"), function (l) {
+        return l.children.length && !l.contains(b) && !l.closest("nav");
+      });
+      function before(l) { return !!(l.compareDocumentPosition(b) & 4); }
+      var card = b.closest(".card");
+      var inCard = card ? all.filter(function (l) { return card.contains(l); }) : [];
+      var pre = inCard.filter(before);
+      if (pre.length) return pre[pre.length - 1];
+      if (inCard.length) return inCard[0];
+      pre = all.filter(before);
+      if (pre.length) return pre[pre.length - 1];
+      return all.length ? all[0] : null; // nút nằm trên bảng: lấy danh sách đầu tiên đứng sau nút
+    }
+    function rowsOf(l) {
+      return Array.prototype.filter.call(l.children, function (c) { return c.tagName !== "SCRIPT" && c.tagName !== "STYLE" && c.tagName !== "TEMPLATE"; });
+    }
+    function say(t) { parent.postMessage({ hint: t }, "*"); }
+    var ACT = {
+      "row-add": function (b) {
+        var l = pickList(b), rows = l ? rowsOf(l) : [];
+        if (!rows.length) { say("Bản xem trước: không có dòng mẫu để thêm"); return; }
+        var last = rows[rows.length - 1], n = last.cloneNode(true);
+        n.removeAttribute("id");
+        Array.prototype.forEach.call(n.querySelectorAll("[id]"), function (x) { x.removeAttribute("id"); });
+        Array.prototype.forEach.call(n.querySelectorAll(".pt-file,.pt-file-input"), function (x) { x.remove(); });
+        Array.prototype.forEach.call(n.querySelectorAll("input,textarea,select"), function (x) {
+          var t = (x.getAttribute("type") || "").toLowerCase();
+          if (t === "hidden") return;
+          if (x.tagName === "SELECT") { Array.prototype.forEach.call(x.options, function (o) { o.removeAttribute("selected"); }); x.selectedIndex = 0; }
+          else if (x.tagName === "TEXTAREA") { x.textContent = ""; x.value = ""; }
+          else if (t === "checkbox" || t === "radio") { x.removeAttribute("checked"); x.checked = false; }
+          else { x.removeAttribute("value"); x.value = ""; }
+        });
+        last.after(n);
+        if (last.classList.contains("dim")) { // dòng mẫu đang ngừng dùng: dòng mới phải là «Đang dùng»
+          var tb = n.querySelector("[data-act=toggle]");
+          if (tb) ACT.toggle(tb); else n.classList.remove("dim");
+        }
+        var f =n.querySelector("input:not([type=hidden]),textarea,select");
+        if (f) try { f.focus(); } catch (er) {}
+      },
+      "row-del": function (b) {
+        var r = b.closest("tr,li,.row");
+        if (!r) { // khối không phải tr/li/.row: xoá con trực tiếp của vùng data-rows chứa nút
+          var box = b.closest("[data-rows]");
+          if (box) { r = b; while (r.parentNode && r.parentNode !== box) r = r.parentNode; if (r.parentNode !== box) r = null; }
+        }
+        if (r) r.remove();
+      },
+      "toggle": function (b) {
+        var r = b.closest("tr,li,.row");
+        if (!r) return;
+        var t = b.textContent.trim(), isBtnTxt = t.indexOf("Ngừng dùng") >= 0 || t.indexOf("Dùng lại") >= 0;
+        var stop = t.indexOf("Ngừng dùng") >= 0 ? true : t.indexOf("Dùng lại") >= 0 ? false : !r.classList.contains("dim");
+        if (isBtnTxt) { b.textContent = stop ? "Dùng lại" : "Ngừng dùng"; b.dataset.state = stop ? "stopped" : "active"; b.classList.toggle("danger", !stop); /* màu theo trạng thái: «Ngừng dùng» đỏ, «Dùng lại» không đỏ */ }
+        var st = r.querySelector("[data-status]");
+        if (!st) st = Array.prototype.filter.call(r.querySelectorAll(".badge,.tag"), function (x) {
+          var s = x.textContent.trim(); return s === "Đang dùng" || s === "Ngừng dùng";
+        })[0];
+        if (st) {
+          st.textContent = stop ? "Ngừng dùng" : "Đang dùng";
+          if (st.classList.contains("tag") || st.classList.contains("badge")) st.classList.toggle("ACTIVE", !stop);
+        }
+        r.classList.toggle("dim", stop);
+      },
+      "save": function (b) {
+        var m = { saved: true }, go = b.getAttribute("data-go");
+        if (go) m.go = go;
+        parent.postMessage(m, "*");
+      },
+      "print": function () { try { window.print(); } catch (er) {} },
+      "file": function (b) {
+        var inp = b.nextElementSibling;
+        if (!inp || !inp.classList.contains("pt-file-input")) {
+          inp = document.createElement("input");
+          inp.type = "file"; inp.className = "pt-file-input"; inp.hidden = true;
+          inp.addEventListener("change", function () {
+            var nm = inp.nextElementSibling;
+            if (!nm || !nm.classList.contains("pt-file")) { nm = document.createElement("span"); nm.className = "pt-file"; nm.style.marginLeft = ".6rem"; inp.after(nm); }
+            nm.textContent = inp.files && inp.files[0] ? inp.files[0].name : "";
+          });
+          b.after(inp);
+        }
+        inp.click();
+      }
+    };
+    document.addEventListener("click", function (e) {
+      var act = e.target.closest("[data-act]");
+      if (act && !act.disabled && !e.target.closest("input,select,textarea") && Object.hasOwn(ACT, act.getAttribute("data-act"))) {
+        e.preventDefault();
+        ACT[act.getAttribute("data-act")](act);
+        return;
+      }
+      var a = e.target.closest("a");
+      if (a) { e.preventDefault(); parent.postMessage({ go: a.getAttribute("href") }, "*"); return; }
+      var b = e.target.closest("button");
+      if (!b) { // dòng bảng / khối có data-go (vd. <tr data-go>) bấm được; ô nhập thì để yên
+        var r = e.target.closest("[data-go]");
+        if (r && !e.target.closest("input,select,textarea,label")) { e.preventDefault(); parent.postMessage({ go: r.getAttribute("data-go") }, "*"); }
+        return;
+      }
+      if (b.hasAttribute("onclick")) return; // nút in (window.print()) chạy thật
+      e.preventDefault();
+      var go = b.getAttribute("data-go");
+      if (go) { parent.postMessage({ go: go, btn: b.textContent.trim().slice(0, 40) }, "*"); return; }
+      if (b.hasAttribute("data-pick")) { pick(b); return; }
+      parent.postMessage({ hint: "Bản xem trước: nút “" + b.textContent.trim().slice(0, 40) + "” không chạy thật" }, "*");
+    }, true);
+    function pick(b) {
+      var sib = Array.prototype.filter.call(b.parentNode.children, function (x) { return x !== b && x.hasAttribute("data-pick"); });
+      var cls = ["selected", "active"].filter(function (c) { return sib.some(function (x) { return x.classList.contains(c); }) || b.classList.contains(c); });
+      if (!cls.length) cls = [b.classList.contains("choice") ? "selected" : "active"];
+      sib.forEach(function (x) { x.removeAttribute("aria-pressed"); cls.forEach(function (c) { x.classList.remove(c); }); });
+      b.setAttribute("aria-pressed", "true");
+      cls.forEach(function (c) { b.classList.add(c); });
+      sib.concat([b]).forEach(function (x) {
+        var t = x.getAttribute("data-tab"), p = t && document.getElementById("tab-" + t);
+        if (p) p.classList.toggle("hidden", x !== b);
+      });
+    }
+    var st = document.createElement("style");
+    st.textContent = "button[data-pick][aria-pressed=true]:not(.choice){background:#8a3b12;color:#fff;border-color:#8a3b12}.dim{opacity:.55}";
+    document.head.appendChild(st);
+    document.addEventListener("submit", function (e) { e.preventDefault(); }, true);
+  <\/script>`;
+  function docFor(s) {
+    let h = s.html.replace("<!--APPCSS-->", "<style>" + D.css + "</style>");
+    return h.replace("</body>", INJECT + "</body>");
+  }
+  function route(href, group) {
+    if (!href || href.startsWith("http") || href.startsWith("tel:")) return null;
+    const owner = group === "Chủ doanh nghiệp";
+    const p = href.split("?")[0];
+    const map = [
+      [/^\/$/, owner ? "home_owner" : "home_shop"], [/^\/logout/, "login"], [/^\/login/, "login"],
+      [/^\/nhap-hang\/phu-lieu/, "ingr_receipt"], [/^\/nhap-hang\/nguoi-ban-moi/, "receipt_newsup"], [/^\/nhap-hang\/in-phieu/, "receipt_print"],
+      [/^\/ton-kho\/kiem-ke/, "inv_kk"], [/^\/in\/tem-bo-sung/, "print_roll"], [/^\/ton-kho\/phu-lieu/, "ingr_stock"], [/^\/mau-luu/, "retain_list"], [/^\/in\/tem-me/, "print_batch"],
+      [/^\/san-xuat\/ua\/\d+\/ngui/, "cure_smell"], [/^\/san-xuat\/ua\/\d+\/ket-qua/, "cure_result"], [/^\/san-xuat\/ua\/\d+/, "cure_detail"], [/^\/san-xuat\/ua/, "cure_list"],
+      [/^\/quan-ly\/cong-thuc\/\w+/, "recipe_edit"], [/^\/quan-ly\/cong-thuc/, "recipe_list"], [/^\/quan-ly\/phu-lieu/, "ingr_stock"],
+      [/^\/quan-ly\/mau-luu/, "retain_list"], [/^\/quan-ly\/thu-luu-huong/, "scent_trial"],
+      [/^\/quan-ly\/lo-thanh-pham\/.+/, "lot_detail"],
+      [/^\/nhap-hang/, "receipt_1"], [/^\/phieu-nhap/, "receipt_list"], [/^\/xuat-hang\/que-kho/, "issue_dry"],
+      [/^\/xuat-hang\/don-hang/, "issue_product"], [/^\/xuat-hang/, "issue_menu"], [/^\/don-hang/, "issue_list"],
+      [/^\/ton-kho/, "inv_nl"], [/^\/san-xuat\/\d+/, "prod_order"], [/^\/san-xuat/, owner ? "prod_owner" : "prod_list"],
+      [/^\/dong-goi/, "labels"], [/^\/quan-ly\/bang-gia/, "prices"], [/^\/quan-ly\/danh-muc\/nguoi-ban/, /approved=0/.test(href) ? "supplier_approve" : /moi=1/.test(href) ? "supplier_add" : "suppliers"],
+      [/^\/quan-ly\/danh-muc\/dia-ban/, "area"], [/^\/quan-ly\/danh-muc\/loai-hang/, "goods_type"],
+      [/^\/quan-ly\/danh-muc\/nguyen-lieu/, /moi=1/.test(href) ? "material_edit" : "material"],
+      [/^\/quan-ly\/danh-muc\/khach-hang/, /moi=1/.test(href) ? "customer_dm_edit" : "customer_dm"],
+      [/^\/quan-ly\/danh-muc\/chung-nhan/, "cert"], [/^\/quan-ly\/danh-muc\/tai-khoan/, "account"],
+      [/^\/quan-ly\/danh-muc\/san-pham/, "products"], [/^\/quan-ly\/danh-muc\/cai-dat/, "settings"], [/^\/quan-ly\/danh-muc/, "admin"],
+      [/^\/quan-ly\/cuon-tem/, "rolls"], [/^\/quan-ly\/lo-thanh-pham/, "plots_lots"], [/^\/quan-ly\/tra-cuu/, "trace"],
+      [/^\/quan-ly\/khach-hang/, /[?&]id=/.test(href) ? "buyer_detail" : "buyers"], [/^\/quan-ly\/bao-cao/, "reports"], [/^\/quan-ly\/vung-nguyen-lieu/, "vung_nguyen_lieu"],
+      [/^\/quan-ly/, "admin"], [/^\/q\//, "q_ok"], [/^\/truy-xuat/, "q_form"], [/^\/$/, "q_ok"]];
+    for (const [re, k] of map) if (re.test(p)) return k;
+    return null;
+  }
+  function goTo(i) { if (i !== cur) show(i); } // đích là chính màn đang mở: giữ nguyên
+  function hint(t) { const h = document.getElementById("hint"); h.textContent = t; h.classList.add("show"); clearTimeout(h._t); h._t = setTimeout(() => h.classList.remove("show"), 2200); }
+  function toast(t) { const h = document.getElementById("toast"); h.textContent = t; h.classList.add("show"); clearTimeout(h._t); h._t = setTimeout(() => h.classList.remove("show"), 2000); }
+  function handleGo(g, btn) {
+    if (/^(https?:|tel:|\/api\/)/.test(g)) return hint("Liên kết ngoài / tải file: bản xem trước không mở");
+    if (g === "#") return hint("Liên kết chưa có đích trong bản xem trước");
+    if (g[0] === "#") { // data-go="#khoá-màn": chỉ nhận khoá có trong bảng màn
+      const key = g.slice(1).replace(/_/g, "-");
+      if (!Object.hasOwn(byKey, key)) hint("Màn hình này không có trong bản xem trước");
+      else if (byKey[key] === cur && btn) hint("Bản xem trước: nút “" + btn + "” không chạy thật"); // nút trỏ về chính màn này = không có việc gì để làm
+      else goTo(byKey[key]);
+      return;
+    }
+    const k = route(g, S[cur].group), key = k && k.replace(/_/g, "-");
+    if (key && Object.hasOwn(byKey, key)) goTo(byKey[key]); else hint("Màn hình này không có trong bản xem trước");
+  }
+  window.addEventListener("message", (e) => {
+    if (!e.data) return;
+    if (e.data.hint) return hint(e.data.hint);
+    if (e.data.saved === true) { // data-act="save": thông báo xanh cố định «Đã lưu» 2 giây; có data-go thì đi tiếp (thông báo nằm ở vỏ nên còn hiện sau khi đổi màn)
+      toast("Đã lưu");
+      if (typeof e.data.go === "string" && e.data.go) setTimeout(() => handleGo(e.data.go, ""), 450);
+      return;
+    }
+    if (e.data.go !== undefined) handleGo(e.data.go || "", e.data.btn);
+  });
+  const nav = document.getElementById("nav");
+  let g = null;
+  S.forEach((s, i) => {
+    if (s.group !== g) { g = s.group; const h = document.createElement("h3"); h.textContent = g; nav.append(h); }
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="n">${String(i + 1).padStart(2, "0")}</span>`; b.append(s.title);
+    b.onclick = () => { show(i); document.body.classList.remove("menu"); };
+    nav.append(b);
+  });
+  function show(i) {
+    cur = (i + S.length) % S.length;
+    const s = S[cur], view = document.getElementById("view");
+    view.innerHTML = "";
+    const f = document.createElement("iframe");
+    f.title = s.title;
+    if (s.kind === "phone") {
+      const w = document.createElement("div"); w.className = "phone-wrap";
+      const ph = document.createElement("div"); ph.className = "phone";
+      const n = document.createElement("div"); n.className = "notch";
+      ph.append(n, f); w.append(ph); view.append(w);
+    } else { f.className = "app"; view.append(f); }
+    f.srcdoc = docFor(s);
+    document.getElementById("title").textContent = s.title;
+    document.getElementById("grp").textContent = s.group;
+    document.getElementById("pos").textContent = `${cur + 1} / ${S.length}`;
+    nav.querySelectorAll("button").forEach((b, j) => b.classList.toggle("on", j === cur));
+    const on = nav.querySelector("button.on"); if (on) on.scrollIntoView({ block: "nearest" });
+    try { history.replaceState(null, "", "#" + s.key); } catch (e) {}
+  }
+  document.getElementById("prev").onclick = () => show(cur - 1);
+  document.getElementById("next").onclick = () => show(cur + 1);
+  document.getElementById("menu").onclick = () => document.body.classList.toggle("menu");
+  document.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") show(cur + 1); if (e.key === "ArrowLeft") show(cur - 1); });
+  const start = location.hash.slice(1);
+  show(Object.hasOwn(byKey, start) ? byKey[start] : byKey["home-shop"] ?? 0);
+  window.addEventListener("hashchange", () => { const k = location.hash.slice(1); if (Object.hasOwn(byKey, k) && byKey[k] !== cur) show(byKey[k]); });
+})();
+</script>
+</body>
+</html>

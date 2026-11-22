@@ -1,0 +1,93 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Gán tem / hủy tem · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+.annot{border:2px dashed var(--line);border-radius:var(--radius);padding:.6rem .9rem;color:var(--muted);font-size:.9rem;margin:.6rem 0}
+.rowerr td{background:var(--err-soft)}
+.rowwarn td{background:#fff8e6}
+.dim{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{min-height:48px;border:2px solid var(--line);border-radius:10px;padding:.3rem .7rem;background:#fff;display:flex;gap:.4rem;align-items:center;font-variant-numeric:tabular-nums}
+.chip.due{border-color:#f0d58a;background:var(--warn-soft)}
+td input,td select{min-height:48px;padding:.3rem .5rem}
+td input.g{text-align:right;font-variant-numeric:tabular-nums;width:130px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-left:.3rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+/* cụm B, #36: thành phần dùng chung */
+button.small,.btn.small{min-height:48px}
+.bigbtn{min-height:72px;font-size:1.25rem;width:100%}
+.job{background:#fff;border:2px solid var(--line);border-radius:16px;padding:1rem 1.2rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.35rem}
+.job .jt{font-size:1.3rem;font-weight:800}
+.job .js{color:var(--muted);font-size:1rem}
+.job .jx{font-size:1.15rem;font-weight:700}
+.job .btn,.job button{min-height:64px;font-size:1.15rem;margin-top:.4rem;width:100%}
+.job.due{border-color:#f0d58a;background:var(--warn-soft)}
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin:.6rem 0 1.2rem}
+.pick{display:flex;gap:.7rem;flex-wrap:wrap}
+.pick .choice{min-height:64px}
+summary.btnlike{list-style:none;min-height:64px;border:2px solid var(--que);border-radius:10px;padding:.6rem 1.1rem;font-weight:600;color:var(--que);background:#fff;justify-content:center;gap:.4rem}
+summary.btnlike::-webkit-details-marker{display:none}
+summary.btnlike.primary{background:var(--cta);border-color:var(--cta);color:#fff;font-size:1.25rem;min-height:72px}
+summary.btnlike.danger{border-color:var(--err);color:var(--err)}
+details[open]>summary.btnlike:not(.primary){background:var(--que-soft)}
+details.dt>div.in{padding:.8rem 0 0}
+.annot b{color:var(--ink)}
+details.dt>summary:not(.btnlike){color:var(--que);text-decoration:underline;font-weight:600}
+details.dt>summary:not(.btnlike)::before{content:"▸ ";white-space:pre}
+details.dt[open]>summary:not(.btnlike)::before{content:"▾ "}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Gán bù / hủy tem</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+
+<div class="tabs"><button class="active" data-pick data-tab="assign">Gán bù tem rời vào lô</button><button data-pick data-tab="void">Hủy tem lỗi</button></div>
+<section id="tab-assign">
+<div class="banner" style="margin:0 0 1rem;font-size:1.05rem">Tem in theo lô (màn «In tem cho 90 chai») đã gán luôn vào lô, <b>không cần quét ở đây</b>. Màn này chỉ để <b>gán bù</b> tem đã in rời (ví dụ cuộn in tự do), hoặc <b>hủy tem lỗi</b>. Thiếu tem thì in bổ sung theo đúng lô ở màn in tem.</div>
+  <div class="card">
+    <div style="font-size:1.3rem;font-weight:800">Tinh dầu Quế Văn Yên 100% 10 ml</div>
+    <div class="muted">Lô Q100-261120-02</div>
+    <div id="progress-box" style="margin-top:.8rem">
+      <div id="progress-label" style="font-weight:800;font-size:1.6rem">Còn 50 tem cần gán</div>
+      <div class="progress" style="margin:.4rem 0"><div id="progress-bar" style="width: 75%;"></div></div>
+      <div class="muted">Đã gán 150 / 200. Chai lưu mẫu không dán tem và không tính vào số này.</div>
+    </div>
+    <details class="dt" style="margin-top:.8rem">
+      <summary>Đổi lô</summary>
+      <div id="lots" class="in choice-grid"><button type="button" data-pick class="choice selected">Tinh dầu Quế Văn Yên 100% 10 ml<span class="sub">Q100-261120-02 · đã gán 150/200</span></button><button type="button" data-pick class="choice">Tinh dầu Quế Cam đậm đà 10 ml<span class="sub">QC2-261023-01 · đã gán 0/90</span></button></div>
+    </details>
+  </div>
+  <div class="card" id="scan-card">
+    <div class="banner ok" style="margin-top:0">Bước 1/2 xong: tem ĐẦU của cuộn là P0TF-3C35-MQ ✔</div>
+    <button class="small">Quét lại tem đầu</button>
+    <div class="step-title" id="scan-title" style="font-size:1.3rem;margin-top:1rem">Bước 2/2: quét tem CUỐI của đoạn tem</div>
+    <input id="scan" class="scan-input" placeholder="Quét tem…" autocomplete="off" value="">
+    <div id="msg" aria-live="polite"></div>
+    <div class="annot">Mới vào màn này chỉ hiện «Bước 1/2: quét tem ĐẦU của cuộn»; quét xong mới hiện bước 2. Quét tem cuối xong tự gán, không cần bấm nút. Thông báo hiện ở ô trống phía trên, ví dụ:
+      <div class="banner ok" style="margin:.4rem 0 0">Đã gán 50 tem, lô này xong.</div>
+      <div class="banner err" style="margin:.4rem 0 0">Chưa gán được: hai tem không cùng một cuộn. Quét lại tem đầu.</div>
+      <div class="banner err" style="margin:.4rem 0 0">Chưa gán được: có tem đã dùng cho lô khác.</div></div>
+  </div>
+</section>
+<section id="tab-void" class="hidden">
+  <div class="card">
+    <div class="step-title">Quét tem rách hoặc in hỏng</div>
+    <div class="choice-grid" id="reasons"><button type="button" data-pick class="choice selected">Tem rách</button><button type="button" data-pick class="choice">In hỏng</button><button type="button" data-pick class="choice">Dán nhầm</button><button type="button" data-pick class="choice">Mất tem</button></div>
+    <input id="void-scan" class="scan-input" placeholder="Quét tem cần hủy…" autocomplete="off" style="margin-top:.6rem" value="">
+    <div id="void-msg"></div>
+  </div>
+</section>
+
+</main>
+<div id="toast"></div>
+</body></html>

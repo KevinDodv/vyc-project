@@ -1,0 +1,29 @@
+---
+import { heightFor, type ImageRef, srcset } from "../../lib/image";
+
+interface Props {
+  image: ImageRef;
+  /** Ví dụ "(min-width: 768px) 50vw, 100vw" */
+  sizes: string;
+  /** true cho ảnh LCP: eager + fetchpriority high. Còn lại lazy. */
+  priority?: boolean;
+  class?: string;
+  id?: string;
+}
+
+const { image, sizes, priority = false, class: className, id } = Astro.props;
+---
+<picture id={id}>
+  <source type="image/avif" srcset={srcset(image, "avif")} sizes={sizes} />
+  <source type="image/webp" srcset={srcset(image, "webp")} sizes={sizes} />
+  <img
+    src={image.url}
+    alt={image.alt}
+    width={image.w}
+    height={heightFor(image, image.w)}
+    class={className}
+    decoding="async"
+    loading={priority ? "eager" : "lazy"}
+    fetchpriority={priority ? "high" : undefined}
+  />
+</picture>

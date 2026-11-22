@@ -1,0 +1,68 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Đơn hàng thành phẩm · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Bán thành phẩm</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<section class="card">
+  <div class="step-title"><span class="n">1</span>Bán cho ai</div>
+  <div id="customer" class="choice-grid"><button type="button" class="choice selected" style="min-width:150px;min-height:64px" data-go="#issue-product">Khách lẻ<span class="sub">trực tiếp, website, Facebook / Zalo</span></button><button type="button" class="choice" style="min-width:150px;min-height:64px" data-go="#issue-product-san">Shopee<span class="sub">sàn</span></button><button type="button" class="choice" style="min-width:150px;min-height:64px" data-go="#issue-product-san">TikTok Shop<span class="sub">sàn</span></button><button type="button" class="choice" style="min-width:150px;min-height:64px" data-go="#issue-product-san">Lazada<span class="sub">sàn</span></button><button type="button" class="choice" style="min-width:150px;min-height:64px" data-pick>Đại lý Hà Nội (mẫu)<span class="sub">đại lý</span></button><button type="button" class="choice" style="min-width:150px;min-height:64px" data-pick>Công ty XNK Quế Việt (mẫu)<span class="sub">doanh nghiệp xuất khẩu</span></button></div>
+  <label>Kênh bán</label>
+  <div id="channels" class="choice-grid"><button type="button" class="choice selected" data-ch="DIRECT" style="min-width:130px;min-height:56px" data-pick>Trực tiếp</button><button type="button" class="choice" data-ch="WEBSITE" style="min-width:130px;min-height:56px" data-go="#issue-product-loi">Website</button><button type="button" class="choice" data-ch="FACEBOOK_ZALO" style="min-width:130px;min-height:56px" data-pick>Facebook / Zalo</button><button type="button" class="choice" data-ch="SHOPEE" style="min-width:130px;min-height:56px" data-pick>Shopee</button><button type="button" class="choice" data-ch="TIKTOK" style="min-width:130px;min-height:56px" data-pick>TikTok Shop</button><button type="button" class="choice" data-ch="LAZADA" style="min-width:130px;min-height:56px" data-pick>Lazada</button><button type="button" class="choice" data-ch="AGENT" style="min-width:130px;min-height:56px" data-pick>Đại lý</button><button type="button" class="choice" data-ch="CORPORATE" style="min-width:130px;min-height:56px" data-pick>Doanh nghiệp</button><button type="button" class="choice" data-ch="EXPORTER" style="min-width:130px;min-height:56px" data-pick>Xuất khẩu</button><button type="button" class="choice" data-ch="OTHER" style="min-width:130px;min-height:56px" data-pick>Khác</button></div>
+</section>
+<section class="card">
+  <div class="step-title"><span class="n">2</span>Quét tem trên từng chai, túi</div>
+  <input id="scan" class="scan-input" placeholder="Quét tem QR…" autocomplete="off" value="">
+  <div id="scan-msg"></div>
+  
+  <div class="table-wrap" style="margin-top:.8rem"><table>
+    <thead><tr><th>Sản phẩm</th><th class="num">Số lượng</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th><th></th></tr></thead>
+    <tbody id="lines" data-rows><tr><td>Tinh dầu quế Văn Yên 10 ml<div class="muted mono" style="font-size: 0.8rem;">K7QD-5ZP2-M3</div></td><td class="num">1</td><td class="num">150.000 đ <button class="small" type="button" data-pick>Đổi giá</button></td><td class="num">150.000 đ</td><td><button class="small" data-act="row-del">Bỏ</button></td></tr></tbody></table></div>
+  <div class="row" style="margin-top:.6rem"><button id="gift-mode" type="button" data-pick>🎁 Thêm quà tặng</button></div>
+  <div id="gift-extra" class="hidden" style="margin-top:.6rem">
+    <label>Quà không có tem (ví dụ thiệp)</label>
+    <div class="row"><select id="gift-product" data-scan-focus-ok="1"><option value="4" selected="">Thiệp cảm ơn</option></select>
+      <input id="gift-qty" type="number" min="1" value="1" style="flex:0 0 120px" data-scan-focus-ok="1">
+      <button id="gift-add" type="button" data-act="row-add" style="flex:0 0 auto">Thêm</button></div>
+  </div>
+</section>
+<section class="card">
+  <div class="step-title"><span class="n">3</span>Người mua <small class="muted">Bắt buộc: họ tên, số điện thoại</small></div>
+  <label for="b-phone">Số điện thoại</label>
+  <input id="b-phone" inputmode="tel" placeholder="0912 345 678" data-scan-focus-ok="1" value="0912345678">
+  <div id="b-found"><div class="banner info">Số này chưa có trong hệ thống — nhập họ tên người mua mới.</div></div>
+  <label for="b-name">Họ tên</label><input id="b-name" data-scan-focus-ok="1" value="Nguyễn Văn An">
+  <details open="" style="margin-top:.8rem"><summary>＋ Thêm thông tin người mua (không bắt buộc)</summary>
+    <label>Tỉnh / xã</label><div id="b-areas" class="choice-grid"><button type="button" class="choice" data-id="1" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Tỉnh Lào Cai</button><button type="button" class="choice selected" data-id="4" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Châu Quế</button><button type="button" class="choice" data-id="5" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Lâm Giang</button><button type="button" class="choice" data-id="8" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Mậu A</button><button type="button" class="choice" data-id="10" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Mỏ Vàng</button><button type="button" class="choice" data-id="2" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Phong Dụ Hạ</button><button type="button" class="choice" data-id="3" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Phong Dụ Thượng</button><button type="button" class="choice" data-id="7" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Tân Hợp</button><button type="button" class="choice" data-id="9" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Xuân Ái</button><button type="button" class="choice" data-id="6" style="min-width: 120px; min-height: 52px; font-size: 1rem;" data-pick>Đông Cuông</button><span class="muted" style="align-self: center;">Tỉnh khác: ghi vào ô địa chỉ</span></div>
+    <label for="b-addr">Số nhà – đường</label><input id="b-addr" data-scan-focus-ok="1" value="Thôn 3">
+    <label style="font-weight:500"><input type="checkbox" id="b-consent" checked> Đồng ý nhận tin ưu đãi qua Zalo / SMS</label>
+    <p class="muted" style="margin:.2rem 0 0">Không tích sẵn. Chỉ tích khi khách đồng ý.</p>
+  </details>
+</section>
+<section class="card hidden" id="saved"></section>
+
+<div class="totalbar">
+  <div class="figure"><span class="lbl">Số món</span><span class="val" id="t-qty">1</span></div>
+  <div class="figure"><span class="lbl">Tổng tiền</span><span class="val money" id="t-money">150.000 đ</span></div>
+  <div class="spacer"></div>
+  <button class="primary" id="save" data-go="/don-hang">💾 Lưu đơn và in</button>
+</div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

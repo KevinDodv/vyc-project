@@ -1,0 +1,26 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Tài khoản · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Tài khoản</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Gõ tên đăng nhập hoặc họ tên để tìm" value=""></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto"><button class="btn primary" id="add" type="button">+ Thêm tài khoản</button></div>
+</div>
+<div id="note"><p class="muted">Mỗi người một tài khoản riêng để nhật ký ghi đúng người. Thủ kho và công nhân dùng chung vai «Xưởng». Không tự ngừng dùng chính mình.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table><thead id="thead"><tr><th>Tên đăng nhập</th><th>Họ tên</th><th>Vai trò</th><th>Đăng nhập gần nhất</th><th>Tình trạng</th><th></th></tr></thead><tbody id="rows"><tr class="clickable"><td class="mono">chudn</td><td>Chủ doanh nghiệp (mẫu) <span class="tag">Bạn</span></td><td><span class="tag gift">Chủ DN</span></td><td>21/11/2026 08:05</td><td><span class="tag ACTIVE">Đang dùng</span></td><td><button class="small danger" type="button" disabled="" title="Không tự ngừng dùng chính mình">Ngừng dùng</button></td></tr><tr class="clickable"><td class="mono">kho.lan</td><td>Nguyễn Thị Lan</td><td><span class="tag GENERAL">Xưởng</span></td><td>21/11/2026 07:40</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr class="clickable"><td class="mono">xuong.hung</td><td>Trần Văn Hùng</td><td><span class="tag GENERAL">Xưởng</span></td><td>20/11/2026 16:12</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr class="clickable"><td class="mono">xuong.mai</td><td>Hoàng Thị Mai</td><td><span class="tag GENERAL">Xưởng</span></td><td>02/11/2026 09:30</td><td data-status><span class="tag">Ngừng dùng</span></td><td><button data-act="toggle" class="small" type="button">Dùng lại</button></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+<dialog open=""><div class="dlg-head">Sửa tài khoản: chudn<button data-go="#account" class="small" type="button">✕</button></div><div class="dlg-body"><div><div class="form-grid"><div><label>Tên đăng nhập *</label><input type="text" value="chudn"></div><div><label>Họ tên *</label><input type="text" value="Chủ doanh nghiệp (mẫu)"></div><div><label>Vai trò *</label><select><option value="OWNER" selected="">Chủ DN (OWNER)</option><option value="WORKSHOP">Xưởng (WORKSHOP)</option></select><small class="muted">Chủ DN: làm được mọi việc. Xưởng: lập phiếu, quét lô, nhập cân; chỉ xem danh mục.</small></div><div><label>Mật khẩu</label><input type="password" value="" autocomplete="new-password"><small class="muted">Từ 8 ký tự. Để trống nếu không đổi mật khẩu.</small></div><div><label>Tình trạng</label><div><span class="tag ACTIVE">Đang dùng</span> <button class="danger" type="button" disabled="" title="Không tự ngừng dùng chính mình">Ngừng dùng</button></div><small class="muted">Đây là tài khoản của bạn nên không ngừng dùng được.</small></div></div></div></div><div class="dlg-foot"><button data-go="#account" class="" type="button">Đóng</button><button data-go="#account" class="primary" type="button">Lưu</button></div></dialog></body></html>

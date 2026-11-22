@@ -1,0 +1,45 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Cài đặt · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Cài đặt</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div class="hidden"><input id="q" placeholder="Tìm kiếm…" value=""></div>
+  <div style="flex:0 0 220px" class="hidden"><select id="status"><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto" class="hidden"><button class="primary" id="add">+ Thêm mới</button></div>
+</div>
+<div id="note"></div>
+<div class="card"><div class="step-title">Thường chỉnh</div>
+<div><label>Số điện thoại liên hệ (hiện trên trang quét QR)</label><input type="text" inputmode="tel" value="0900 000 000"></div>
+<div><label>Báo khi một tem bị quét quá số lần</label><input type="number" inputmode="numeric" value="20"><small class="muted">Quét quá số này, trang QR hiện khung vàng.</small></div>
+<div><label>Báo khi giá mua lệch bảng giá quá (%)</label><input type="number" inputmode="numeric" value="20"></div>
+<div><label>Báo khi hạn dùng còn dưới (ngày)</label><input type="number" inputmode="numeric" value="60"></div>
+<div><label>Khổ giấy in phiếu</label><div class="choice-grid"><button data-pick class="choice selected" type="button">A5</button><button data-pick class="choice" type="button">80 mm</button></div></div>
+<div><label>Tên thương hiệu</label><input type="text" value="Quế Văn Yên"></div>
+<div><label>Câu chuyện thương hiệu (rút gọn)</label><textarea rows="3">Quế Văn Yên trồng trên đồi cao vùng Văn Yên, lấy vỏ khi cây đủ năm tuổi, phơi sấy và chế biến tại xưởng của gia đình.</textarea></div></div>
+<div class="card"><div class="step-title">Gắn với tem đã in (ít khi đổi)</div>
+<div><label>Tên miền trong mã QR</label><input type="text" value="https://quevanyen.vn" readonly style="background:#f3ece4"><small class="muted">Đã in cuộn đầu tiên (CT-2611-01) ngày 20/11/2026, không đổi được.</small></div>
+<div><label>Địa danh hiện trên trang quét QR</label><input type="text" value="Văn Yên, Yên Bái"></div>
+<div class="row"><div><label>Khổ tem: rộng (mm)</label><input type="number" inputmode="numeric" value="50"></div><div><label>Khổ tem: cao (mm)</label><input type="number" inputmode="numeric" value="30"></div></div>
+</div>
+<p><button data-act="save" class="primary" type="button">💾 Lưu cài đặt</button></p>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,58 @@
+# --- Dữ liệu trích tạm, không commit ---
+docs/_tools/tmp/
+
+# --- Bí mật và biến môi trường ---
+.env
+.env.*
+!.env.example
+*.env
+secrets.*
+
+# --- Khoá, chứng chỉ ---
+*.pem
+*.key
+*.p12
+rclone.conf
+
+# --- Dữ liệu DB và sao lưu ---
+db.sqlite3
+*.sql
+*.dump
+*.sql.gz
+*.bak
+backups/
+
+# --- Python / Django ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage/
+backend/media/
+backend/staticfiles/
+
+# --- Node / Astro / frontend ---
+node_modules/
+frontend/dist/
+frontend/.astro/
+dist/
+.astro/
+playwright-report/
+test-results/
+
+# --- Log ---
+*.log
+
+# --- Rác hệ điều hành và editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+# File khoá của Office (Word/Excel mở sẵn)
+~$*
+
+# --- Trạng thái đội ProTeam (ảnh minh chứng, dữ liệu task) ---
+.proteam/evidence/
+.proteam/tasks/
+.lighthouseci/

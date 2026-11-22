@@ -1,0 +1,16 @@
+# Cài vào /etc/logrotate.d/vyc (chạy bằng root, thường qua cron.daily hoặc systemd timer của logrotate).
+# Giữ log 30 ngày (van-hanh.md mục 7, mục 11): daily + rotate 30.
+# `su deploy deploy`: thư mục /var/log/vyc thuộc user deploy (cron của user này ghi log vào đó),
+# logrotate từ chối xoay file trong thư mục không thuộc root nếu thiếu dòng này. Đổi `deploy deploy`
+# nếu user/nhóm trên VPS đặt tên khác (xem deploy/README.md).
+# copytruncate vì cron chỉ nối thêm vào file đang mở qua `>>`; script không giữ file mở lâu.
+/var/log/vyc/*.jsonl /var/log/vyc/*.log {
+    su deploy deploy
+    daily
+    rotate 30
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

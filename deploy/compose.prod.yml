@@ -1,0 +1,123 @@
+# Override chung cho staging và prod (docs/kien-truc/van-hanh.md mục 2.1, 2.2): image dựng sẵn,
+# giới hạn RAM theo biến, log xoay vòng, healthcheck. Dùng kèm compose.yml cùng MỘT trong hai:
+#   prod:    compose.edge.yml    (subnet 172.28.0.0/24, Caddy bind 80/443, nhìn thấy mạng staging)
+#   staging: compose.staging.yml (mạng ngoài vyc-staging 172.29.0.0/24, alias cho Caddy)
+# Staging và prod chỉ khác: file .env, project name (-p), hai file trên. Script deploy/backup/compose.sh
+# ghép đúng bộ file. Bắt buộc đặt IMAGE_TAG; không có tag `latest`.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-hardening: &hardening
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
+services:
+  postgres:
+    # Staging đặt PG_MEM_LIMIT=384m, PG_SHARED_BUFFERS=96MB trong .env.staging (van-hanh.md 2.1).
+    mem_limit: ${PG_MEM_LIMIT:-1g}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${PG_SHARED_BUFFERS:-256MB}
+      - -c
+      - max_connections=50
+      - -c
+      - work_mem=8MB
+    logging: *logging
+    security_opt:
+      - no-new-privileges:true
+
+  backend:
+    <<: *hardening
+    image: ${IMAGE_REPO:-ghcr.io/kevindodv}/vyc-backend:${IMAGE_TAG:?đặt IMAGE_TAG (sha commit hoặc vX.Y.Z)}
+    build:
+      context: ../backend
+      dockerfile: ../deploy/backend.Dockerfile
+      additional_contexts:
+        deploy: .
+    init: true
+    # Staging: BACKEND_MEM_LIMIT=384m, WEB_CONCURRENCY=2.
+    mem_limit: ${BACKEND_MEM_LIMIT:-768m}
+    environment:
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-3}
+    healthcheck:
+      # Host phải nằm trong DJANGO_ALLOWED_HOSTS (có `backend`), nên gửi Host: backend.
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen(u.Request('http://127.0.0.1:8000/api/health', headers={'Host': 'backend'}), timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    logging: *logging
+
+  frontend:
+    <<: *hardening
+    image: ${IMAGE_REPO:-ghcr.io/kevindodv}/vyc-frontend:${IMAGE_TAG:?đặt IMAGE_TAG (sha commit hoặc vX.Y.Z)}
+    build:
+      context: ../frontend
+      dockerfile: ../deploy/frontend.Dockerfile
+    init: true
+    # Staging: FRONTEND_MEM_LIMIT=256m, FRONTEND_HEAP_MB=160.
+    mem_limit: ${FRONTEND_MEM_LIMIT:-384m}
+    environment:
+      NODE_OPTIONS: --max-old-space-size=${FRONTEND_HEAP_MB:-256}
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4321/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    logging: *logging
+
+  # Một Caddy duy nhất, thuộc project prod: chỉ bật bằng `--profile edge` (staging không có Caddy riêng).
+  caddy:
+    profiles: ["edge"]
+    image: caddy:2-alpine
+    restart: unless-stopped
+    mem_limit: 128m
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      # Prod đặt SITE_ADDRESS trong .env.prod. Không dùng `:?` vì staging cũng nạp file này (Caddy không chạy
+      # ở staging) và không có biến đó; thiếu ở prod thì smoke test của deploy.sh báo lỗi và tự lùi.
+      SITE_ADDRESS: ${SITE_ADDRESS:-http://localhost}
+      # Staging tắt/chưa cấu hình: khối staging rơi về địa chỉ không phân giải được và hash bcrypt
+      # ngẫu nhiên không ai biết mật khẩu, nên không mở gì ra ngoài. Dấu $ phải nhân đôi trong Compose.
+      STAGING_ADDRESS: ${STAGING_ADDRESS:-http://staging.invalid}
+      STAGING_BASIC_USER: ${STAGING_BASIC_USER:-staging-off}
+      STAGING_BASIC_HASH: ${STAGING_BASIC_HASH:-$$2a$$10$$EYMZBTiVjUQtZwoWDU.RrwFIgHtlX13WHzGqv3C/acQx5ZpOsMoYI}
+      CSP_GTM_SCRIPT: ${CSP_GTM_SCRIPT:-}
+      CSP_GTM_CONNECT: ${CSP_GTM_CONNECT:-}
+      CSP_GTM_IMG: ${CSP_GTM_IMG:-}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - media:/srv/media:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    logging: *logging
+
+volumes:
+  caddy_data:
+  caddy_config:

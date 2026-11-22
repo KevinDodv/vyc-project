@@ -1,0 +1,45 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Bảng giá theo hạng · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+/* UX cụm C (#37): khối dùng riêng trong cụm C, chờ chuyển vào app.css chung */
+.todo{display:grid;gap:.6rem;margin:1rem 0}
+.todo-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:12px;background:var(--warn-soft);border:1px solid #f0d58a;font-weight:600}
+.todo-item.info{background:#eef4fb;border-color:#c9dbef}
+.todo-item .btn{margin-left:auto;min-height:48px;flex:0 0 auto}
+.range-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.range-btns .choice{min-height:56px;min-width:120px}
+.cta{display:flex;width:100%;min-height:72px;font-size:1.3rem;justify-content:center;align-items:center;gap:.6rem}
+.sub-note{font-size:1rem;color:var(--muted);margin:.2rem 0 0;font-weight:400}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Bảng giá theo hạng</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<label>Giá áp dụng cho ngày</label>
+<div class="range-btns"><button data-pick class="choice selected" type="button">Hôm nay<span class="sub">20/11/2026</span></button><button data-pick class="choice" type="button">Hôm qua<span class="sub">19/11/2026</span></button><button data-pick class="choice" type="button">Chọn ngày khác…</button></div>
+<div id="info"><div class="banner ok">Đã có giá cho ngày này. Sửa ô thay đổi rồi Lưu.</div></div>
+<div class="table-wrap" style="margin-top:.8rem"><table>
+  <thead><tr><th>Nguyên liệu</th><th>Loại</th><th class="num">Giá mua (đ/kg)</th><th class="num">Giá bán (đ/kg)</th><th>Đang dùng giá ngày</th></tr></thead>
+  <tbody id="grid"><tr><td>Vỏ quế</td><td>Loại 1</td><td><input class="big-number" inputmode="numeric" value="45000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="60000" style="font-size: 24px;"></td><td>20/11/2026</td></tr><tr><td>Vỏ quế</td><td>Loại 2</td><td><input class="big-number" inputmode="numeric" value="38000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="50000" style="font-size: 24px;"></td><td>20/11/2026</td></tr><tr><td>Vỏ quế</td><td>Loại 3</td><td><input class="big-number" inputmode="numeric" value="30000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="40000" style="font-size: 24px;"></td><td>20/11/2026</td></tr><tr><td>Quế vụn</td><td>Loại 1</td><td><input class="big-number" inputmode="numeric" value="18000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="25000" style="font-size: 24px;"></td><td>20/11/2026</td></tr><tr><td>Quế vụn</td><td>Loại 2</td><td><input class="big-number" inputmode="numeric" value="14000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="20000" style="font-size: 24px;"></td><td>20/11/2026</td></tr><tr><td>Quế vụn</td><td>Loại 3</td><td><input class="big-number" inputmode="numeric" value="10000" style="font-size: 24px;"></td><td><input class="big-number" inputmode="numeric" value="15000" style="font-size: 24px;"></td><td>20/11/2026</td></tr></tbody></table></div>
+<p class="row" style="align-items:center"><button data-pick type="button" style="flex:0 0 auto">↩ Giá giống hôm qua</button><button data-act="save" class="primary" id="save" style="flex:1 1 240px">💾 Lưu bảng giá</button></p>
+<h2>Lịch sử 30 ngày</h2>
+<div class="table-wrap"><table><thead><tr><th>Ngày</th><th>Hàng</th><th class="num">Giá mua</th><th class="num">Giá bán</th></tr></thead><tbody id="hist"><tr><td>20/11/2026</td><td>Vỏ quế Loại 1</td><td class="num">45.000 đ</td><td class="num">60.000 đ</td></tr><tr><td>20/11/2026</td><td>Vỏ quế Loại 2</td><td class="num">38.000 đ</td><td class="num">50.000 đ</td></tr><tr><td>20/11/2026</td><td>Vỏ quế Loại 3</td><td class="num">30.000 đ</td><td class="num">40.000 đ</td></tr><tr><td>20/11/2026</td><td>Quế vụn Loại 1</td><td class="num">18.000 đ</td><td class="num">25.000 đ</td></tr><tr><td>20/11/2026</td><td>Quế vụn Loại 2</td><td class="num">14.000 đ</td><td class="num">20.000 đ</td></tr><tr><td>20/11/2026</td><td>Quế vụn Loại 3</td><td class="num">10.000 đ</td><td class="num">15.000 đ</td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

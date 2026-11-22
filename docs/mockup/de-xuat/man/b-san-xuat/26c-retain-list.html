@@ -1,0 +1,75 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Mẫu lưu · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+.annot{border:2px dashed var(--line);border-radius:var(--radius);padding:.6rem .9rem;color:var(--muted);font-size:.9rem;margin:.6rem 0}
+.rowerr td{background:var(--err-soft)}
+.rowwarn td{background:#fff8e6}
+.dim{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{min-height:48px;border:2px solid var(--line);border-radius:10px;padding:.3rem .7rem;background:#fff;display:flex;gap:.4rem;align-items:center;font-variant-numeric:tabular-nums}
+.chip.due{border-color:#f0d58a;background:var(--warn-soft)}
+td input,td select{min-height:48px;padding:.3rem .5rem}
+td input.g{text-align:right;font-variant-numeric:tabular-nums;width:130px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-left:.3rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+button.small,.btn.small{min-height:48px}
+.annot b{color:var(--ink)}
+summary.btnlike{list-style:none;min-height:64px;border:2px solid var(--que);border-radius:10px;padding:.6rem .9rem;font-weight:600;color:var(--que);background:#fff;justify-content:center;gap:.4rem}
+summary.btnlike::-webkit-details-marker{display:none}
+summary.btnlike.primary{background:var(--cta);border-color:var(--cta);color:#fff}
+summary.btnlike.danger{border-color:var(--err);color:var(--err)}
+details[open]>summary.btnlike:not(.primary){background:var(--que-soft)}
+details.dt>div.in{padding:.6rem 0 0}
+.job{background:#fff;border:2px solid var(--line);border-radius:16px;padding:1rem 1.2rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.35rem}
+.job .jt{font-size:1.3rem;font-weight:800}
+.job .js{color:var(--muted);font-size:1rem}
+.job .jx{font-size:1.15rem;font-weight:700}
+.job .btn,.job button{min-height:64px;font-size:1.15rem;margin-top:.4rem;width:100%}
+.job.due{border-color:#f0d58a;background:var(--warn-soft)}
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin:.6rem 0 1.2rem}
+details.dt>summary:not(.btnlike){color:var(--que);text-decoration:underline;font-weight:600}
+details.dt>summary:not(.btnlike)::before{content:"▸ ";white-space:pre}
+details.dt[open]>summary:not(.btnlike)::before{content:"▾ "}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Mẫu lưu</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+
+<div class="tabs"><button class="active" data-pick>Mẫu đang giữ (3)</button><button data-pick>Lô chưa lưu mẫu (1)</button></div>
+<div class="table-wrap"><table>
+  <thead><tr><th>Lô</th><th>Sản phẩm</th><th>Vị trí</th><th>Ngày lưu</th><th>Giữ đến</th><th>Còn</th><th></th></tr></thead>
+  <tbody>
+    <tr class="rowerr"><td class="mono">QC2-251105-01</td><td>Tinh dầu Quế Cam đậm đà 10 ml</td><td>Tủ mẫu, kệ 1</td><td>05/11/2025</td><td>05/11/2026</td><td><span class="tag err">Hết hạn lưu</span></td><td><details class="dt"><summary class="btnlike danger" style="min-height:48px">Hủy mẫu</summary><div class="in"><b>Hủy mẫu QC2-251105-01?</b><div class="muted">Chai đã hết hạn lưu (05/11/2026).</div><button class="danger small" data-pick style="margin-top:.4rem">Hủy mẫu</button></div></details></td></tr>
+    <tr class="warn"><td class="mono">QC1-251215-01</td><td>Tinh dầu Quế Cam dịu nhẹ 10 ml</td><td>Tủ mẫu, kệ 1</td><td>15/12/2025</td><td>15/12/2026</td><td><span class="tag warn">Còn 25 ngày</span></td><td></td></tr>
+    <tr><td class="mono">QC1-260310-01</td><td>Tinh dầu Quế Cam dịu nhẹ 10 ml</td><td>Tủ mẫu, kệ 2</td><td>10/03/2026</td><td>10/03/2027</td><td class="muted">Còn 110 ngày</td><td></td></tr>
+  </tbody></table></div>
+<p class="muted">Sắp xếp theo hạn lưu. Dưới 30 ngày tô cam; hết hạn mới hủy được.</p>
+
+<h2>Lô chưa lưu mẫu</h2>
+<div class="jobs">
+  <div class="job">
+    <div class="jt">Tinh dầu Quế Cam đậm đà 10 ml</div>
+    <div class="js"><a class="mono" href="/quan-ly/lo-thanh-pham/QC2-261023-01">QC2-261023-01</a> · xong 20/11/2026 · 90 chai</div>
+    <details class="dt">
+      <summary class="btnlike primary">Lưu mẫu</summary>
+      <div class="in"><label style="margin-top:0">Để chai ở đâu? <span class="muted" style="font-weight:500">(điền sẵn như lần trước)</span></label><input value="Tủ mẫu, kệ 2"><button class="primary" data-pick style="margin-top:.7rem">Lưu mẫu</button></div>
+    </details>
+  </div>
+</div>
+<p class="muted">Chỉ hiện lô của sản phẩm bật «Lưu mẫu mỗi lô». Không chặn gán tem hay xuất hàng.</p>
+
+</main>
+<div id="toast"></div>
+</body></html>

@@ -1,0 +1,79 @@
+---
+import ErrorState from "../components/site/ErrorState.astro";
+import ProductCard from "../components/site/ProductCard.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { callApi, publicApi } from "../lib/api/server";
+import { BRAND } from "../lib/business";
+import { CACHE_PRIVATE, CACHE_PUBLIC } from "../lib/cache";
+import { HOME_LIMIT, mergeFeatured } from "../lib/products";
+import { organizationJsonLd } from "../lib/seo";
+
+export const prerender = false;
+
+const api = publicApi(Astro.request, "anon");
+
+// Sản phẩm sếp chọn nổi bật; dưới 6 thì bù bằng sản phẩm mới cập nhật (frontend-seo.md 5.3).
+const featured = await callApi(() =>
+  api.GET("/api/public/products", { params: { query: { featured: true, limit: HOME_LIMIT } } }),
+);
+let failed = featured.kind !== "ok";
+let products = featured.kind === "ok" ? featured.data : [];
+if (featured.kind === "ok" && products.length < HOME_LIMIT) {
+  const recent = await callApi(() =>
+    api.GET("/api/public/products", { params: { query: { limit: HOME_LIMIT } } }),
+  );
+  if (recent.kind === "ok") products = mergeFeatured(products, recent.data, HOME_LIMIT);
+  else failed = true;
+}
+
+// Có sản phẩm để hiện thì vẫn render; không có gì mà API lỗi thì 503, không render trang rỗng.
+const unavailable = failed && products.length === 0;
+if (unavailable) {
+  Astro.response.status = 503;
+  Astro.response.headers.set("Cache-Control", CACHE_PRIVATE);
+  Astro.response.headers.set("Retry-After", "30");
+} else {
+  Astro.response.headers.set("Cache-Control", failed ? CACHE_PRIVATE : CACHE_PUBLIC);
+}
+---
+<SiteLayout
+  title={`${BRAND} | Tinh dầu quế, túi thơm từ quế Văn Yên`}
+  description="Tinh dầu quế, túi thơm và sản phẩm từ quế Văn Yên, có mã QR truy xuất nguồn gốc tới từng chai, từng túi."
+  path="/"
+  jsonLd={[organizationJsonLd()]}
+  noindex={unavailable}
+>
+  {
+    unavailable ? (
+      <ErrorState
+        heading="Tạm thời chưa xem được trang này"
+        message="Hệ thống đang bận. Bạn vui lòng thử lại sau ít phút."
+      />
+    ) : (
+      <>
+        <section class="py-8">
+          <h1 class="text-3xl font-bold md:text-4xl">{BRAND}: sản phẩm từ quế Văn Yên</h1>
+          <p class="mt-3 max-w-2xl">
+            Tinh dầu quế, túi thơm làm từ quế Văn Yên. Mỗi chai, mỗi túi có mã QR để xem nguồn gốc.
+          </p>
+        </section>
+        <section aria-labelledby="noi-bat">
+          <h2 id="noi-bat" class="mb-4 text-2xl font-bold">
+            Sản phẩm nổi bật
+          </h2>
+          {products.length > 0 ? (
+            <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {products.map((p, i) => (
+                <li>
+                  <ProductCard product={p} priority={i === 0} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Sản phẩm đang được cập nhật.</p>
+          )}
+        </section>
+      </>
+    )
+  }
+</SiteLayout>

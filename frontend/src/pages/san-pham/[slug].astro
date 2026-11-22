@@ -1,0 +1,167 @@
+---
+import Breadcrumb from "../../components/site/Breadcrumb.astro";
+import BuyButtons from "../../components/site/BuyButtons.astro";
+import ErrorState from "../../components/site/ErrorState.astro";
+import Picture from "../../components/site/Picture.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { callApi, publicApi } from "../../lib/api/server";
+import { CACHE_PRIVATE, CACHE_PUBLIC } from "../../lib/cache";
+import { formatVnd } from "../../lib/format";
+import {
+  breadcrumbJsonLd,
+  buildTitle,
+  type Crumb,
+  clampDescription,
+  offerOf,
+  productJsonLd,
+} from "../../lib/seo";
+import { absoluteUrl, redirectLocation } from "../../lib/url";
+
+export const prerender = false;
+
+const slug = Astro.params.slug ?? "";
+const api = publicApi(Astro.request, "anon");
+const outcome = await callApi(() =>
+  api.GET("/api/public/products/{slug}", { params: { path: { slug } } }),
+);
+
+// Slug cũ: API trả 200 kèm slug hiện hành, ta so với URL rồi 301 (frontend-seo.md 6.5).
+let redirectTo: string | null = null;
+let badSlug = false;
+if (outcome.kind === "ok" && outcome.data.slug !== slug) {
+  try {
+    redirectTo = redirectLocation(
+      `/san-pham/${encodeURIComponent(outcome.data.slug)}`,
+      Astro.url.search,
+    );
+  } catch {
+    badSlug = true; // slug có "\" hoặc khác origin: không chuyển hướng, coi như không có trang
+  }
+}
+if (redirectTo) {
+  return new Response(null, {
+    status: 301,
+    headers: { Location: redirectTo, "Cache-Control": CACHE_PUBLIC },
+  });
+}
+
+const product = outcome.kind === "ok" && !badSlug ? outcome.data : null;
+if (product) {
+  Astro.response.headers.set("Cache-Control", CACHE_PUBLIC);
+} else if (outcome.kind === "unavailable") {
+  Astro.response.status = 503;
+  Astro.response.headers.set("Cache-Control", CACHE_PRIVATE);
+  Astro.response.headers.set("Retry-After", outcome.retryAfter);
+} else {
+  Astro.response.status = 404;
+  Astro.response.headers.set("Cache-Control", CACHE_PRIVATE);
+}
+
+const path = product ? `/san-pham/${encodeURIComponent(product.slug)}` : "/san-pham";
+const crumbs: Crumb[] = product
+  ? [
+      { name: "Trang chủ", path: "/" },
+      { name: "Sản phẩm", path: "/san-pham" },
+      { name: product.name, path },
+    ]
+  : [];
+const offer = product ? offerOf(product) : null;
+const first = product?.images[0];
+---
+{
+  product ? (
+    <SiteLayout
+      title={buildTitle(product.seo_title, product.name)}
+      description={clampDescription(
+        product.seo_description ?? product.short_description ?? product.name,
+      )}
+      path={path}
+      type="product"
+      ogImage={product.og_image ?? first?.url ?? null}
+      preloadImage={first}
+      jsonLd={[productJsonLd(product, absoluteUrl(path)), breadcrumbJsonLd(crumbs)]}
+    >
+      <Breadcrumb items={crumbs} />
+      <article class="grid gap-8 md:grid-cols-2">
+        <div>
+          {product.images.length > 0 && (
+            <>
+              <div class="gallery rounded-box">
+                {product.images.map((img, i) => (
+                  <Picture
+                    id={`anh-${i + 1}`}
+                    image={img}
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    priority={i === 0}
+                    class="w-full"
+                  />
+                ))}
+              </div>
+              {product.images.length > 1 && (
+                <nav class="mt-2 flex gap-2" aria-label="Ảnh sản phẩm">
+                  {product.images.map((_, i) => (
+                    <a href={`#anh-${i + 1}`} class="btn btn-sm btn-ghost">
+                      Ảnh {i + 1}
+                    </a>
+                  ))}
+                </nav>
+              )}
+            </>
+          )}
+        </div>
+        <div class="flex flex-col gap-4">
+          <h1 class="text-3xl font-bold">{product.name}</h1>
+          <p class="opacity-70">{product.spec}</p>
+          <p class="text-2xl font-bold text-primary">
+            {offer ? formatVnd(offer.price) : "Liên hệ"}
+          </p>
+          {offer && (
+            <p>
+              <span class={`badge ${offer.availability === "in_stock" ? "badge-success" : "badge-warning"}`}>
+                {offer.availability === "in_stock" ? "Còn hàng" : "Hết hàng"}
+              </span>
+            </p>
+          )}
+          {product.short_description && <p>{product.short_description}</p>}
+          <BuyButtons links={product.buy_links} sku={product.sku} />
+          {product.story_html && (
+            <details class="collapse collapse-arrow border border-base-300">
+              <summary class="collapse-title font-bold">Câu chuyện</summary>
+              <div class="collapse-content prose-vyc" set:html={product.story_html} />
+            </details>
+          )}
+          {product.usage_html && (
+            <details class="collapse collapse-arrow border border-base-300">
+              <summary class="collapse-title font-bold">Cách dùng</summary>
+              <div class="collapse-content prose-vyc" set:html={product.usage_html} />
+            </details>
+          )}
+        </div>
+      </article>
+    </SiteLayout>
+  ) : outcome.kind === "unavailable" ? (
+    <SiteLayout
+      title="Tạm thời chưa xem được trang"
+      description="Hệ thống đang bận, vui lòng thử lại sau ít phút."
+      path={path}
+      noindex
+    >
+      <ErrorState
+        heading="Tạm thời chưa xem được trang này"
+        message="Hệ thống đang bận. Bạn vui lòng thử lại sau ít phút."
+      />
+    </SiteLayout>
+  ) : (
+    <SiteLayout
+      title="Không tìm thấy sản phẩm"
+      description="Sản phẩm này không còn hoặc đường dẫn chưa đúng."
+      path={path}
+      noindex
+    >
+      <ErrorState
+        heading="Không tìm thấy sản phẩm"
+        message="Sản phẩm này không còn hoặc đường dẫn chưa đúng."
+      />
+    </SiteLayout>
+  )
+}

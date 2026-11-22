@@ -1,0 +1,5 @@
+# Script shell và Dockerfile phải dùng LF: CRLF làm shebang và COPY vào image hỏng trên Linux.
+*.sh text eol=lf
+*.Dockerfile text eol=lf
+Dockerfile text eol=lf
+Caddyfile text eol=lf

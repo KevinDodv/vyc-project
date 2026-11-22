@@ -1,0 +1,49 @@
+@import "tailwindcss" source(none);
+@source "../../pages/quan-ly";
+@source "../../layouts/Admin.astro";
+@source "./";
+
+@plugin "daisyui" {
+  include: button, navbar, input, select, fieldset, label, alert, badge, card, link;
+  themes: false;
+  logs: false;
+}
+@plugin "daisyui/theme" {
+  name: "vyc";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #fffdf9;
+  --color-base-200: #f6efe6;
+  --color-base-300: #e6dccd;
+  --color-base-content: #2b2118;
+  --color-primary: #0f6b3a;
+  --color-primary-content: #ffffff;
+  --color-secondary: #8a3b12;
+  --color-secondary-content: #ffffff;
+  --color-accent: #8a3b12;
+  --color-accent-content: #ffffff;
+  --color-neutral: #3b2d22;
+  --color-neutral-content: #fffdf9;
+  --color-info: #1d5fa8;
+  --color-info-content: #ffffff;
+  --color-success: #0f6b3a;
+  --color-success-content: #ffffff;
+  --color-warning: #b26a00;
+  --color-warning-content: #ffffff;
+  --color-error: #b3261e;
+  --color-error-content: #ffffff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+html {
+  font-family: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}

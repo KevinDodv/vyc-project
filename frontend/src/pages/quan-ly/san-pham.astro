@@ -1,0 +1,66 @@
+---
+import Admin from "../../layouts/Admin.astro";
+
+export const prerender = false;
+---
+<Admin title="Sản phẩm">
+  <h1 class="text-2xl font-bold">Tạo sản phẩm</h1>
+  <p class="mt-1 text-sm">Sản phẩm mới ở trạng thái nháp; bấm «Đăng» để hiện ở trang công khai.</p>
+
+  <form id="product-form" class="mt-6 grid gap-4 sm:grid-cols-2" novalidate>
+    <label class="flex flex-col gap-1">
+      <span class="label">Mã SKU</span>
+      <input class="input w-full" name="sku" required maxlength="40" placeholder="TD10" />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Tên sản phẩm</span>
+      <input class="input w-full" name="name" required maxlength="200" placeholder="Tinh dầu quế Văn Yên 10 ml" />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Slug (đường dẫn)</span>
+      <input class="input w-full" name="slug" required maxlength="120" placeholder="tinh-dau-que-van-yen-10ml" />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Mã loại hàng (goods_type_id)</span>
+      <input class="input w-full" name="goods_type_id" type="number" min="1" step="1" required />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Quy cách</span>
+      <input class="input w-full" name="size_label" required maxlength="40" placeholder="10 ml" />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Đơn vị</span>
+      <input class="input w-full" name="unit" required maxlength="20" placeholder="chai" />
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class="label">Giá bán lẻ (đồng, có thể để trống)</span>
+      <input class="input w-full" name="retail_price" type="number" min="0" step="1" />
+    </label>
+    <label class="flex flex-col gap-1 sm:col-span-2">
+      <span class="label">Mô tả ngắn</span>
+      <input class="input w-full" name="short_desc" maxlength="300" />
+    </label>
+    <div class="sm:col-span-2">
+      <button type="submit" class="btn btn-primary">Tạo sản phẩm</button>
+    </div>
+  </form>
+
+  <p id="product-error" role="alert" class="alert alert-error mt-4" hidden></p>
+
+  <section id="product-result" class="card mt-6 border border-base-300 bg-base-100" hidden>
+    <div class="card-body gap-2">
+      <h2 class="card-title" id="product-result-name"></h2>
+      <p>Trạng thái: <span id="product-result-status" class="badge"></span></p>
+      <p id="product-result-link" hidden>
+        Trang công khai: <a id="product-result-href" class="link" target="_blank" rel="noopener"></a>
+      </p>
+      <div class="card-actions">
+        <button type="button" id="product-publish" class="btn btn-secondary">Đăng</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import "../../scripts/admin/products";
+  </script>
+</Admin>

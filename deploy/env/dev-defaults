@@ -1,0 +1,7 @@
+# Giá trị CHỈ DÙNG CHO DEV trên máy cá nhân, cố ý công khai. Không dùng cho staging/prod:
+# compose.yml bắt buộc ba biến bí mật (cú pháp :?) nên prod thiếu env-file sẽ lỗi thay vì dùng giá trị này.
+# Makefile nạp file này qua --env-file; ghi đè bằng biến môi trường shell nếu cần.
+ENVIRONMENT=dev
+DJANGO_SECRET_KEY=dev-only-insecure-key-not-for-prod
+IP_HASH_SALT=dev-only-salt-not-for-prod
+POSTGRES_PASSWORD=vyc_dev_password

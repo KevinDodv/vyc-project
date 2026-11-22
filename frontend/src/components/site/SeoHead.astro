@@ -1,0 +1,50 @@
+---
+import { BRAND } from "../../lib/business";
+import { srcset } from "../../lib/image";
+import { safeJson } from "../../lib/safe-json";
+import type { SeoProps } from "../../lib/seo";
+import { absoluteUrl } from "../../lib/url";
+
+type Props = SeoProps;
+
+const {
+  title,
+  description,
+  path,
+  ogImage = null,
+  type = "website",
+  noindex = false,
+  preloadImage,
+  preloadSizes = "(min-width: 768px) 50vw, 100vw",
+  jsonLd = [],
+} = Astro.props;
+
+const canonical = absoluteUrl(path);
+const ogImageUrl = ogImage ? absoluteUrl(ogImage) : null;
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang="vi" href={canonical} />
+<link rel="alternate" hreflang="x-default" href={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={type} />
+<meta property="og:locale" content="vi_VN" />
+<meta property="og:site_name" content={BRAND} />
+{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+{
+  preloadImage && (
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      imagesrcset={srcset(preloadImage, "avif")}
+      imagesizes={preloadSizes}
+      fetchpriority="high"
+    />
+  )
+}
+{jsonLd.map((block) => <script type="application/ld+json" set:html={safeJson(block)} />)}

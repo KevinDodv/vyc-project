@@ -1,0 +1,8 @@
+---
+import { safeJson } from "../../lib/safe-json";
+
+interface Props {
+  data: object;
+}
+---
+<script type="application/ld+json" set:html={safeJson(Astro.props.data)} />

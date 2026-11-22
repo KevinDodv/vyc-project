@@ -1,0 +1,25 @@
+---
+import Admin from "../../layouts/Admin.astro";
+
+export const prerender = false;
+---
+<Admin title="Đăng nhập">
+  <section class="mx-auto max-w-sm">
+    <h1 class="text-2xl font-bold">Đăng nhập</h1>
+    <form id="login-form" class="mt-6 flex flex-col gap-4" method="post" action="/quan-ly/dang-nhap">
+      <label class="flex flex-col gap-1">
+        <span class="label">Tên đăng nhập</span>
+        <input class="input w-full" type="text" name="username" autocomplete="username" required maxlength="150" />
+      </label>
+      <label class="flex flex-col gap-1">
+        <span class="label">Mật khẩu</span>
+        <input class="input w-full" type="password" name="password" autocomplete="current-password" required />
+      </label>
+      <p id="login-error" role="alert" class="alert alert-error" hidden></p>
+      <button type="submit" class="btn btn-primary">Đăng nhập</button>
+    </form>
+  </section>
+  <script>
+    import "../../scripts/admin/login";
+  </script>
+</Admin>

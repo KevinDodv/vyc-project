@@ -1,0 +1,23 @@
+# Chỉ cho job CI `lighthouse` (van-hanh.md 9.1): stack giống prod (image build từ Dockerfile, CÓ Caddy
+# nén zstd/gzip để đo byte đã nén) chạy trên http://localhost. Dùng:
+#   docker compose --profile edge -p vyc-ci --env-file deploy/env/dev-defaults --env-file deploy/env/ci-defaults \
+#     -f deploy/compose.yml -f deploy/compose.prod.yml -f deploy/compose.ci.yml up -d --build --wait
+# Dựng, tạo OWNER và seed dữ liệu: deploy/ci/stack.sh (seed_catalog.py). Không bao giờ dùng ngoài CI.
+services:
+  backend:
+    networks:
+      default:
+        aliases: [backend-prod]
+  frontend:
+    networks:
+      default:
+        aliases: [frontend-prod]
+  caddy:
+    ports:
+      - "80:80"
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24

@@ -1,0 +1,27 @@
+---
+import { formatVnd } from "../../lib/format";
+import { offerOf, type PublicProductOut } from "../../lib/seo";
+import Picture from "./Picture.astro";
+
+interface Props {
+  product: PublicProductOut;
+  priority?: boolean;
+}
+const { product, priority = false } = Astro.props;
+const offer = offerOf(product);
+const image = product.images[0];
+---
+<a href={`/san-pham/${encodeURIComponent(product.slug)}`} class="card bg-base-100 border border-base-300">
+  {
+    image && (
+      <figure>
+        <Picture image={image} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" priority={priority} class="w-full object-cover" />
+      </figure>
+    )
+  }
+  <div class="card-body">
+    <h3 class="card-title text-base">{product.name}</h3>
+    <p class="text-sm opacity-70">{product.spec}</p>
+    <p class="font-bold text-primary">{offer ? formatVnd(offer.price) : "Liên hệ"}</p>
+  </div>
+</a>

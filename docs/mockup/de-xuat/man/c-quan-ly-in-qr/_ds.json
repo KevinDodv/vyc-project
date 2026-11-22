@@ -1,0 +1,314 @@
+[
+  {
+    "stt": "01",
+    "key": "login",
+    "title": "Đăng nhập",
+    "group": "Chung",
+    "kind": "app"
+  },
+  {
+    "stt": "01b",
+    "key": "login-err",
+    "title": "Đăng nhập — sai tên hoặc mật khẩu",
+    "group": "Chung",
+    "kind": "app",
+    "sau": "login"
+  },
+  {
+    "stt": "01c",
+    "key": "login-locked",
+    "title": "Đăng nhập — tài khoản bị khóa 15 phút",
+    "group": "Chung",
+    "kind": "app",
+    "sau": "login-err"
+  },
+  {
+    "stt": "19",
+    "key": "home-owner",
+    "title": "Trang chủ chủ DN (người bán chờ duyệt)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "20",
+    "key": "prices",
+    "title": "Bảng giá theo hạng (6 ô giá mua, 6 ô giá bán)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "21",
+    "key": "suppliers",
+    "title": "Người bán & đồi quế",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "21b",
+    "key": "supplier-add",
+    "title": "Thêm người bán nhanh (3 bước: tên, loại, thôn)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "suppliers"
+  },
+  {
+    "stt": "22",
+    "key": "supplier-edit",
+    "title": "Sửa người bán — bảng đồi quế",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "22b",
+    "key": "supplier-approve",
+    "title": "Duyệt người bán chờ duyệt (hộp sửa)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "supplier-edit"
+  },
+  {
+    "stt": "25",
+    "key": "rolls",
+    "title": "In tem theo lô (gán luôn, in bổ sung); cuộn tự do chỉ chủ",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "27",
+    "key": "trace",
+    "title": "Tra cứu hai chiều (từ người bán → khách)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "41",
+    "key": "vung-nguyen-lieu",
+    "title": "Vùng nguyên liệu (bản đồ, bảng đồi)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "trace"
+  },
+  {
+    "stt": "28",
+    "key": "buyers",
+    "title": "Khách hàng đã mua",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "29",
+    "key": "buyer-detail",
+    "title": "Chi tiết khách — “Xem đầy đủ” có ghi nhật ký",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "30",
+    "key": "reports",
+    "title": "Báo cáo hiệu suất theo người bán",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "31",
+    "key": "admin",
+    "title": "Menu quản lý",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "32",
+    "key": "settings",
+    "title": "Cài đặt (tên miền QR, khổ tem…)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app"
+  },
+  {
+    "stt": "33",
+    "key": "print-receipt",
+    "title": "Phiếu nhập A5 + tem lô nguyên liệu 50×30",
+    "group": "Mẫu in",
+    "kind": "print"
+  },
+  {
+    "stt": "34",
+    "key": "print-issue",
+    "title": "Phiếu xuất / đơn hàng (có quà tặng)",
+    "group": "Mẫu in",
+    "kind": "print"
+  },
+  {
+    "stt": "35",
+    "key": "print-roll",
+    "title": "In bổ sung tem cho lô (nối tiếp serial, 50×30)",
+    "group": "Mẫu in",
+    "kind": "print"
+  },
+  {
+    "stt": "42",
+    "key": "print-batch",
+    "title": "Tem theo lô 50×30 (QR serial + mã lô + NSX + HSD, gán luôn)",
+    "group": "Mẫu in",
+    "kind": "print",
+    "sau": "print-roll"
+  },
+  {
+    "stt": "36",
+    "key": "q-ok",
+    "title": "Chính hãng — hợp lệ (trong kho hoặc đã xuất; không hiện người mua)",
+    "group": "Khách quét QR",
+    "kind": "phone"
+  },
+  {
+    "stt": "37",
+    "key": "q-many-scans",
+    "title": "Chính hãng — quét quá ngưỡng (khung vàng)",
+    "group": "Khách quét QR",
+    "kind": "phone"
+  },
+  {
+    "stt": "38",
+    "key": "q-recall",
+    "title": "Lô bị thu hồi (khung đỏ)",
+    "group": "Khách quét QR",
+    "kind": "phone"
+  },
+  {
+    "stt": "39",
+    "key": "q-unassigned",
+    "title": "Mã chưa kích hoạt (nghi giả)",
+    "group": "Khách quét QR",
+    "kind": "phone"
+  },
+  {
+    "stt": "43",
+    "key": "q-notfound",
+    "title": "Mã không có trong hệ thống",
+    "group": "Khách quét QR",
+    "kind": "phone",
+    "sau": "q-unassigned"
+  },
+  {
+    "stt": "44",
+    "key": "q-void",
+    "title": "Mã đã bị hủy",
+    "group": "Khách quét QR",
+    "kind": "phone",
+    "sau": "q-notfound"
+  },
+  {
+    "stt": "40",
+    "key": "q-form",
+    "title": "Nhập mã tay",
+    "group": "Khách quét QR",
+    "kind": "phone"
+  },
+  {
+    "stt": "45",
+    "key": "area",
+    "title": "Danh mục Địa bàn (cây tỉnh › xã › thôn)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "settings",
+    "file": "45-dia-ban.html"
+  },
+  {
+    "stt": "45b",
+    "key": "area-edit",
+    "title": "Sửa / thêm địa bàn (hộp sửa)",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "area",
+    "file": "45b-dia-ban-edit.html"
+  },
+  {
+    "stt": "46",
+    "key": "goods-type",
+    "title": "Danh mục Loại hàng hóa",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "area-edit",
+    "file": "46-loai-hang.html"
+  },
+  {
+    "stt": "46b",
+    "key": "goods-type-edit",
+    "title": "Sửa / thêm loại hàng hóa",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "goods-type",
+    "file": "46b-loai-hang-edit.html"
+  },
+  {
+    "stt": "47",
+    "key": "material",
+    "title": "Danh mục Nguyên liệu & hạng",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "goods-type-edit",
+    "file": "47-nguyen-lieu.html"
+  },
+  {
+    "stt": "47b",
+    "key": "material-edit",
+    "title": "Sửa / thêm nguyên liệu & hạng",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "material",
+    "file": "47b-nguyen-lieu-edit.html"
+  },
+  {
+    "stt": "48",
+    "key": "customer-dm",
+    "title": "Danh mục Khách & kênh bán",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "material-edit",
+    "file": "48-khach-hang-dm.html"
+  },
+  {
+    "stt": "48b",
+    "key": "customer-dm-edit",
+    "title": "Sửa / thêm khách & kênh bán",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "customer-dm",
+    "file": "48b-khach-hang-dm-edit.html"
+  },
+  {
+    "stt": "49",
+    "key": "cert",
+    "title": "Danh mục Chứng nhận",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "customer-dm-edit",
+    "file": "49-chung-nhan.html"
+  },
+  {
+    "stt": "49b",
+    "key": "cert-edit",
+    "title": "Sửa / thêm chứng nhận",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "cert",
+    "file": "49b-chung-nhan-edit.html"
+  },
+  {
+    "stt": "50",
+    "key": "account",
+    "title": "Danh mục Tài khoản",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "cert-edit",
+    "file": "50-tai-khoan.html"
+  },
+  {
+    "stt": "50b",
+    "key": "account-edit",
+    "title": "Sửa / thêm tài khoản",
+    "group": "Chủ doanh nghiệp",
+    "kind": "app",
+    "sau": "account",
+    "file": "50b-tai-khoan-edit.html"
+  }
+]

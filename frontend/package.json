@@ -1,0 +1,37 @@
+{
+  "name": "vyc-frontend",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "node dist/server/entry.mjs",
+    "check": "astro check && biome ci .",
+    "lint": "biome lint .",
+    "format": "biome format --write",
+    "test": "vitest run",
+    "gen:api": "node scripts/gen-api.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.14",
+    "@fontsource/be-vietnam-pro": "^5.3.0",
+    "astro": "^7.4.13",
+    "openapi-fetch": "^0.17.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@biomejs/biome": "^2.6.8",
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^24.19.2",
+    "daisyui": "^5.8.1",
+    "openapi-typescript": "^7.13.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9.3",
+    "vitest": "^5.1.1"
+  }
+}

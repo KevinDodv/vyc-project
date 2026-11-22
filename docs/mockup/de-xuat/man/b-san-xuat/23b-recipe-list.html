@@ -1,0 +1,71 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Công thức · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+.annot{border:2px dashed var(--line);border-radius:var(--radius);padding:.6rem .9rem;color:var(--muted);font-size:.9rem;margin:.6rem 0}
+.rowerr td{background:var(--err-soft)}
+.rowwarn td{background:#fff8e6}
+.dim{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{min-height:48px;border:2px solid var(--line);border-radius:10px;padding:.3rem .7rem;background:#fff;display:flex;gap:.4rem;align-items:center;font-variant-numeric:tabular-nums}
+.chip.due{border-color:#f0d58a;background:var(--warn-soft)}
+td input,td select{min-height:48px;padding:.3rem .5rem}
+td input.g{text-align:right;font-variant-numeric:tabular-nums;width:130px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-left:.3rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+button.small,.btn.small{min-height:48px}
+.annot b{color:var(--ink)}
+summary.btnlike{list-style:none;min-height:64px;border:2px solid var(--que);border-radius:10px;padding:.6rem .9rem;font-weight:600;color:var(--que);background:#fff;justify-content:center;gap:.4rem}
+summary.btnlike::-webkit-details-marker{display:none}
+summary.btnlike.primary{background:var(--cta);border-color:var(--cta);color:#fff;font-size:1.15rem}
+summary.btnlike.danger{border-color:var(--err);color:var(--err)}
+details[open]>summary.btnlike:not(.primary){background:var(--que-soft)}
+details.dt>div.in{padding:.6rem 0 0}
+details.dt>summary:not(.btnlike){color:var(--que);text-decoration:underline;font-weight:600}
+details.dt>summary:not(.btnlike)::before{content:"▸ ";white-space:pre}
+details.dt[open]>summary:not(.btnlike)::before{content:"▾ "}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly/danh-muc">← Danh mục</a>
+  <div class="title">Công thức</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+
+<div class="row" style="align-items:center">
+  <div><input placeholder="Tìm mã hoặc tên công thức…" value=""></div>
+  <div style="flex:0 0 auto"><a class="btn primary" href="/quan-ly/cong-thuc/new">+ Công thức mới</a></div>
+</div>
+<p class="muted">Mỗi mã chỉ có một phiên bản «Đang dùng». Muốn đổi thành phần thì nhân bản thành phiên bản mới (nháp), sửa, rồi kích hoạt.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Mã</th><th>Tên</th><th>Làm ra</th><th>Phiên bản</th><th class="num">Mẻ chuẩn (g)</th><th class="num">Ủ tối thiểu (ngày)</th><th class="num">Lưu mẫu (tháng)</th><th>Trạng thái</th></tr></thead>
+  <tbody>
+  <tr class="clickable"><td class="mono">QC1</td><td>Quế Cam, dầu nhẹ</td><td>Sản phẩm</td><td>v1</td><td class="num">89,72</td><td class="num">21</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono"><a href="/quan-ly/cong-thuc/qc1-v2">QC1</a></td><td>Quế Cam, dầu nhẹ</td><td>Sản phẩm</td><td>v2</td><td class="num">89,72</td><td class="num">21</td><td class="num">12</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+  <tr class="clickable"><td class="mono">QC2</td><td>Quế Cam, đậm đà</td><td>Sản phẩm</td><td>v1</td><td class="num">92,17</td><td class="num">28</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">RQ1</td><td>Rừng Quế, dầu nhẹ</td><td>Sản phẩm</td><td>v1</td><td class="num">92,13</td><td class="num">21</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">RQ2</td><td>Rừng Quế, đậm đà</td><td>Sản phẩm</td><td>v1</td><td class="num">94,25</td><td class="num">28</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">TQ1</td><td>Tết Quế, dầu nhẹ</td><td>Sản phẩm</td><td>v1</td><td class="num">89,60</td><td class="num">21</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">TQ2</td><td>Tết Quế, đậm đà</td><td>Sản phẩm</td><td>v1</td><td class="num">91,93</td><td class="num">28</td><td class="num">12</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">TT1</td><td>Hương nền dầu nhẹ</td><td>Hương nền TT1</td><td>v1</td><td class="num">94,44</td><td class="num">14</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">TT2</td><td>Hương nền đậm đà</td><td>Hương nền TT2</td><td>v1</td><td class="num">95,77</td><td class="num">14</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">DDT</td><td>Dung dịch tẩm</td><td>Dung dịch tẩm</td><td>v1</td><td class="num">100,00</td><td class="num">2</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">SAP</td><td>Sáp thơm</td><td>Sản phẩm</td><td>v1</td><td class="num">109,00</td><td class="num">14</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">VTC</td><td>Viên thơm thạch cao</td><td>Sản phẩm</td><td>v1</td><td class="num">173,50</td><td class="num">7</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">TUI</td><td>Túi vỏ quế 25 g (mẻ 40 túi)</td><td>Sản phẩm</td><td>v1</td><td class="num">1.100,00</td><td class="num">5</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">U-Q</td><td>Ủ dầu quế</td><td>Dầu quế ủ</td><td>v1</td><td class="num">100,00</td><td class="num">28</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">Q100</td><td>Quế Văn Yên 100%</td><td>Sản phẩm</td><td>v1</td><td class="num">100,00</td><td class="num">0</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  <tr class="clickable"><td class="mono">SC-VQH</td><td>Sơ chế vỏ quế</td><td>Vỏ quế sơ chế</td><td>v1</td><td class="num">—</td><td class="num">0</td><td class="num">—</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr>
+  </tbody></table></div>
+
+</main>
+<div id="toast"></div>
+</body></html>

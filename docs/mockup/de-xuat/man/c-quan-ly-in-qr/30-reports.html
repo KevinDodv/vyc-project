@@ -1,0 +1,41 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Báo cáo · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+/* UX cụm C (#37): khối dùng riêng trong cụm C, chờ chuyển vào app.css chung */
+.todo{display:grid;gap:.6rem;margin:1rem 0}
+.todo-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:12px;background:var(--warn-soft);border:1px solid #f0d58a;font-weight:600}
+.todo-item.info{background:#eef4fb;border-color:#c9dbef}
+.todo-item .btn{margin-left:auto;min-height:48px;flex:0 0 auto}
+.range-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin:.6rem 0}
+.range-btns .choice{min-height:56px;min-width:120px}
+.cta{display:flex;width:100%;min-height:72px;font-size:1.3rem;justify-content:center;align-items:center;gap:.6rem}
+.sub-note{font-size:1rem;color:var(--muted);margin:.2rem 0 0;font-weight:400}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Báo cáo</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<label>Khoảng thời gian <small class="muted">(đang xem: 22/08/2026 – 20/11/2026)</small></label>
+<div class="range-btns"><button data-pick class="choice" type="button">Tháng này</button><button data-pick class="choice" type="button">Tháng trước</button><button data-pick class="choice selected" type="button">3 tháng</button><button data-pick class="choice" type="button">Năm nay</button><button data-pick class="choice" type="button">Chọn ngày…</button></div>
+<div class="tabs" style="margin-top:1rem"><button data-pick class="active" data-r="yield">Sản lượng</button><button data-pick data-r="purchases">Thu mua</button><button data-pick data-r="sales">Bán hàng</button><button data-pick data-r="scans">Lượt quét QR</button></div>
+<div id="opts"><div class="choice-grid" style="margin-bottom: 0.8rem;"><button data-pick class="choice">Theo sản phẩm</button><button data-pick class="choice selected">Theo người bán</button><button data-pick class="choice">Theo tháng</button></div></div>
+<div id="out"><div class="table-wrap"><table><thead><tr><th class="">Người bán</th><th class="num">Số lô</th><th class="num">Quế đưa vào (kg)</th><th class="num">Thành phẩm (kg)</th><th class="num">Tiền mua quế</th></tr></thead><tbody><tr><td class="">Gia đình (đồi nhà) (NCC-CQ-001)</td><td class="num">1</td><td class="num">85</td><td class="num">—</td><td class="num">3.825.000 đ</td></tr><tr style="color:var(--muted)"><td class="">Hoàng Thị Mai (NCC-DC-001)</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">1.800.000 đ</td></tr><tr style="color:var(--muted)"><td class="">Nguyễn Văn Hùng (NCC-CQ-002)</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">5.422.500 đ</td></tr></tbody></table></div><div class="muted">Chỉ tính quế đã đưa vào lô thành phẩm. <details style="display:inline-block;vertical-align:top"><summary style="display:inline-flex;min-height:48px">ⓘ Chi tiết</summary><span class="muted">Quế của NCC-DC-001 và NCC-CQ-002 mới nhập kho, chưa vào lô nào nên ghi 0. Xưởng không tự chưng cất nên không có hiệu suất. Tiền mua tính theo phiếu nhập. Cột thành phẩm của người bán chưa tính được nên để «—».</span></details></div><a class="btn small" href="/api/v1/reports/yield?from=2026-08-22&amp;to=2026-11-20&amp;group_by=supplier&amp;format=csv">⬇ Tải bảng Excel (.csv)</a></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

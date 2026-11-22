@@ -1,0 +1,14 @@
+---
+import Admin from "../../layouts/Admin.astro";
+
+export const prerender = false;
+
+Astro.response.status = 403;
+---
+<Admin title="Không có quyền">
+  <section class="mx-auto max-w-xl py-12 text-center">
+    <h1 class="text-2xl font-bold">Bạn không có quyền vào màn này</h1>
+    <p class="mt-3">Màn này chỉ dành cho chủ doanh nghiệp.</p>
+    <a href="/quan-ly" class="btn btn-primary mt-6">Về trang quản lý</a>
+  </section>
+</Admin>

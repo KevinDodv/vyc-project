@@ -1,0 +1,13 @@
+---
+import ErrorState from "../components/site/ErrorState.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { CACHE_PRIVATE } from "../lib/cache";
+
+export const prerender = false;
+
+Astro.response.status = 404;
+Astro.response.headers.set("Cache-Control", CACHE_PRIVATE);
+---
+<SiteLayout title="Không tìm thấy trang" description="Trang bạn tìm không tồn tại." path="/" noindex>
+  <ErrorState heading="Không tìm thấy trang" message="Đường dẫn chưa đúng hoặc trang đã được chuyển đi." />
+</SiteLayout>

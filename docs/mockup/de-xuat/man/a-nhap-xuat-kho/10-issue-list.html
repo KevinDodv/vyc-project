@@ -1,0 +1,40 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Danh sách đơn hàng / phiếu xuất · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Đơn hàng</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row">
+  <div style="flex:0 0 auto"><label>Ngày</label><div class="choice-grid"><button type="button" class="choice selected" style="min-height:56px" data-pick>Hôm nay</button><button type="button" class="choice" style="min-height:56px" data-pick>7 ngày</button><button type="button" class="choice" style="min-height:56px" data-pick>Tháng này</button></div></div>
+  <div><label for="phone">Số điện thoại người mua (4 số cuối)</label><input id="phone" inputmode="tel" value=""></div>
+</div>
+<details style="margin-top:.6rem"><summary>＋ Lọc thêm</summary><div class="row" style="margin-top:.6rem">
+  <div><label>Loại</label><select id="kind"><option value="PRODUCT">Đơn hàng thành phẩm</option><option value="DRY_CINNAMON">Quế khô</option><option value="" selected="">Tất cả</option></select></div>
+  <div><label>Từ ngày</label><input type="date" id="from" value="2026-11-20"></div>
+  <div><label>Đến ngày</label><input type="date" id="to" value="2026-11-20"></div>
+  <div><label>Kênh</label><select id="channel"><option value="" selected="">Tất cả</option><option value="DIRECT">Bán trực tiếp</option><option value="WEBSITE">Website</option><option value="SHOPEE">Shopee</option><option value="TIKTOK">TikTok Shop</option><option value="LAZADA">Lazada</option><option value="FACEBOOK_ZALO">Facebook / Zalo</option><option value="AGENT">Đại lý</option><option value="CORPORATE">Quà tặng doanh nghiệp</option><option value="EXPORTER">Doanh nghiệp xuất khẩu</option><option value="OTHER">Khác</option></select></div>
+  <div><label>Sản phẩm</label><select id="product"><option value="" selected="">Tất cả</option><option value="4">Thiệp cảm ơn</option><option value="1">Tinh dầu quế Văn Yên 10 ml</option><option value="2">Túi thơm quế Văn Yên 25 g</option></select></div>
+  <div style="flex:0 0 auto"><label><input type="checkbox" id="gift"> Đơn có quà</label></div>
+</div></details>
+<div class="table-wrap" style="margin-top:1rem"><table>
+  <thead><tr><th>Số phiếu</th><th>Giờ</th><th>Khách</th><th class="num">Số lượng</th><th>Trạng thái</th></tr></thead>
+  <tbody id="rows"><tr class="clickable"><td class="mono">PX-261120-004</td><td>16:42</td><td>Shopee</td><td class="num">2</td><td><span class="tag SAVED">Đã lưu</span></td></tr><tr class="clickable"><td class="mono">PX-261120-003</td><td>15:10</td><td>Khách lẻ</td><td class="num">3</td><td><span class="tag SAVED">Đã lưu</span></td></tr><tr class="clickable" style="color:var(--muted)"><td class="mono">PX-261120-002</td><td>11:25</td><td>Khách lẻ</td><td class="num">1</td><td><span class="tag VOID">Đã hủy</span></td></tr><tr class="clickable"><td class="mono">PX-261120-001<span class="tag gift" style="margin-left: 0.3rem;">quà</span></td><td>09:05</td><td>Khách lẻ</td><td class="num">4</td><td><span class="tag SAVED">Đã lưu</span></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,35 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Hủy phiếu nhập · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Phiếu nhập</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="tabs"><button type="button" class="active" data-pick>Phiếu nhập quế</button><button type="button" data-go="#ingr-receipt">Phiếu nhập phụ liệu</button></div>
+<div style="margin-bottom:.6rem"><div style="font-size:1.4rem;font-weight:800">Hôm nay 20/11/2026</div>
+  <details><summary>＋ Xem ngày khác</summary><div class="row" style="margin-top:.4rem"><div><label>Từ ngày</label><input type="date" id="from" value="2026-11-20"></div><div><label>Đến ngày</label><input type="date" id="to" value="2026-11-20"></div></div><p class="muted" style="margin:.3rem 0 0">Chọn ngày xong, danh sách tự đổi.</p></details>
+</div>
+<p class="muted">Chỉ sửa, hủy được phiếu của mình trong ngày.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Số phiếu</th><th>Ngày</th><th>Người bán</th><th class="num">Số dòng</th><th class="num">Tổng kg</th><th>Người lập</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody id="rows"><tr><td class="mono">PN-261120-005</td><td>20/11/2026</td><td>Gia đình (đồi nhà)</td><td class="num">3</td><td class="num">183,7</td><td>Thủ kho (mẫu)</td><td><span class="tag SAVED">Đã lưu</span></td><td><button class="small" data-go="#receipt-print">In</button> <button class="small" data-go="#receipt-2">Sửa</button> <button class="small danger" data-go="#receipt-cancel">Hủy</button></td></tr><tr><td class="mono">PN-261120-004</td><td>20/11/2026</td><td>Hoàng Thị Mai</td><td class="num">2</td><td class="num">62,5</td><td>Chủ doanh nghiệp (mẫu)</td><td><span class="tag SAVED">Đã lưu</span><span class="tag warn">Lô đã dùng</span></td><td><button class="small" data-go="#receipt-print">In</button> <span class="muted">Không sửa, không hủy được: lô đã dùng</span></td></tr><tr><td class="mono">PN-261120-003</td><td>20/11/2026</td><td>Gia đình (đồi nhà)</td><td class="num">1</td><td class="num">85</td><td>Chủ doanh nghiệp (mẫu)</td><td><span class="tag SAVED">Đã lưu</span><span class="tag warn">Lô đã dùng</span></td><td><button class="small" data-go="#receipt-print">In</button> <span class="muted">Không sửa, không hủy được: lô đã dùng</span></td></tr><tr><td class="mono">PN-261120-002</td><td>20/11/2026</td><td>Thương lái Bình</td><td class="num">1</td><td class="num">500</td><td>Thủ kho (mẫu)</td><td><span class="tag SAVED">Đã lưu</span><span class="tag warn">Lô đã dùng</span></td><td><button class="small" data-go="#receipt-print">In</button> <span class="muted">Không sửa, không hủy được: lô đã dùng</span></td></tr><tr><td class="mono">PN-261120-001</td><td>20/11/2026</td><td>Nguyễn Văn Hùng</td><td class="num">2</td><td class="num">150,5</td><td>Thủ kho (mẫu)</td><td><span class="tag SAVED">Đã lưu</span><span class="tag warn">Lô đã dùng</span></td><td><button class="small" data-go="#receipt-print">In</button> <span class="muted">Không sửa, không hủy được: lô đã dùng</span></td></tr></tbody>
+</table></div>
+<div class="totalbar"><div class="spacer"></div><a class="btn primary" href="/nhap-hang" style="min-width:240px;min-height:72px;font-size:1.3rem">+ Phiếu nhập mới</a></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+<dialog open=""><div class="dlg-head">Hủy phiếu PN-261120-005?<button class="small" type="button" data-go="#receipt-list">✕</button></div><div class="dlg-body"><p>Phiếu này có 3 lô (183,7 kg): NL-2611-0007, NL-2611-0008, NL-2611-0009. Hủy xong, 3 lô không còn trong kho.</p></div><div class="dlg-foot"><button class="danger" type="button" data-go="#receipt-list">Hủy phiếu</button><button class="primary" type="button" data-go="#receipt-list">Giữ lại</button></div></dialog></body></html>

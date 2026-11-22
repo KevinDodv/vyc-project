@@ -1,0 +1,32 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Nguyên liệu &amp; hạng · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Nguyên liệu &amp; hạng</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Gõ mã hoặc tên nguyên liệu để tìm" value=""></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto"><a class="btn primary" id="add" href="/quan-ly/danh-muc/nguyen-lieu?moi=1">+ Thêm nguyên liệu</a></div>
+</div>
+<div id="note"><p class="muted">Nguyên liệu quế thu mua theo cân (kg), cả lô, mỗi nguyên liệu chia theo hạng (Loại 1–3). Không ngừng dùng được hạng đang có lô trong kho.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table><thead id="thead"><tr><th>Thứ tự</th><th>Mã</th><th>Tên</th><th>Loại hàng</th><th>Hạng</th><th>Ảnh nút bấm</th><th></th></tr></thead><tbody id="rows"><tr class="clickable"><td>1</td><td class="mono">VQ</td><td>Vỏ quế</td><td>Nguyên liệu quế</td><td>Loại 1 · Loại 2 · Loại 3</td><td>✔ Có</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr class="clickable"><td>2</td><td class="mono">QV</td><td>Quế vụn</td><td>Nguyên liệu quế</td><td>Loại 1 · Loại 2 · Loại 3</td><td>✔ Có</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+<dialog open=""><div class="dlg-head">Vỏ quế<button data-go="#material" class="small" type="button">✕</button></div><div class="dlg-body"><div><div class="form-grid"><div><label>Mã *</label><input type="text" value="VQ"></div><div><label>Tên *</label><input type="text" value="Vỏ quế"></div><div><label>Loại hàng *</label><select><option value="NGUYEN-LIEU-QUE" selected="">Nguyên liệu quế</option></select></div><div><label>Ảnh nút bấm (hiện ở màn nhập hàng)</label><button data-act="file" class="small" type="button">📷 Chọn ảnh</button></div><div><label>Thứ tự</label><input type="text" value="1"></div><div><label>Tình trạng</label><select><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option></select></div></div><div><h3>Hạng</h3><table><thead><tr><th>Tên hạng *</th><th>Bậc *</th><th>Tình trạng</th><th></th></tr></thead><tbody data-rows><tr><td><input type="text" value="Loại 1"></td><td><input type="text" value="1" style="max-width:90px"></td><td><span class="tag warn">Có lô trong kho</span></td><td><button class="small" type="button" disabled="">Ngừng dùng</button></td></tr><tr><td><input type="text" value="Loại 2"></td><td><input type="text" value="2" style="max-width:90px"></td><td><span class="tag warn">Có lô trong kho</span></td><td><button class="small" type="button" disabled="">Ngừng dùng</button></td></tr><tr><td><input type="text" value="Loại 3"></td><td><input type="text" value="3" style="max-width:90px"></td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small" type="button">Ngừng dùng</button></td></tr></tbody></table><button data-act="row-add" class="small" type="button">+ Thêm hạng</button><p class="muted" style="margin:.4rem 0">⚠ Không ngừng dùng hạng đang có lô trong kho: nút «Ngừng dùng» bị khóa cho tới khi lô đó xuất hết. Bậc là số từ 1 đến 9 (1 là hạng cao nhất), không trùng nhau trong cùng một nguyên liệu.</p></div></div></div><div class="dlg-foot"><button data-go="#material" class="" type="button">Đóng</button><button data-go="#material" class="primary" type="button">Lưu</button></div></dialog></body></html>

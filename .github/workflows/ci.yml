@@ -1,0 +1,376 @@
+# CI mỗi PR và mỗi push main (docs/kien-truc/van-hanh.md mục 9.1).
+# Job: backend, frontend, budget, lighthouse (Lighthouse CI + Playwright), makefile (make check, make image), images, infra.
+# Action ghim theo commit SHA kèm số phiên bản; Dependabot cập nhật (.github/dependabot.yml).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Phiên bản pnpm khớp lockfile và deploy/frontend.Dockerfile (ARG PNPM_VERSION).
+  PNPM_VERSION: "12.21.0"
+  NODE_VERSION: "24"
+
+jobs:
+  backend:
+    name: Backend (lint, test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: vyc
+          POSTGRES_PASSWORD: vyc_ci_password
+          POSTGRES_DB: vyc
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vyc -d vyc"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      # settings mặc định là prod (fail-closed): CI phải đặt dev rõ ràng (decisions: ENVIRONMENT bắt buộc).
+      ENVIRONMENT: dev
+      DATABASE_URL: postgres://vyc:vyc_ci_password@localhost:5432/vyc
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+          python-version-file: backend/.python-version
+
+      - run: uv sync --frozen
+
+      - name: Ruff (lint)
+        run: uv run ruff check .
+
+      - name: Ruff (format)
+        run: uv run ruff format --check .
+
+      - name: Mypy
+        run: uv run mypy .
+
+      - name: Import-linter (luật phụ thuộc giữa app)
+        run: uv run lint-imports
+
+      - name: Migration không bị quên
+        run: uv run python manage.py makemigrations --check --dry-run
+
+      - name: OpenAPI đã commit khớp code
+        run: |
+          set -euo pipefail
+          uv run python manage.py export_openapi_schema --api config.api.api_v1 --output openapi/v1.json --indent 2
+          uv run python manage.py export_openapi_schema --api config.api.api_public --output openapi/public.json --indent 2
+          # add -N để file mới chưa track cũng bị tính là lệch
+          git add -N openapi/
+          if ! git diff --exit-code openapi/; then
+            echo "::error::OpenAPI lệch bản đã commit. Chạy lại lệnh sinh (backend.md mục 7.3) rồi commit backend/openapi/."
+            exit 1
+          fi
+
+      - name: Pytest
+        run: uv run pytest
+
+  frontend:
+    name: Frontend (lint, test, build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint và kiểu (astro check, biome ci)
+        run: pnpm check
+
+      - name: Test (vitest)
+        run: pnpm test
+
+      - name: Kiểu API sinh khớp OpenAPI đã commit
+        run: |
+          set -euo pipefail
+          pnpm gen:api
+          git add -N src/lib/api/
+          if ! git diff --exit-code src/lib/api/; then
+            echo "::error::src/lib/api/*.d.ts lệch OpenAPI. Chạy 'pnpm gen:api' rồi commit."
+            exit 1
+          fi
+
+      - name: Build
+        run: pnpm build
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 3
+          if-no-files-found: error
+
+  budget:
+    name: Ngân sách dung lượng (tĩnh)
+    needs: frontend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: frontend-dist
+          path: frontend/dist
+
+      - run: node scripts/check-budget.mjs frontend/dist
+
+  lighthouse:
+    name: Lighthouse CI và E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      # Stack compose.ci.yml chạy ở http://localhost (qua Caddy, có nén); xem deploy/ci/stack.sh.
+      E2E_BASE_URL: http://localhost
+      # compose.yml bắt buộc ENVIRONMENT; dev để cookie không Secure khi chạy http://localhost (khớp deploy/env/dev-defaults).
+      ENVIRONMENT: dev
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Cài phụ thuộc frontend (cho Playwright)
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Dựng stack (Postgres, Django, Astro, Caddy), tạo OWNER và seed
+        run: bash deploy/ci/stack.sh up
+
+      - name: Chờ site lên qua Caddy
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://localhost/api/health && curl -fsS -o /dev/null http://localhost/healthz; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::stack không phản hồi qua Caddy"
+          exit 1
+
+      # Lighthouse chạy TRƯỚC Playwright: test E2E tạo thêm sản phẩm, không để lẫn vào trang đo.
+      - name: Lighthouse CI
+        working-directory: frontend
+        run: pnpm dlx @lhci/cli@0.16.1 autorun --config=lighthouserc.cjs
+
+      - name: Cài trình duyệt cho Playwright
+        working-directory: frontend
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Playwright (luồng mẫu đăng nhập, tạo, đăng, xem công khai)
+        working-directory: frontend
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ${{ runner.temp }}/playwright-report.json
+        run: |
+          set -euo pipefail
+          # stack.sh up đã tạo OWNER và ghi mật khẩu vào GITHUB_ENV; thiếu thì spec tự skip và bước này xanh giả.
+          if [ -z "${E2E_OWNER_PASSWORD:-}" ]; then
+            echo "::error::thiếu E2E_OWNER_PASSWORD (stack.sh up không ghi được vào GITHUB_ENV)"
+            exit 1
+          fi
+          pnpm exec playwright test --reporter=list,html,json
+          # Ép CI đỏ khi có test bị skip, hỏng hoặc không có test nào chạy.
+          node -e '
+            const s = require(process.argv[1]).stats;
+            console.log(JSON.stringify(s));
+            if (s.skipped > 0 || s.expected < 1 || s.unexpected > 0) {
+              console.error("::error::Playwright có test bị skip, hỏng, hoặc không chạy test nào");
+              process.exit(1);
+            }
+          ' "$RUNNER_TEMP/playwright-report.json"
+
+      - name: Log container (khi job đỏ)
+        if: failure()
+        run: bash deploy/ci/stack.sh logs || true
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: lighthouse-e2e-reports
+          path: |
+            frontend/.lighthouseci
+            frontend/playwright-report
+            frontend/test-results
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Dọn stack
+        if: always()
+        run: bash deploy/ci/stack.sh down || true
+
+  makefile:
+    name: Makefile (make check, make image)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: vyc
+          POSTGRES_PASSWORD: vyc_ci_password
+          POSTGRES_DB: vyc
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vyc -d vyc"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # settings mặc định là prod (fail-closed) và compose.yml dùng ${ENVIRONMENT:?}: đặt dev rõ ràng cho make check và make image.
+      ENVIRONMENT: dev
+      DATABASE_URL: postgres://vyc:vyc_ci_password@localhost:5432/vyc
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+          python-version-file: backend/.python-version
+
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: make install
+        run: make install
+
+      - name: make check
+        run: make check
+
+      - name: Sinh lại OpenAPI và kiểu TS, cây làm việc không được lệch
+        run: |
+          set -euo pipefail
+          (cd backend \
+            && uv run python manage.py export_openapi_schema --api config.api.api_v1 --output openapi/v1.json --indent 2 \
+            && uv run python manage.py export_openapi_schema --api config.api.api_public --output openapi/public.json --indent 2)
+          (cd frontend && pnpm gen:api)
+          git add -N backend/openapi/ frontend/src/lib/api/
+          if ! git diff --exit-code; then
+            echo "::error::make check hoặc bước sinh làm đổi file đã commit (OpenAPI, .d.ts hoặc file khác)."
+            exit 1
+          fi
+
+      - name: make image (build compose prod, không đẩy)
+        run: make image
+
+  images:
+    name: Build thử Dockerfile (không đẩy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Build backend
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: backend
+          file: deploy/backend.Dockerfile
+          build-contexts: |
+            deploy=deploy
+          push: false
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build frontend
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: frontend
+          file: deploy/frontend.Dockerfile
+          push: false
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+  infra:
+    name: Kiểm cấu hình hạ tầng (shellcheck, actionlint, compose, Caddy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Shellcheck
+        run: shellcheck -x -P SCRIPTDIR --severity=warning deploy/*.sh deploy/backup/*.sh deploy/ci/*.sh
+
+      - name: Actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12 -color
+
+      - name: docker compose config (prod, staging, CI)
+        run: |
+          set -euo pipefail
+          printf 'IMAGE_TAG=abc1234\nSITE_ADDRESS=vyc.example.com\nENVIRONMENT=prod\nDJANGO_SECRET_KEY=x\nIP_HASH_SALT=x\nPOSTGRES_PASSWORD=x\n' > /tmp/ci-env
+          D=deploy
+          docker compose -p vyc --profile edge --env-file /tmp/ci-env \
+            -f $D/compose.yml -f $D/compose.prod.yml -f $D/compose.edge.yml config -q
+          docker compose -p vyc-staging --env-file /tmp/ci-env \
+            -f $D/compose.yml -f $D/compose.prod.yml -f $D/compose.staging.yml config -q
+          docker compose -p vyc-ci --profile edge --env-file $D/env/dev-defaults --env-file $D/env/ci-defaults \
+            -f $D/compose.yml -f $D/compose.prod.yml -f $D/compose.ci.yml config -q
+          docker compose --env-file $D/env/dev-defaults -f $D/compose.yml -f $D/compose.dev.yml config -q
+
+      - name: Caddy validate
+        run: |
+          set -euo pipefail
+          for site in vyc.example.com http://localhost; do
+            docker run --rm -v "$PWD/deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro" \
+              -e "SITE_ADDRESS=$site" -e STAGING_ADDRESS=http://staging.invalid \
+              -e STAGING_BASIC_USER=staging-off \
+              -e 'STAGING_BASIC_HASH=$2a$10$EYMZBTiVjUQtZwoWDU.RrwFIgHtlX13WHzGqv3C/acQx5ZpOsMoYI' \
+              -e CSP_GTM_SCRIPT= -e CSP_GTM_CONNECT= -e CSP_GTM_IMG= \
+              caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          done

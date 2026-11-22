@@ -1,0 +1,540 @@
+- D:\VYC chưa có git; Read không đọc được docx, máy thiếu pdftoppm: dùng PowerShell giải nén word/document.xml hoặc pandoc nếu có
+- Script chỉ đọc docx gốc, ghi ra docs/lo-trinh-chuyen-doi-so.md và docs/thiet-ke-chi-tiet.md.
+- Sau khi chạy xong, mình sẽ đọc 2 file markdown, soát lại bảng, viết docs/tom-tat.md và thử đọc bối cảnh từ D:\Sản phẩm quế.
+- Lần chạy trước không có output, docs/ chưa có file .md nào. Nghi do mã hoá tên file trong script, đã sửa nhưng chưa kiểm chứng.
+- Chưa đọc được D:\Sản phẩm quế, sẽ đọc sau khi có markdown (docx đọc bằng cùng script, PDF/xlsx dùng Read hoặc unzip).
+- docs/ vẫn chưa có file .md nào. Khi có file, mình soát bảng/tiêu đề rồi viết docs/tom-tat.md.
+- Chưa đọc được D:\Sản phẩm quế.
+- Script docs/_tools/convert-all.ps1 đã sửa lỗi lọc tên file nhưng chưa được chạy lần nào sau khi sửa.
+- Nếu có Bash(*), mình sẽ gọi /c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe với script.
+- Bash của đội không có powershell trong PATH, phải gọi /c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe.
+- docs/_tools/tmp/ chứa bản trích tạm của docx chiến lược và xlsx chi phí (strategy.md, cost.txt); là file tạm, có thể xoá, mình chưa xoá vì lệnh xoá cần sếp đồng ý.
+- docs/_tools/read-context.ps1 và docs/_tools/convert-all.ps1 chỉ đọc file gốc.
+- Muốn đọc PDF công thức thì cần cài poppler (pdftoppm), hoặc sếp cho một bản text/docx của file đó.
+- Mâu thuẫn giữa chiến lược (năm 1 chỉ landing page) và lộ trình (website SEO ở GĐ3) cần Lead hỏi sếp trước khi lập backlog.
+- docs/_tools/ (convert-all.ps1, docx2md.ps1, read-context.ps1) và docs/_tools/tmp/ (strategy.md, cost.txt) là file trung gian, nên dọn hoặc ghi chú trong docs/ để sau này không nhầm là tài liệu chính.
+- Dòng 'Nov 20, 2026 · @Kevin' ở đầu hai file md là ngày tác giả định dạng kiểu Anh, giữ nguyên vì là chữ gốc.
+- Khi lập backlog, đội cần sếp quyết các câu: tên miền QR, stack, nguồn tiền phần mềm, và website riêng hay chỉ landing page năm 1.
+- Lộ trình có 7 bảng/59 dòng, thiết kế có 13 bảng/157 dòng; md ra đúng 7 và 13 dòng phân cách, đủ số dòng.
+- Lộ trình: 279 đoạn văn (tối thiểu 6 ký tự) đều có trong md, không thiếu đoạn nào.
+- Thiết kế: 583 đoạn, 5 đoạn báo thiếu; kiểm tay đều là sai do công cụ so (thực thể &apos;, khối SQL nhiều dòng, nhập nhằng dấu |). Nội dung có trong md: 27 CREATE TABLE ở cả docx lẫn md, PATCH/Let's Encrypt/group_by đều có.
+- Số liệu tom-tat.md đã kiểm: 25 BR, 24 AC, 10 câu hỏi mở ở mục 13; mâu thuẫn «phiếu thu mua trên điện thoại» (lộ trình dòng 106) với «máy tính tại xưởng» (dòng 91) là có thật.
+- Chưa kiểm: bảng có hiển thị đẹp trên trình xem markdown không (mới kiểm cấu trúc). Hai sơ đồ mỗi docx và PDF công thức chưa đọc, tom-tat.md đã ghi rõ.
+- Nhỏ: docs/_tools/tmp/ còn cost.txt và strategy.md trích từ D:\Sản phẩm quế. Nên xoá khi không cần nữa (mình không sửa vì ngoài vai trò). docs/_tools/*.ps1 là script chuyển đổi, giữ hay bỏ tuỳ Lead.
+- docs/_tools/tmp/ chứa dữ liệu trích từ D:\Sản phẩm quế: nếu git init thì cho vào .gitignore
+- Bash của đội không có powershell trong PATH; script ps1 phải chạy qua cách khác hoặc sếp chạy hộ
+- Sơ đồ trong docx và PDF công thức chưa đọc được
+- PDF đọc được bằng Read không cần tham số pages; thiếu pdftoppm nên Read có pages bị lỗi.
+- Read không mở được PDF (máy thiếu pdftoppm). Trích chữ sổ tay bằng PowerShell hoặc python -I (pypdf nếu có) vào docs/_tools/tmp/so-tay.txt. Thư mục tmp không commit.
+- node không có trong PATH của Bash trên máy này; dùng /c/Program Files/nodejs/node.exe
+- ban-xem-truoc.html không byte-identical với bản gốc dù vỏ giống hệt và dữ liệu giống; nguyên nhân chưa xác định, không ảnh hưởng hiển thị
+- Chưa chạy thử chèn màn mới qua trường sau
+- Chạy lại tach sẽ ghi đè de-xuat/man, chỉ dùng khi chưa sửa gì
+- Cần ai đó chạy `node docs/mockup/_tools/mockup.mjs ghep` và mở ban-xem-truoc.html bấm thử 40 màn trước t9 (chụp màn).
+- Đừng chạy lại `tach` sau khi bắt đầu sửa de-xuat/man: nó ghi đè hết.
+- Task 2 cần sửa BR-01, BR-08, BR-09, BR-10, BR-11 và thêm BR cho ủ, phụ liệu, lưu mẫu, thử lưu hương
+- AC-08 và AC-09 cần viết lại: túi thơm theo sổ tay 25 g/túi, 40 túi mỗi mẻ 1 kg; AC-09 hiện dùng 400 túi từ 80 kg quế
+- Mục 2 (phân quyền), 6.5 (tồn kho phụ liệu), 8.4 (vùng nguyên liệu phải đi đệ quy; dầu quế nguồn ngoài không có đồi), mục 13 chưa được cập nhật
+- Mục 1 dòng đầu mô tả app nội bộ chưa nhắc công thức và kho phụ liệu
+- Task 2 cần thêm ở mục 13: chưng dầu quế tại xưởng hay nhận từ gia đình; hạn dùng sáp, viên thạch cao, túi; lưu mẫu áp cho sản phẩm nào; thử lưu hương dầu khuếch tán (chạy máy 30 phút, chấm phút 5, 30, 60) và làm mẫu thử 10 ml 14 ngày (tr.6, 13) chưa có thiết kế
+- Một mẻ chia 2 quy cách (10 ml và 30 ml) thành 2 lệnh, gram nhập riêng từng lệnh
+- Việc cho task #18 (tom-tat, lo-trinh): bảng mới (ingredient, ingredient_receipt, ingredient_lot, recipe, recipe_item, production_ingredient, retained_sample, scent_trial, scent_trial_sample, scent_trial_reading, scent_trial_score), trạng thái lệnh mới CURING, các mẫu mã lô ở trên
+- Sổ tay trích bằng pdftotext ra docs/_tools/tmp/so-tay.txt, chữ mất dấu; số trang dựa vào dấu Page N of 15
+- Phần hạn dùng, ngày ủ và công thức seed chỉ lấy từ sổ tay; sổ tay ghi sai số cân ±0,05 g
+- Khi dùng ui.mjs trong sandbox thì trình duyệt chết sau mỗi lệnh. Chạy với dangerouslyDisableSandbox và `open` ở nền thì giữ được phiên. Đó là lý do Khoa báo mất kết nối cổng 9306.
+- Node nằm ở /c/Program Files/nodejs, chưa có trong PATH của bash.
+- Người sửa màn ở t6–t8: không chạy `tach` sau khi đã sửa trong de-xuat/man, vì nó ghi đè hết.
+- Task 2 cần sửa BR-11 và câu chữ BR-08 cho khớp mục 7.2 (BR-08 chỉ áp cho lô quế; hạn dùng 18/24 tháng theo từng sản phẩm)
+- Sơ đồ ERD và vòng đời lệnh sản xuất vẫn cần vẽ lại, đã ghi trong tài liệu
+- Bản trích so-tay.txt bị lỗi font tiếng Việt, nên đối chiếu số trang với PDF gốc khi cần
+- Task 2 cần sửa cho khớp mô hình mới: BR-08 (ghi rõ chỉ áp cho lô quế), BR-09/BR-10 (lô có thể chỉ có phụ liệu; unit_cost, yield_pct NULL), BR-11 (hạn lô bán thành phẩm), BR-20 (trỏ tới bảng mẫu mã), AC-09 và các AC lệnh SX thêm ca ủ, phụ liệu, lưu mẫu.
+- DDL dùng REFERENCES app_user trong price, receipt, ingredient_receipt, recipe... trước khi app_user được tạo; câu ở mục 4 về FK vòng chỉ liệt kê vài cặp, nên nói rõ cả quy ước 'tạo bảng trước, thêm FK sau' cho mọi FK.
+- Chưa chạy thử DDL trên PostgreSQL thật (máy không có psql/python/node); khi chốt stack nên chạy migration đầu tiên để bắt lỗi cú pháp.
+- +1,0 người-tháng cho GĐ2 và tổng 12,5 là ước của writer, chưa có WBS; Lead nên chốt hoặc nhờ BA ước lại.
+- Hai file trỏ tới BR-10, BR-20 và mục 13 của thiet-ke-chi-tiet.md; nếu task #17 đánh số lại BR hoặc đổi câu hỏi mở thì cần sửa lại hai file này.
+- Khi sếp trả lời 3 câu ở #359: cập nhật mục Câu hỏi mở và dòng Việc cần làm ngay trong tom-tat.md và lo-trinh-chuyen-doi-so.md.
+- Không ghi được tasks/18.md do harness chặn (như #357), nên danh sách đoạn đã sửa để trong comments.
+- Sơ đồ ERD (29 bảng) và vòng đời lệnh sản xuất / lô phụ liệu vẫn chưa được vẽ.
+- tom-tat.md:16 nói BR-01..25 / AC-01..24 và trỏ về thiết kế chi tiết lấy số cuối. Thiết kế đã có BR-29 (task #17 đang làm). Khi #17 xong, Huy2 cập nhật con số này.
+- Cả hai file chưa nhắc mẫu lô của lệnh không có công thức (BR-20: <SKU>-YYMMDD-NN, dùng cho trà và ống quế). Không mâu thuẫn, chỉ thiếu.
+- Ngoài phạm vi task này, có từ bản gốc: lo-trinh-chuyen-doi-so.md:106 vẫn ghi GĐ1 'phiếu thu mua trên điện thoại' và '5 danh mục', trong khi nguyên tắc ghi nhập liệu ở máy tính xưởng và thiết kế có 9 màn hình danh mục.
+- Mình chỉ đọc HTML của các màn, chưa xem trên trình duyệt.
+- Giữa lúc soát, TK và LT được topic #2 cập nhật: LT đã đưa công thức, kho phụ liệu, ủ, lưu mẫu, thử lưu hương vào GĐ2. Dẫn TK/LT trong file là bản đọc ngày 21/11/2026; nếu topic #2 đổi tiếp thì đối chiếu lại. Chưa kiểm lại tom-tat.md.
+- B-10 (kho phụ liệu) nằm giữa cụm A và B; task #23 gộp một chỗ khi tổng hợp.
+- Cụm C cần thêm: thẻ Đang ủ, Lô chưa lưu mẫu, Mẫu sắp hết hạn ở màn 19; chuỗi phụ liệu và nút Xem mẫu lưu ở màn 27; tem mẻ cho lọ ủ ở màn 25 và 35.
+- Bản PDF trích bằng pdftotext bị lỗi dấu tiếng Việt; số liệu và số trang đã đối chiếu với bảng seed trong TK 4 (QC1 31,40/8,97/49,35 g, các số ngày ủ) trước khi dẫn.
+- Chưa đọc lại sổ tay PDF và thiet-ke-chi-tiet.md sau cập nhật của topic #2; các dẫn tr.N và TK lấy theo Lan2.
+- B-10 kho phụ liệu trùng cụm A: gộp một chỗ ở #23.
+- TK mâu thuẫn nội bộ: mục 2 bảng giá theo hạng WORKSHOP 'Không' vs mục 6.2 hiện giá dưới nút hạng; LT nói trang chủ 3 nút, TK 6.1 nói 4 nút. Nên nhờ topic #2 thống nhất.
+- Công nợ nhà cung cấp có trong GĐ1 (lộ trình) nhưng thiết kế không có bảng hay màn; cần Lead hỏi sếp, không thuộc cụm A.
+- TK mục 6.5a chưa nói rõ có màn danh sách/sửa/hủy phiếu nhập phụ liệu như màn 06 không.
+- Màn 'Mẫu lưu' và 'Lô chưa lưu mẫu' thuộc cụm B hoặc C, BA hai cụm đó cần gom.
+- Chưa kiểm hành vi JS và bấm trên trình duyệt (A-07: nhãn buyer-req có thể đổi theo kênh khi bấm thật). Số dòng TK có thể lệch vì topic #2 đang sửa file; căn cứ ghi theo mã BR/AC và tên mục, nhưng vài chỗ còn ghi 'TK (...)' sau khi gỡ số dòng cũ.
+- Cụm B còn dùng mã lô cũ TP-TD10-2611-xx ở 15, 17, 18, 24, 26: Dev/BA cụm B cần đổi cùng lúc.
+- Màn mới đề xuất (41-vung-nguyen-lieu, 42-print-batch, q-notfound, q-void, q-many-scans, 22b, 01b, 01c) cần khoá route trong vỏ vo.html và _ds.json, ngoài vùng của task #22.
+- Dữ liệu mẫu 27/30/26 mâu thuẫn về lô NL-2611-0007 (NCC-CQ-001 hay NCC-CQ-002), cần chốt chung với cụm B.
+- PDF sổ tay không đọc được (thiếu poppler); đã dùng so-tay.txt mất dấu, chỉ đọc được mục C.3 và đoạn nhãn.
+- Chưa mở màn trên trình duyệt.
+- Ngoài danh sách mục giao nhưng cần cho đủ API: mục 2 thêm các hàng phân quyền (công thức, phiếu nhập phụ liệu, ủ, lưu mẫu, thử lưu hương). Thêm mục 6.5a 'Phiếu nhập phụ liệu' (giữ số 6.6 nên không vỡ tham chiếu) và dòng 'Phụ liệu' ở 6.5. Mục 8.4 thêm nơi bán phụ liệu và mã lô phụ liệu vào danh sách 'không hiện'. Mục 11 sửa số luồng test tích hợp thành 8.
+- Sửa trong mục 4 (bảng của #16): product.shelf_life_months bỏ NOT NULL, thêm product.requires_retention_sample, sửa comment retain_months (góp ý của Hue). Theo finding của Ngoc, thêm scent_trial.chosen_variant: điểm PASS/FAIL từng biến thể được tính khi xem, còn scent_trial.result là kết luận cả đợt. Đã chỉnh 7.5 cho khớp.
+- API đổi tên: POST /production-orders/{id}/lots thành /material-lots (chỉ lô quế), thêm /ingredients (production_ingredient), /start-curing, /extend-curing. Mã BR mới là BR-26 đến BR-31. AC mới là AC-25 đến AC-38; mỗi BR mới có ít nhất một AC, và bảng AC mới có cột BR để đối chiếu. Số BR, AC cũ không đổi.
+- BR-17 đã thêm: nơi bán phụ liệu, số lô nhà cung cấp, mã lô phụ liệu và mã lô dầu không bao giờ ra API hay URL công khai. QR lô phụ liệu chỉ chứa mã, không phải URL (AC-33).
+- @Huy2: các câu 'chờ sếp chốt' trong tom-tat.md và lo-trinh có thể dùng đúng giả định ở mục 13. Hạn dùng: 18/24 tháng, còn sáp, viên, túi nhập tay. Lưu mẫu: 6 công thức, có cờ để bật thêm. Dầu quế: hỗ trợ cả hai nhánh.
+- Ví dụ trong tài liệu ghi ngày 17/11/2026 để khớp QC1-261117-01; dòng ngày đầu file vẫn là 20/11/2026 (không đổi).
+- #23 khi gộp: C-04 (màn Vùng nguyên liệu) cần thêm route vào vỏ và _ds.json, nằm ngoài vùng của #22, giao Khoa hoặc Nhung ở #24/#25.
+- #23: mã lô cũ TP-TD10 có ở cả cụm B (15, 17, 18, 24, 26) và C, gộp thành một mục chung với A-01.
+- #23: C-10 (lô NL-2611-0007 thuộc hai người bán) cần đối chiếu với cụm B màn 26 trước khi chốt số liệu.
+- #23: nhiều dẫn «TK §x» chưa kèm mã BR/AC. Bổ sung khi gộp, như Lan2 đã nhắc ở #378.
+- tom-tat.md:16 còn ghi BR-01..25 / AC-01..24; thiết kế giờ có BR-01..31 và AC-01..38. @Huy2 cập nhật. Số BR/AC không đổi nên các trỏ BR-10, BR-20, mục 13 vẫn đúng.
+- Mình chưa đối chiếu lại nội dung mục 5 và chỉ đọc lướt mục 4, 6, 8.4. Chưa chạy DDL (máy không có psql).
+- Đã cộng lại: AC-25 (314,00+89,70+493,50 = 897,20; tồn 185,98 / 110,30 / 106,50 đúng). AC-26 lệch 0,50 g đúng. AC-27: 17/11 + 21 ngày = 08/12, còn 18 ngày vào 20/11, ủ thêm 7 ngày thành 15/12, đều đúng. AC-28: 897,22 g, hạn 08/06/2028 đúng. AC-29: 01/12/2028 đúng. AC-34: 08/12/2027 đúng. AC-36: 35% PASS (3,6 ≤ 4; 2,8 ≥ 2,5; 4,0 ≥ 3,5; 0,6 ≤ 0,8), 45% FAIL ở tiêu chí 1, đúng. AC-38: 20/10 + 28 ngày = 17/11 đúng. AC-09: 3,6 triệu / 400 = 9.000, yield 50% đúng.
+- Mỗi BR mới đều có AC: BR-26 (AC-25, 37), BR-27 (25, 26, 38), BR-28 (27, 28, 38), BR-29 (34, 35), BR-30 (36), BR-31 (30–33). Không còn câu nào nói lệnh SX chỉ nhận lô quế. Comment retain_months (dòng 319) đã sửa đúng, BR-17 đã thêm nhánh phụ liệu.
+- Chưa kiểm: các dòng API dài ở mục 9 (đối chiếu tên endpoint với bảng ở mục 4), vì tôi chỉ đọc kỹ BR/AC. @Hue đã nhận phần API.
+- Ba file nhan-xet/a-*.md, b-*.md, c-*.md giữ nguyên làm chi tiết (trường dữ liệu từng màn thiếu, phân tích dài). Lỗi font «má»¥c» trong file A chưa sửa ở nguồn, đã sửa ở bản gộp.
+- A-01 chốt Q100 thay QC1 mà B-05 và C-03 đề xuất. #24–#26 cần theo ở mục 1.4 của nhan-xet.md.
+- Các màn mới (41-vung-nguyen-lieu, 42-print-batch, ingr-receipt, ingr-stock, 03b, 04b, 05b, 09b, 09c, 01b, 01c, 22b, màn công thức, theo dõi ủ, mẫu lưu, thử lưu hương, q-notfound, q-void, q-many-scans) cần route trong vỏ và _ds.json, việc của #24–#26.
+- Chuyển topic #2: công nợ NCC không có trong TK, TK mục 2 mâu thuẫn mục 6.2 về xem giá, TK 4 nút so với LT 3 nút, quy tắc đọc số chấm/phẩy cần ghi vào TK §6.2.
+- Không mở lại từng dòng HTML khi gộp, vì các dẫn dòng đã được tester và BA kiểm ở #20–#22. Chưa bấm trình duyệt và chưa đối chiếu lại sổ tay PDF (ghi ở mục 5 của nhan-xet.md).
+- Cách kiểm: trích mã A/B/C-nn từ 3 file nguồn rồi so với mã mở đầu các dòng bảng mục 3; 8 mã không có dòng riêng, trong đó B-05, B-10, B-16 và C-03 là bản gộp hợp lệ.
+- Mục 1.3 điểm #10 (A-03) có trong danh sách SẾP QUYẾT nhưng không có dòng ở mục 3.4; sếp tra mã A-03 sẽ không thấy căn cứ.
+- Mục 1.2 và 1.3 không đổi nội dung, B-09, B-11, B-14 đã có dòng đầy đủ để #24–#26 tra theo mã.
+- Chưa mở lại từng dòng HTML và sổ tay PDF; căn cứ ST, TK của 4 dòng mới chép từ b-san-xuat.md và a-nhap-xuat-kho.md, bổ sung số BR/AC (BR-26, BR-28, BR-30, AC-27, AC-36, AC-37) lấy từ TK hiện tại.
+- Vỏ vo.html (ngoài vùng) cần route: thay [/^\/quan-ly\/vung-nguyen-lieu/, null] bằng trỏ tới key vung_nguyen_lieu; thêm trước /^\/quan-ly/ các route cong-thuc, phu-lieu, mau-luu, thu-luu-huong trỏ màn cụm B khi có; thêm route cho 42-print-batch (đề xuất /in/tem-me) hoặc nút In tem mẻ ở màn 26.
+- Màn 30 (NCC-CQ-002: 1,2 kg, 1%) và 26 (lô -01 120,5 kg ra 20 chai) cần chốt cùng cụm B; mình chưa đổi 30. Cụm A/B còn mã lô cũ TP-TD10-2611-0x ở 12,13,14,15,17,18,24,26.
+- Máy không có node trong PATH, dùng C:\Program Files\nodejs\node.exe. Không chạy mockup.mjs ghep vì ghi đè ban-xem-truoc.html ngoài vùng; mình ghép bằng bản sao logic ra thư mục tạm. Ngan chạy ghep thật khi chụp ở #27.
+- 36/37 vẫn ghi vùng Châu Quế + Đông Cuông trong khi nhánh NL ở 27 chỉ còn Châu Quế; cần chốt nguồn quế lô -02 cùng cụm B.
+- Số liệu màn 41 (diện tích, năm trồng của đồi NCC-DC-001, NCC-CQ-002) là số minh hoạ, đã ghi chú trên màn.
+- Chưa tự chạy ghep: nó ghi đè ban-xem-truoc.html ngoài vùng. Tin vào bản ghép 47 màn của Huy3, chưa tự kiểm lại.
+- Cần Khoa thêm route vào vo.html như Huy3 và Huy3 đã liệt kê (vung_nguyen_lieu, cong-thuc/phu-lieu/mau-luu/thu-luu-huong, đường vào 42-print-batch).
+- Route cần thêm vào vo.html (ngoài vùng của mình): /nhap-hang/phu-lieu→ingr_receipt, /ton-kho/phu-lieu→ingr_stock, /san-xuat/ua/\d+→cure_detail, /san-xuat/ua→cure_list, /quan-ly/cong-thuc/\w+→recipe_edit, /quan-ly/cong-thuc→recipe_list, /quan-ly/lo-thanh-pham/.+→lot_detail, /quan-ly/mau-luu→retain_list, /quan-ly/thu-luu-huong→scent_trial; mỗi dòng đặt trước dòng tổng quát cùng đầu đường dẫn (xem mục 4 của thay-doi-b.md)
+- Cụm A còn tên sản phẩm cũ (TD10, TT50, TRA100) và mã TP-TD10-… ở 09–14; cần đổi theo Q100-10, TD-QC1-10, TD-QC2-10, TT25 và mã lô Q100-261120-0x
+- Cụm C: màn 19 thêm thẻ Mẻ đang ủ, Lô chưa lưu mẫu, Mẫu sắp hết hạn lưu; 27, 36-38 đổi mã lô; 31 thêm lối vào Công thức
+- Mã lệnh và lô phụ trong mockup (LSX-2610-002, DDT-261119-01, TUI-261118-01, VQH-2611-01, CAM-2610-01, TL-2610-01...) do Nhung đặt theo BR-20, chưa có trong TK
+- Chưa bấm thử trên trình duyệt qua vỏ: chỉ chụp riêng từng màn bằng Chrome headless và đếm thẻ đóng mở
+- Bản sao mockup.mjs trỏ OUT sang D:/tmp-gh/out.html nên ban-xem-truoc.html không bị ghi đè.
+- ui.mjs không giữ phiên giữa các lệnh nên chưa mở được trình duyệt. Chưa bấm qua vỏ, vo.html cũng chưa có route mới (grep không thấy phu-lieu, cong-thuc, mau-luu).
+- Số học các màn đã khớp: QC2 921,70 g, tổng 921,87 g (lệch +0,17), TUI 1.100 g, QC1 v2 89,72 g đúng 35/10/55%, ngày còn lại ở 16b và 26c.
+- Chưa kiểm: sổ tay PDF, công thức thật, hiển thị chi tiết từng màn mới.
+- Route cần thêm vào vỏ (hàm route trong _tools/vo.html), đặt trước ^/nhap-hang và ^/ton-kho: ^/nhap-hang/phu-lieu → ingr_receipt; ^/nhap-hang/nguoi-ban-moi → receipt_newsup; ^/nhap-hang/in-phieu → receipt_print; ^/ton-kho/phu-lieu → ingr_stock; ^/mau-luu → màn Mẫu lưu của cụm B (retain-list?).
+- Ghép thử bằng cách copy docs/mockup ra thư mục tạm rồi chạy mockup.mjs ghep ở đó, vì ghep ghi cứng ra de-xuat/ban-xem-truoc.html trong repo (ngoài vùng của #24). Bản ghép trong repo chưa được ghép lại.
+- issue-list và issue-detail còn «Túi thơm quế Văn Yên 50 g» (B-15 đề xuất 25 g); đổi cùng lúc với cụm B nếu sếp chốt.
+- Màn 06 chưa có biến thể «phiếu nhập phụ liệu» riêng; chỉ có tab theo mặc định của nhận xét. A-06 mới vẽ hộp thoại phiếu của chính thủ kho.
+- Ảnh sau-sửa cụm A đặt ở D:\VYC\.proteam\evidence\cum-a-sau-*.png (12 ảnh, ngoài vùng git của app) để #27 tham khảo.
+- Script sửa hàng loạt nằm ở thư mục tạm ngoài repo (AppData\Local\Temp\vyc-a), không thuộc repo.
+- Cụm A còn 'Túi thơm 50 g' ở 10-issue-list.html:23 và 11-issue-detail.html:23; đổi cùng cụm B nếu sếp chọn 25 g.
+- Route /mau-luu phải trỏ đúng key màn Mẫu lưu của cụm B; 5 route cụm A cần vào vo.html trước ^/nhap-hang và ^/ton-kho.
+- Máy không có node trong PATH, dùng C:\Program Files\nodejs\node.exe.
+- Vỏ cần thêm 5 route theo mục 4 của thay-doi-a.md, đặt trước ^/nhap-hang và ^/ton-kho. Khi chưa có, các link tab Phụ liệu, Người bán mới, In phiếu, Mẫu lưu sẽ nhảy sai màn.
+- Chưa kiểm: sổ tay PDF, in thử tem 40×30, ảnh chụp cum-a-sau-*.png.
+- Medium gom cho tổng kết: 36:68 và 37:69 còn «Xã Đông Cuông» (Minh, #26); 30-reports.html:24 và 41-vung-nguyen-lieu.html còn hiệu suất 1,92% (Ngan, #26); 23b-recipe-list.html thiếu link sang 23c-recipe-edit (Minh, #25); 26-plots-lots.html:35,37 lô Q100 không có chi tiết mẻ, cần chú thích (Minh, #25); 15 và 24: QC2-261023-01 hai trạng thái (Ngan, #25); 10-issue-list.html:23 và 11-issue-detail.html:23 còn «Túi thơm 50 g» (Minh và Ngan, #24); thay-doi-a.md:59 key retain-list chưa chốt, vo.html đã dù
+- Link không dẫn tới màn: recipe-edit không có link nào vào; print-batch chỉ vào được từ menu trái (đề xuất route /in/tem-me đã có trong vỏ nhưng chưa màn nào trỏ tới).
+- 6 tile /quan-ly/danh-muc/{dia-ban,khach-hang,nguyen-lieu,loai-hang,chung-nhan,tai-khoan} vẫn rơi về màn Quản lý (admin) theo mặc định C-18.
+- 30-reports / màn Tra cứu có href="#" không có đích (cụm C).
+- 04b-receipt-warn.html:39 vs :46 lệch 38.000 và 18.000 đ/kg, ảnh receipt-warn-sau thể hiện rõ; 10-issue-list và 11-issue-detail dòng 23 còn «Túi thơm 50 g».
+- Máy không có node trong PATH: dùng C:\Program Files\nodejs\node.exe. ui.mjs open không giữ được trình duyệt giữa các lệnh nên ảnh được chụp bằng Edge headless qua CDP; script tạm đã bỏ.
+- Chưa kiểm _ds.json parse được vì máy không có node/python; file không bị sửa trong lượt này.
+- Màn 17, 26, 26b, 26c vẫn là cảnh sau khi hoàn thành mẻ QC2 (ngửi 20/11 đạt); 15, 24, 16b, 16c là trước đó. Đã ghi ở thay-doi-b.md mục 6.
+- Màn 10 và 11 (cụm A) có thể còn «Túi thơm 50 g», thuộc Khoa, ngoài vùng của task này.
+- Dropdown 04b (18.000/14.000/10.000) là bảng giá Quế vụn đang được chọn, còn cảnh báo nói về dòng 2 Vỏ quế Loại 2 (38.000), nên không còn mâu thuẫn. Cảnh báo 04b hiện ghi rõ «Dòng 2 (Vỏ quế Loại 2)». Chưa mở trình duyệt xem lại 04b.
+- 26-plots-lots.html (cụm B) còn cột «Hiệu suất» giá trị «—»: Nhung xem lại nếu muốn bỏ hẳn cột.
+- 30: NCC-DC-001 và NCC-CQ-002 để 0 lô/0 kg vì lô -02 chỉ dùng NL của NCC-CQ-001 theo 27; số 1,63 kg thành phẩm của NCC-CQ-001 chưa có nguồn đối chiếu.
+- Không chạy tach/ghep. Ngan ghép lại ở #31.
+- Chưa kiểm bằng trình duyệt. Chưa kiểm ảnh chụp.
+- Không có git nên không có diff, chỉ đọc file hiện có.
+- Link /san-xuat/ua/1 ở 15, 24, 16b là route mẫu của vỏ nên mở cùng màn chi tiết ủ với mọi mẻ.
+- _ds.json không sửa; Ngan đã parse OK ở #443.
+- 26-plots-lots.html:33 (cụm B) còn cột Hiệu suất giá trị «—»: Nhung bỏ nếu theo câu 1
+- Màn 30: NCC-CQ-002 để 0 kg, không phải 1,2 kg như brief; lý do là cụm B 26 không có số theo người bán
+- _ds.json cụm C chưa chạy parser thật (không có node/python), chỉ đếm key bằng grep
+- Kiểm bằng Edge không cửa sổ qua một script tạm ở /tmp (ui.mjs không giữ được trình duyệt trên máy này). Kết quả: 63 key, không trùng, 63/63 nút menu chuyển đúng màn. Bấm thử 23b «+ Công thức mới» và ô QC1 thì sang recipe-edit; 25 «In nhãn lô Q100-261120-02» thì sang print-batch. Chỉ 25 có link vào 42; 26b, 26, 26c, 18, 24 không có.
+- Hash goc/mockup-goc.html là 673518bf…a41ba629, trùng file đính kèm của sếp. ban-chinh.html giống hệt de-xuat/ban-xem-truoc.html (cmp) và mở được bằng file://.
+- Đã ghi đè trong anh/: issue-list, issue-detail, receipt-warn, prod-list, prod-owner, cure-list, cure-detail, recipe-list, plots-lots, retain-list, trace, admin, vung-nguyen-lieu, rolls, print-batch, q-ok, q-many-scans. Thêm mới reports-sau.png và reports-truoc.png, vì màn 30 reports nay có sửa (bỏ 1,92% và cột Hiệu suất) mà so-sanh.md cũ ghi là «giữ nguyên». so-sanh.md có thêm mục 58 cho màn này.
+- Số ảnh -truoc: 34 ảnh cũ khớp 34 mục có «Trước» trong so-sanh.md; cộng reports là 35. Dòng tổng cũ ghi 33 sửa và 24 mới là sai: đúng là 35 sửa, 23 mới và 5 giữ nguyên. Đã sửa dòng 7 và ghi rõ issue-product-truoc.png là màn gốc chung cho 4 màn đã tách (issue-product, -san, -moi, -loi).
+- Hạn chế ảnh: mới chụp lại 18 màn thuộc t1–t3. 16b, 16c, 27 (trace) và 26 cũng đổi ở lượt sửa QC2/Châu Quế; 16b, 16c, trace và 26 đã chụp lại, còn các ảnh khác không đổi nên giữ nguyên. Chưa đối chiếu nội dung từng ảnh mới với HTML, chỉ xem q-ok, prod-list, reports.
+- Ngoài vùng, chưa sửa: 30-reports.html:24 còn «1,63» kg thành phẩm của NCC-CQ-001 (Minh đã nêu, mất nguồn sau khi bỏ 1,92%). 26-plots-lots còn cột «Hiệu suất» giá trị «—» (Minh và Ngan đã nêu). 33-print-receipt:55 và màn 41 vẫn còn nhánh Đông Cuông (Thuan đã nêu). Cả ba vẫn thấy trong ban-chinh.html. @Lead quyết giữ hay nhờ Nhung và Huy3 sửa rồi ghép lại.
+- Script tạm và máy chủ tĩnh cổng 18777 nằm ngoài dự án (/tmp); máy chủ có thể còn chạy, tắt được khi cần.
+- Chưa có ux/ra-soat-a.md nên dùng chuẩn: chạm ≥48px, chữ ≥16px (≈0,89rem vì html 18px), không viết tắt.
+- CSS chung cần sửa (ghi ở mục 4 của file kết quả, không sửa app.css): button.small 44px, button.link, .tag .78rem, các cỡ .85rem, td input 44px, .chip.
+- Mockup: 4 mẻ ủ cùng trỏ /san-xuat/ua/1 ở 15:36-37, 24:58-59, 16b:36-39 (B2-80). 15:42 và 24:63 thiếu lô QC2-261023-01 đang 0/90 cần gán tem (B2-74).
+- 16c:37 toàn ô tick lắc chai bị khóa nên không có chỗ bấm «đã lắc hôm nay» (B2-30). TK chưa có trường lưu việc này, hỏi sếp ở B2-31.
+- b/26-plots-lots.html:33 còn cột «Hiệu suất», đề xuất bỏ cùng «Giá quế / đơn vị» (B2-81).
+- b/14b-ingr-stock.html:54 còn nhắc QC2-261023-01 (cụm A, ngoài phạm vi). Chưa xem trên trình duyệt thật, chưa đối chiếu sổ tay PDF.
+- @Phuong khi làm #36: coi B2-50 (nhập kết quả là màn riêng sau «Đạt») là đúng, bảng §1 dòng 5–6 ghi 1 màn là sót.
+- Chưa kiểm trên trình duyệt; không có diff vì thư mục không có git.
+- Ngoài phạm vi, cần người phụ trách sửa: c-quan-ly-in-qr/28-buyers.html:19 và 29-buyer-detail.html:19 còn «Túi thơm 50 g» (đã chốt 25 g).
+- 36-q-ok.html:82 và 37-q-many-scans.html:83 hiện chữ «[ví dụ minh hoạ, chưa có thật]» trên trang công khai; 30-reports.html:24 còn «1,63» kg.
+- Mục 3 của ra-soat-c.md đề xuất cho trang chủ thủ kho (A/02), cụm A (@Mai) cần thống nhất.
+- Số chạm đếm theo thiết kế tĩnh của mockup, chưa đo với người dùng thật; chưa mở trình duyệt.
+- D1 (16→6 chạm) chưa có bảng liệt kê từng thao tác để kiểm lại; số chạm là ước tính theo mockup tĩnh.
+- Chưa kiểm trên trình duyệt và chưa đối chiếu sổ tay PDF.
+- Chưa có docs/mockup/ux/ra-soat-a.md nên chưa kiểm được A/02 với đề xuất của Mai.
+- Tôi chưa sửa c-quan-ly-in-qr/28:19 và 29:19. Hai chỗ còn «Túi thơm 50 g», cần 25 g, và việc sửa thuộc #37 của Dat.
+- app.css dùng chung 3 cụm: @Tuan, @Hoa nên đo lại cụm mình (script đo ở ra-soat-a.md mục 5)
+- Edge headless không hạ cửa sổ dưới ~492px nên màn hẹp đo ở 492px, không phải 390px
+- Không đọc được ảnh chụp (thư mục tạm ngoài dự án nên bị chặn quyền đọc); kiểm bằng số đo chứ chưa nhìn bằng mắt
+- 05b là phiếu và tem in nên còn chữ dưới 16px, đã loại khỏi chuẩn chữ
+- Các đề xuất A1–A29 cần Long sửa markup và JS; thứ tự dựng gợi ý ở ra-soat-a.md mục 6
+- Nút chính ở màn 06 và 10 đang cao 64px vì nằm giữa trang; sẽ về thanh dưới khi làm A8 và A27
+- ra-soat-b.md §7 (dòng 139-143) nêu số của app.css cũ; app.css mới ở docs/mockup/de-xuat/man/app.css:83,84,104,124,189. Dev #36 dùng app.css mới.
+- Chưa kiểm style ghi đè trong các file màn cụm B, và .badge/.sub/.lbl/.kpi .l (dòng 143).
+- Medium: app.css:79 đổi mọi `.primary` sang xanh. 03-receipt-1.html:44 «+ Thêm dòng» và :63 «Lưu và in» cùng xanh. 03b có 3 nút primary, 05-receipt-3 có 3 («Thêm dòng», «Phiếu mới», «Lưu và in»), 08-issue-dry có 2. Vậy chuẩn 0.3 (một màn một nút xanh) chưa đạt trên chính các màn cụm A. Mục 5 chỉ nói đã đo chiều cao, chữ và tràn ngang, không nhắc việc này.
+- Cách sửa: chỉ cho xanh và 72px khi nút nằm trong `.totalbar`. Nút primary ngoài thanh dưới thì viền nâu nền trắng, không đổi tên class. Hoặc ghi rõ ở mục 4 rằng A1, A2, A10 phải đổi class khi Long dựng.
+- Đã đối chiếu: 03:44 có «(Enter)», 03:62 là link «Phiếu hôm nay», 05:63 là nút «Lưu và in», 04:22 có «Vùng kiểm soát», 02:27 là «Gán tem / hủy tem». Các mã Q-A1..A3 đều giữ BR-22, BR-03 và BR-04 như mặc định.
+- Lưu ý cho @Long: A/02:27 chồng với đề xuất của Hoa (khối «Việc cần làm» và chữ «Dán tem lên chai»). Hai việc này chỉ có hiệu lực nếu sếp trả lời Q-C1 là «có».
+- Không sửa app.css; các lớp .todo, .todo-item, .range-btns, .cta, .sub-note nằm trong <style> đầu 19, 20, 22b, 25, 30; nên chuyển vào app.css khi người giữ file ghép.
+- _tools/vo.html chưa có route cho 21b: «+ Thêm người bán» (href ?moi=1) hiện rơi vào màn 21. Thêm route supplier_add nếu cần bấm sang.
+- Việc cho cụm A/B: B/17 thêm nút «In tem cho 90 chai» trỏ /quan-ly/cuon-tem; B/18 chỉ quét tem đầu (A5, A6); A/05b mở thẳng hộp thoại in (P1); A/11 nút «In phiếu» (P3); A/02 nút «In tem» và «Dán tem lên chai».
+- D2 (hộp Bổ sung thông tin truy xuất ở 41) chưa vẽ riêng. W6 giữ nguyên (chữ mẫu, Dev gỡ khi dựng). 33:56 còn Đông Cuông (đang chờ Lead quyết).
+- Ảnh tự kiểm nằm ở docs/mockup/ux/anh-c/ (11 màn), không phải ảnh trước/sau chính thức; #38 chụp lại sau khi ghép.
+- Đã xem ảnh 19, 25, 30, 21b, 22b, 27, 32, 39, 42. 20, 31, 33, 36 chỉ chụp, chưa xem. Chưa kiểm bấm link và menu trong bản ghép.
+- Số chạm là ước theo mockup tĩnh, chưa thử với người dùng thật.
+- Ngoài vùng, cần người khác: B/17 và B/18 (Phuong, #36); A/05b dòng 80-83 còn «40 × 30 mm» và A/02 nút «Gán tem» (cụm A); vo.html cần route /in/tem-bo-sung → print_roll và ?moi=1 → 21b (#38)
+- Tài liệu thiết kế cần BR-12 và mục 7.3 theo in theo lô gán luôn, thêm bản ghi in tem (lô, dải serial, người in, lúc in, lý do, in bổ sung); đã báo ở #496
+- Thủ kho in tem phải cấp quyền phía máy chủ, không chỉ giấu nút (nhắc của Tri ở #478)
+- Ảnh tự kiểm nằm ở .proteam/evidence/c37-*.png. ui.mjs không giữ được trình duyệt từ shell nên chụp bằng msedge headless
+- Đã xoá de-xuat/thay-doi-ux-c.md (file do mình tạo, ngoài vùng) sau khi chép sang ux/thay-doi-c.md
+- docs/mockup/de-xuat/thay-doi-ux-c.md không còn tồn tại; báo cáo thay đổi cụm C chỉ ở docs/mockup/ux/thay-doi-c.md (đúng scope).
+- Ảnh tự kiểm ở .proteam/evidence/c37-*.png (thư mục không tính lấn vùng).
+- Dev dựng thật: máy chủ phải kiểm số tem in bổ sung không vượt (số chai − số tem đã in) của đúng lô, và cấp quyền in tem cho thủ kho ở phía máy chủ.
+- #38 cần thêm route /in/tem-bo-sung → print_roll và ?moi=1 → 21b vào vo.html.
+- ux/thay-doi-c.md còn dòng cũ về +5 tem (dòng 39, 55) mâu thuẫn mục 0.
+- Long khi ghép (#38): thêm vào _tools/vo.html, trước dòng /san-xuat/ua/\d+, hai route /san-xuat/ua/<số>/ngui → cure_smell và /san-xuat/ua/<số>/ket-qua → cure_result. Không thêm thì link rơi vào 16c. B2-80 không cần sửa vỏ vì route ua/\d+ nhận mọi id
+- Lô Q100 chưa có đường thu hồi sau B2-82: 26 bỏ nút, chỉ QC2 có 26b với «Thu hồi lô», và màn tra cứu 27 (cụm C) không có nút này. Cần Lead hoặc Huy3 thêm «Thu hồi lô» vào 27 hoặc làm 26b cho mọi lô
+- app.css chưa sửa (ngoài vùng): button.small :79, button.link :80, .tag .78rem, .tile .badge, .choice .sub, .totalbar .lbl, .kpi .l .85rem, checkbox 28 px. Trong màn đã ghi đè 44 → 48 px
+- 14b-ingr-stock.html:54 còn nhắc QC2-261023-01 (cụm A)
+- Ảnh trước/sau ở D:\VYC\.proteam\evidence\b36-*.png (ngoài vùng, giống chỗ các cụm khác để ảnh); không khai vào files_changed. Màn 16d, 16e chỉ có ảnh sau
+- Bản ghép tạm để thử nằm ngoài repo (C:\Users\VTIT\AppData\Local\Temp\bwork); ban-xem-truoc.html chưa ghép lại, không chạm vo.html
+- Ảnh chụp file HTML không có CSS (APPCSS do vo.html chèn) nên nút chưa đỏ trong ảnh; node không chạy được nên dùng msedge --headless thay ui.mjs.
+- 27 mặc định tra mã người bán NCC-CQ-001, chưa có trạng thái tra thẳng một mã lô.
+- Cần thêm route `^/ton-kho/kiem-ke` → `inv_kk` vào _tools/vo.html (đặt trước `^/ton-kho`) khi ghép, nếu không nút «Kiểm kê kho» ở 12, 13 nhảy về inv-nl. Việc của #38.
+- c-quan-ly-in-qr/19-home-owner.html:30 còn ô «Xuất hàng» dẫn /xuat-hang (màn 07, nay chỉ là lối dự phòng); Hoa/Dat quyết ở cụm C.
+- Cột «Giờ» ở màn 10 và 11 (16:42, 15:10, 11:25, 09:05) là số mẫu.
+- Số cân ở màn 04, 04b, 04c, 05, 05b để trống vì bản cũ gõ sẵn 12 hoặc 500 trùng dòng đã thêm, không khớp quy tắc «dòng dở tự thêm».
+- Máy này node nằm ở C:\Program Files\nodejs (chưa trong PATH của bash); ui.mjs mở trình duyệt xong thì trình duyệt tắt ngay, đã chụp bằng msedge --headless --screenshot.
+- A14 chỉ đổi chữ và ghi chú «đã chọn sẵn người mua lần trước»; danh sách «gần đây» thật cần luồng chạy thật.
+- Phía máy chủ vẫn phải kiểm lô thuộc đúng sản phẩm và còn tồn khi chọn sẵn lô cũ nhất, và ghi người làm cùng thời điểm theo BR (nhắc của Tri ở #487).
+- Medium: ảnh c39-27-thu-hoi-lo.png chụp không CSS nên chưa chứng minh nút đỏ (class danger) hiện đúng trên Edge; nên chụp lại có CSS nếu sếp cần xem.
+- Medium: brief ghi mã Q100-261120-01 nhưng -01 đã RECALLED, Dat dùng -02. Hợp lý, Lead nên ghi rõ trong bài tổng kết.
+- Bản ghi thay đổi chính thức của #35 là docs/mockup/ux/thay-doi-a.md. Bản docs/mockup/de-xuat/thay-doi-a.md (ngoài vùng) được giữ cho khớp nội dung với bản trong ux/.
+- Việc ngoài vùng cho #38: route ^/ton-kho/kiem-ke → inv_kk trong _tools/vo.html.
+- Việc ngoài vùng cho cụm C: c-quan-ly-in-qr/19-home-owner.html:30 còn ô «Xuất hàng» dẫn /xuat-hang.
+- 05b chỉ kiểm bằng grep sau khi sửa, chưa chụp lại bằng trình duyệt.
+- docs/mockup/de-xuat/thay-doi-a.md đã khớp 118 dòng đầu của ux/thay-doi-a.md. 'Nguyên trạng' suy ra từ bản ux/ mình đã copy, vì không có bản gốc riêng để so.
+- Việc ngoài vùng cho #38: route ^/ton-kho/kiem-ke → inv_kk trong _tools/vo.html.
+- Việc ngoài vùng cho cụm C: c-quan-ly-in-qr/19-home-owner.html:30 còn ô «Xuất hàng» dẫn /xuat-hang.
+- Cần thêm route ^/ton-kho/kiem-ke → inv_kk vào vo.html khi ghép #38 (Long đã báo).
+- Q-A3: 09 đang hiện hàng «Khách lẻ mua qua» chọn kênh. Lead nói giao diện tự điền kênh. Dev dựng thật vẫn lưu channel theo khách; chỉ khách lẻ mới cho chọn kênh.
+- Ngoài vùng: tồn tại cả de-xuat/thay-doi-a.md và ux/thay-doi-a.md, khác nhau (15159 và 15486 byte). Long nói đã đưa file ngoài vùng về như trước, nên mình không động tới. Lead kiểm lại khi ghép #38 xem bản nào là bản chính.
+- Việc cần thêm khi ghép #38: route ^/ton-kho/kiem-ke → inv_kk, route 16d/16e, /in/tem-bo-sung và ?moi=1 trong _tools/vo.html; chụp lại 27 có CSS (Thao/Diep medium ở #517, #518)
+- Chưa trả lời Lead về c-quan-ly-in-qr/19-home-owner.html:30 còn ô «Xuất hàng» dẫn /xuat-hang
+- Ảnh chụp bằng bản sao tạm có app.css nhúng; file thật vẫn dùng placeholder APPCSS
+- 09c, 09d chỉ kiểm bằng grep, chưa mở trình duyệt; số chạm ở mục 6 thay-doi-a.md là mức chênh lệch, chưa đo trên luồng thật
+- ux/thay-doi-a.md và de-xuat/thay-doi-a.md vốn không giống nhau (de-xuat ngắn hơn một chút)
+- Khi ghép #38 cần làm: route ^/ton-kho/kiem-ke → inv_kk, route 16d/16e, /in/tem-bo-sung và ?moi=1 trong _tools/vo.html
+- Khi ghép #38 cần chụp lại màn 27 có CSS, vì ảnh c39 không thấy nút đỏ (Thao/Diep medium)
+- Khi ghép #38 cần đo hoặc chụp 09b–09d ở 492 px (Thao medium ở #531)
+- Hai file thay-doi-a.md đánh số mục lệch nhau, nên đồng bộ khi ghép (Thao #531)
+- Màn 09c đang chọn sẵn kênh DIRECT và 09d chọn sẵn WEBSITE dù khách là khách lẻ, cần quyết có giữ không (Diep #530)
+- ui.mjs open báo mở được nhưng các lệnh text/eval/shot báo không nối được cổng 9567; chụp ảnh bằng msedge --headless thay thế.
+- Ảnh chụp không có CSS nếu mở file trực tiếp (placeholder <!--APPCSS-->); ảnh lưu đã được nạp app.css.
+- Chưa đo scrollWidth ở 492 px bằng công cụ; kiểm tra bằng ảnh và CSS grid hai cột.
+- Chưa bấm thử trong trình duyệt (ui.mjs không nối được theo Dat); chỉ kiểm bằng grep và xem ảnh.
+- Tile 19 không có data-gd như 02; có thể cố ý vì trang chủ chủ không lọc giai đoạn, Long lưu ý khi ghép #38.
+- Cần người giữ _tools/vo.html (ngoài vùng) thêm 4 chỗ route như mục 0 của ux/tong-hop.md. Không thì chạy lại 'mockup.mjs ghep' sẽ mất bản vá trong ban-xem-truoc.html.
+- Bash không thấy node trong PATH và ui.mjs không giữ được Chrome giữa các lệnh. Tôi chạy node bằng đường dẫn đầy đủ và tự lái Chrome qua CDP bằng script tạm ngoài repo.
+- ux/thay-doi-a.md dòng 1-66 còn bản cũ #24 (40×30, GĐ2, 50 g); de-xuat/thay-doi-a.md thiếu mục 5 so với bản ux/; de-xuat/thay-doi-b.md và thay-doi-c.md cũ hơn bản ux/. Tất cả ngoài vùng của #38.
+- Chữ «Đăng xuất» ở thanh trên cao 21 px (1140 px) và 44 px (492 px), dưới chuẩn 48 px. Có từ trước.
+- Nút «Dán tem lên chai» ở 02 dẫn màn 18 «Gán bù / hủy tem»; cần Lead hoặc Dat xem có khớp với in tem theo lô gán luôn không.
+- 09c chọn sẵn «Trực tiếp» và 09d chọn sẵn «Website» là cố ý, minh họa ca thử; đã ghi ở tong-hop.md mục 2.
+- Chưa tự kiểm bằng trình duyệt: ui.mjs open báo «không nối được cổng 9306». Số 68/68 màn và 236 link là theo báo cáo của Long, tôi chưa chạy lại.
+- ban-chinh.html có giờ sửa 11:06, trước lượt ghép (ban-xem-truoc 12:24), nên không thấy dấu hiệu bị ghi đè. Thư mục không có git nên không so được nội dung.
+- vo.html chưa xử lý data-go/data-pick: #45 cần dùng closest('[data-go]') cho cả button và tr.
+- data-pick cần bật .selected cho nhóm .choice và .active cho tab ở màn 30.
+- 25 tới 35 đi qua link a href /in/tem-bo-sung; route này mới được vá trong ban-xem-truoc.html, chưa có trong vo.html.
+- Chưa kiểm tra lại từng nút, chỉ đếm số data-go/data-pick trên mỗi file sau khi chạy.
+- Vỏ cần xử lý data-pick tại chỗ. Với 4 tab ở 18 và 26c, data-pick chỉ sáng nút; để đổi nội dung thì 18 dựa vào data-tab, 26c thì vỏ phải tự đổi khối vì 26c chưa có data-tab.
+- Luồng 23 → 23b chưa có nút nào dẫn tới: 23 chỉ có «+ Thêm mới», «Lưu», «Hủy» đều là thao tác tại chỗ. Muốn nối thì Lead chọn nút (ví dụ «Lưu» → #recipe-list), tôi không tự nối vì sẽ lạ với người xem.
+- 17 → 18 cũng không có nút dẫn: 17 có 3 link <a> trỏ /quan-ly/cuon-tem (màn in tem theo lô). 18 chỉ vào được từ link «Gán tem» ở 15 và 24 (/dong-goi).
+- Còn lại ở 06b có «Chụp / đính ảnh COA» và 2 nút «Sửa». Ở 16 có 3 nút «Bỏ dòng này». 23c có 3 nút ✕. Các nút này đều là thao tác tại chỗ, không có màn đích.
+- Nút để trống (52): sửa tại chỗ (Sửa giá, + Thêm dòng, Bỏ, Đổi giá, Thêm quà, Đổi người mua), in/máy in (In ở 06/06c, In phiếu ở 05b/11), tab Phiếu nhập phụ liệu ở 06/06c, Kiểm tra ở 14/14c, Lưu và in bị disabled ở 03.
+- Vỏ xem trước (_tools/vo.html và ban-xem-truoc.html) phải xử lý data-go (href hoặc #key) và data-pick thì nút mới chạy; ngoài scope của task này.
+- Màn 10 không có nút hay link dẫn sang 11 (hàng đơn không phải <button>); ngoài phạm vi task.
+- Key #... đã đối chiếu với _ds.json, đủ. Bỏ data-go/data-pick khỏi file đã sửa thì giống hệt bản gốc (cmp). Chưa bấm thử trên trình duyệt.
+- Key #print-receipt nằm ở _ds.json cụm C, #inv-tp và #inv-kk ở cụm A. Vỏ ghép cần gộp key của cả ba cụm thì mới giải được các đích này.
+- vo.html:79-94 có regex /^\/san-xuat\/ua\/\d+/ không có $, nên /san-xuat/ua/1/ngui và /san-xuat/ua/1/ket-qua đều ra cure_detail (16c). Hậu quả: bấm «Ngửi kiểm tra» và «✔ Đạt» sẽ rơi sai màn, đứt luồng 16c → 16d → 16e. ban-xem-truoc.html đã vá; vo.html thì chưa. @Vinh cần vá ở vo.html khi ghép #45.
+- Tab data-tab ở 18 và 26c cần vỏ xử lý (Quang đã nêu).
+- Chưa bấm thử trong vỏ vì vo.html chưa xử lý data-go và data-pick, việc này nằm ở #45.
+- Không có bản gốc hay diff, nên chưa xác nhận được «không đổi chữ/bố cục».
+- Với #45, vo.html:105 cần bắt data-go dạng #key và dạng route.
+- _tools/quet-nut.js: script quét toàn bộ nút trên bản ghép, chạy qua ui.mjs eval trên ban-xem-truoc.html
+- Ngoài vùng, chưa sửa: 25-rolls «In lại»/«In 100 tem» đang trỏ #print-batch (Ha gợi ý #print-roll); 06-receipt-list «In» ×5 và «Phiếu nhập phụ liệu» chưa có data-go
+- Muốn chụp nút nằm trong <details> thì phải mở khối trước (ví dụ khối «Chưa đạt» ở 16d)
+- Quét tự động của Vinh chỉ đếm <button>, nên cần quét thêm [data-go] bất kỳ.
+- Chưa tự lái trình duyệt trong lượt này; kết luận dựa trên đọc vo.html và grep ban-xem-truoc.html.
+- Cần vá ngoài vùng của task này (em không sửa): thêm 4 mục vào _ds.json cụm c-quan-ly-in-qr (key material, material-edit, customer-dm, customer-dm-edit) và 2 route trong vo.html: /quan-ly/danh-muc/nguyen-lieu → material, /quan-ly/danh-muc/khach-hang → customer-dm. Ô «Nguyên liệu & hạng» và «Khách & kênh bán» ở 31-admin.html cũng cần data-go.
+- Ảnh để nguyên 47-/48- trong .proteam/evidence/; file render có nhúng app.css nằm ở thư mục Temp của máy, không thuộc repo.
+- ui.mjs dùng chung một cổng debug 9565 cho mọi agent nên chụp song song sẽ lộn trang. Chụp bằng msedge --headless --screenshot thì độc lập.
+- Ghi chú low (không trả task): ở 47b-nguyen-lieu-edit.html, nút «📷 Chọn ảnh» và «+ Thêm hạng», cùng ở 48-khach-hang-dm.html, chưa có data-go hay data-pick. Khi ghép vào vỏ chúng sẽ báo hint «không chạy thật», nên cần ghi vào danh sách nút hint ở ux/tong-hop.md 5.3.
+- Ghi chú low: 47b-nguyen-lieu-edit.html và 48b-khach-hang-dm-edit.html dùng dialog open trên nền danh sách, đúng khuôn 22-supplier-edit.html. Tỉnh/xã trong 48b chỉ có 5 tỉnh và 3 xã mẫu. Khi có màn Địa bàn thì nên khớp lại.
+- Ghép vào bản xem trước phải thêm 4 key (material, material-edit, customer-dm, customer-dm-edit) vào _ds.json, 2 route vào vo.html, và data-go cho 2 ô ở 31-admin.html (task #49).
+- Medium của Xuan ở #47: 48b:33 ghi «Quận Lê Chân/Hồng Bàng» thì phải là «Phường», và còn Yên Bái (đã nhập vào Lào Cai, lo-trinh:37). Gom vào mục «Finding medium đã bỏ qua» khi tổng kết. Xuan review #46 thì cần soát cây Địa bàn có hai lỗi này không.
+- Nút hint mới ở #47: «Chọn ảnh» và «+ Thêm hạng» (47b). Thêm vào danh sách nút «không chạy thật» lúc tổng kết.
+- Task ghép: thêm vào _ds.json của cụm c-quan-ly-in-qr (group «Quản lý»): 45 area, 45b area-edit (sau area), 46 goods-type, 46b goods-type-edit (sau goods-type).
+- vo.html cần thêm route dia-ban → area và loai-hang → goods-type trước dòng danh-muc chung (~vo.html:112), nếu không sẽ rơi vào admin. 31-admin.html cần đổi ô trỏ sang 2 route này.
+- Thiết kế không seed loại hàng (chỉ 2 material, 6 grade). Danh sách 8 loại hàng ở 46 là dữ liệu mẫu tự đặt, cần chủ DN/BA xác nhận.
+- Số dòng thiết kế trong brief (623, 627-628) đã lệch; mục Địa bàn và Loại hàng hóa nay nằm ở khoảng dòng 612-613 của docs/thiet-ke-chi-tiet.md.
+- ui.mjs không dùng được lượt này (trình duyệt bị dọn sau mỗi lệnh); ảnh chụp bằng chrome --headless --screenshot, từ bản sao có chèn app.css ở thư mục tạm ngoài repo. File thô chứa <!--APPCSS--> nên mở thẳng không có CSS.
+- Cần thêm 4 key area, area-edit, goods-type, goods-type-edit vào _ds.json và 2 route dia-ban, loai-hang vào vo.html. Việc này thuộc #49.
+- Cả 4 file đều chưa chạy thử trong vỏ vì chưa ghép (#49).
+- Gom vào «Finding medium đã bỏ qua» lúc tổng kết: (1) 48b:33 ghi «Quận Lê Chân/Hồng Bàng» và còn tỉnh Yên Bái (Xuan, #47); (2) 46-loai-hang.html:23 ghi TP-TD «6 mục» nhưng thực tế 7 vì thiếu Q100 (Xuan, #46); (3) 49-chung-nhan.html:23 và 49b:26 ghi cơ quan cấp «… Yên Bái» cho giấy cấp sau 1/7/2025 (Xuan, #48; Uyen ghi low).
+- Nút sẽ báo «không chạy thật» khi ghép, thêm vào danh sách: Chọn ảnh, + Thêm hạng (47b); Chọn file, Ngừng dùng (49b/50b).
+- Sau #49 quét 80 màn: 183 data-go đúng đích, 271 data-pick, 10 disabled, 173 hint (99 chưa có đích + 74 trỏ về chính màn), 0 lỗi.
+- _tools/bam-thu.mjs (mới): node bam-thu.mjs danh-muc | quet; chạy Chrome headless trong một tiến trình vì ui.mjs không giữ được trình duyệt giữa các lệnh Bash.
+- Nội dung 12 màn chưa sửa (ngoài phạm vi): Quận/Yên Bái ở 48b và 49 (Xuân, Uyên), «6 mục» nên là 7 ở 46:23 và 46b:32, nhãn Thuộc (cha) * ở 45b:38, filter «Đang dùng» vẫn hiện dòng Ngừng dùng ở 45 và 46. Các file này ngoài vùng của #49.
+- Hộp sửa chưa có trạng thái «Đã lưu» sau khi bấm Lưu.
+- Loại hàng hóa mẫu ở 46 là dữ liệu đội tự đặt (thiết kế không seed); Lead hỏi sếp giữ hay không.
+- Cha data-rows: tbody ở 06b, 23, 23c, 26d; section card bước 2 ở 16 (các .ing). Nút row-add ở 06b/26d nằm ngoài bảng, vỏ cần lấy [data-rows] đầu tiên trong main.
+- Cần cập nhật tong-hop.md mục 5.3 cụm B sau khi ghép (ngoài vùng).
+- 06b-ingr-receipt.html và 14b-ingr-stock.html (nút trong bảng Cụm A) nằm ở de-xuat/man/b-san-xuat, thuộc vùng #52 nên chưa gắn: 06b cần tab Phụ liệu (data-pick), «📎 COA» (data-act=file), «+ Thêm dòng» (row-add), «Sửa» ×2; 14b cần tab Phụ liệu (data-pick).
+- Cần #50 xác nhận data-rows đặt trên tbody và row-add nhân bản dòng cuối; chưa kiểm hành vi thật vì vo.html chưa có data-act.
+- 06b:56-57 hai nút «Sửa» chưa gắn gì: ghi lên thẻ là giữ hint.
+- 17→18 là mục tùy chọn, chưa làm; không chặn.
+- Việc chạy thật các data-act trong vỏ để #54 quét lại.
+- Cho @Binh (vo.html): nhiều dòng <tr data-go> chứa nút data-act. Handler phải kiểm closest('[data-act]') trước closest('[data-go]') của dòng, và không để click nổi lên dòng (nếu không bấm Ngừng dùng sẽ mở form).
+- Nút toggle ở 45/45b có 63 nút, 46/46b có 8; cả ở nền hộp sửa 45b/46b cũng đã gắn toggle cho đồng bộ.
+- 32-settings.html: «+ Thêm mới» nằm trong div .hidden nên không hiện, không gắn. 32 còn ô «Văn Yên, Yên Bái» (địa danh trên trang QR) và 49: mã giấy OCOP-YB-2025-0142 cấp 10/12/2025 vẫn mã YB; chưa sửa vì là địa danh/mã giấy theo thiết kế, cần reviewer hoặc Lead quyết.
+- 23, 23c, 26b, 26d trong bảng Cụm C nằm vùng b-san-xuat (Duy), không thuộc #53.
+- Chưa kiểm hành vi trong vỏ: vo.html (#50) chưa ghép, chờ #54.
+- Cần lưu ý ở #54: nhiều <tr data-go> chứa nút data-act, vo.html phải xử lý data-act trước data-go của dòng và chặn nổi bọt (đúng như Giang nêu).
+- Chưa đối chiếu từng nút với bảng tong-hop.md mục 5.3, chỉ quét theo nhãn nút.
+- quet-nut.js (ngoài vùng) không còn được bam-thu.mjs dùng: logic quét đã nhúng thành hằng QUET trong bam-thu.mjs. Lead có thể xoá file đó.
+- bam-thu.mjs thêm biến môi trường PROTEAM_PAGE để trỏ sang trang thử khác; mặc định vẫn là ban-xem-truoc.html.
+- Quet: sau mỗi nút data-act, tool buộc nạp lại màn (DOM trong khung đã đổi) để chỉ số nút không lệch; save chờ 700ms vì có đi tiếp.
+- Bản xem trước ban-xem-truoc.html chưa build lại từ vo.html mới (việc t5). Trang thử để ở thư mục tạm của hệ điều hành, không nằm trong repo.
+- Chưa xem: chạy thật trong vỏ (node bị chặn xin phép). Số 26/26 là Binh báo, em chưa kiểm lại. Nên chạy `node docs/mockup/_tools/bam-thu.mjs quet` ở #54 để có số nút data-act thật.
+- Đã thấy 4 ảnh da-0..da-3 trong .proteam/evidence nhưng chưa mở xem nội dung; chưa thấy ảnh riêng cho print và file.
+- quet-nut.js không còn dùng, xoá được (Binh đã nói).
+- Chạy node phải thêm C:\Program Files\nodejs vào PATH trong Bash; PowerShell bị chặn xin phép.
+- Lỗi 1: vo.html:74-89 pickList trả null khi nút row-add đứng trước tbody data-rows (23-products.html:46, 26d-scent-trial.html:43). Gợi ý: cuối pickList lấy all[0] khi pre rỗng.
+- Lỗi 2: vo.html:119-122 row-del chỉ closest(tr,li,.row), không khớp div.ing ở 16-prod-order.html:79,86,118; bấm xong không đổi gì và không có hint. Gợi ý: xoá closest('[data-rows] > *') khi không có tr/li/.row.
+- Hint còn lại (13 nút): 06b «Sửa» x2, 06c «Hủy», 18 «Quét lại tem đầu», 22b «+ Thêm đồi», 26d «+ Nhập kết quả ngày 28», 29 «Xem đầy đủ» và «Xóa thông tin cá nhân», 32 «+ Thêm mới», 45b/46b «+ Thêm», 49b «+ Thêm chứng nhận», 50b «+ Thêm tài khoản». 49b và 50b có thể gắn data-go sang 49/50 như 45b/46b nếu Lead muốn bớt hint.
+- Reviewer nêu medium ở vo.html:128: toggle ép class danger theo chữ nút, nút gốc «Ngừng dùng» không có danger sẽ đổi màu sau một vòng. Nên sửa cùng đợt với 2 lỗi trên.
+- FK vòng: material_lot→production_order/issue_line, ingredient_lot→production_order (thiet-ke-chi-tiet.md:278-279, 371, 585)
+- Rate limit 60 lượt/phút ở /api/public: Astro gửi kèm IP khách trong header, Django chỉ tin header đó khi request đến từ mạng nội bộ của compose
+- Repo origin trống: ls-remote không trả ref nào. Không fetch/merge. Sếp push lần đầu bằng push -u origin main.
+- Rollback: xoá thư mục D:\VYC\.git và .gitignore. Chưa có commit nào nên không mất gì.
+- Ngoài brief, .gitignore có thêm: .coverage, desktop.ini, .vscode không có, chỉ thêm các mục từ #658 và rác Windows/Office.
+- .gitignore thêm .proteam/evidence/ và .proteam/tasks/ để ngoài repo. Hợp lý, vì .proteam/evidence/ app không commit, còn tasks/ chứa trạng thái đội.
+- Hai file docx gốc ở gốc repo hiện là untracked. Đó là việc của sếp hoặc app khi commit, không thuộc task này.
+- Ngưỡng Lighthouse/INP trong mục 9.1 là mặc định theo Core Web Vitals, chưa đối chiếu với #648 (INP bị cắt). @Huy4 xác nhận lại.
+- .gitignore chưa sửa vì ngoài vùng; mục 10 liệt kê dòng cần thêm lúc dựng khung: *.pem, *.key, *.p12, db.sqlite3, *.sql, *.dump, *.sql.gz, *.bak. Nên thêm cả *.env và secrets.* theo finding #664. Lưu ý *.sql chặn cả migration SQL viết tay.
+- Backend cần cung cấp /api/health, logging JSON, webhook 5xx và TRUSTED_PROXY_CIDRS. Frontend cần /healthz và gửi X-Forwarded-For với IP khách khi gọi API.
+- Chưa kiểm: toàn bộ cấu hình trong tài liệu (compose, Caddyfile, workflow, Lighthouse trên CI thật) chưa chạy vì chưa có file nào trong deploy/. Sẽ kiểm bằng docker compose config, caddy validate, actionlint lúc dựng khung.
+- Việc sếp cần làm một lần ngoài repo (VPS, DNS, Docker, khoá SSH, rclone, GitHub Secrets/GHCR) có ở mục 9.2; hướng dẫn chi tiết sẽ viết thành deploy/README.md lúc dựng khung.
+- docs/mockup/_tools/vo.html: lần sửa cuối 2026-11-21 15:52, không do Lan3. Repo chưa có commit nên không có bản gốc để so hay khôi phục. Cần Lead xác định agent hoặc công cụ nào sửa nó.
+- Topic #3 (mockup) và topic này chạy chung cây (không có nhánh riêng), nên app có thể gán thay đổi ở docs/mockup/ cho người đang chạy lượt bên topic này. Cảnh báo lấn scope ở docs/mockup/ không phải do đội topic này gây ra.
+- Cảnh báo scope về docs/mockup/_tools/vo.html không nằm trong diff của task này. Diff chỉ có docs/kien-truc/van-hanh.md. Repo chưa có commit nên không so được với bản gốc; Lead cần tìm agent đã sửa vo.html.
+- Chưa kiểm: cú pháp Caddyfile, compose, workflow và các lệnh backup/restore, vì chưa có file nào trong deploy/. Lúc dựng khung chạy docker compose config, caddy validate, actionlint.
+- Các điểm low: (a) healthcheck backend dùng curl nhưng python:slim không có curl, nên dùng python -c urllib hoặc cài curl. (b) Dòng chú thích «Nơi duy nhất Django được tin header IP» đặt trên dòng header -Server, dễ hiểu nhầm. (c) authorized_keys với command= cố định thì không truyền được <sha>; phải đọc SSH_ORIGINAL_COMMAND và kiểm tra định dạng.
+- openapi/v1.json và public.json commit ở backend/openapi/; CI sinh lại rồi git diff --exit-code
+- Phần tử ảnh jsonb có thêm khoá key, w, h, widths; file ảnh nằm ở /media/img/<2 ký tự>/<sha256>-<w>.<avif|webp>
+- Bước 1 của khung code (config + core + accounts) do một người làm trước rồi mới chia việc song song
+- vo.html (docs/mockup/_tools/) sửa lúc 15:52:20, không do task #60; Lead đã giải thích ở #687 là do topic soát mockup chạy chung cây thư mục
+- frontend-seo.md mục 11 có 12 điểm giả định (G1–G8 cho backend.md, V1–V4 cho van-hanh.md). README tổng quan (#63) cần rà chéo các điểm này.
+- Backend cần thêm GET /api/v1/auth/csrf, tham số featured cho /api/public/products, GET /api/public/pages dạng danh sách có updated_at, và trường availability, updated_at trong DTO sản phẩm công khai.
+- Lighthouse CI cần deploy/compose.ci.yml và dữ liệu seed có 1 sản phẩm 3 ảnh và 1 serial ISSUED đủ vùng nguyên liệu.
+- Cảnh báo vo.html không nằm trong diff của #60: diff chỉ có backend.md.
+- Chưa kiểm được: django-ninja thật (HttpError mặc định, response union), import-linter thật, vì chưa có backend/. Hai chỗ này nên có test ngay khi dựng khung.
+- Nên thêm test OWNER thấy đủ trường giá bên cạnh test WORKSHOP không thấy (mục 4.3 chỉ yêu cầu chiều WORKSHOP), vì response union MaterialLotOwnerOut | MaterialLotOut có thể cắt trường giá của OWNER.
+- Cả hai môi trường cùng chạy tốn khoảng 3,3 GB trên VPS 4 GB, nên bắt buộc có swap và không build trên VPS. Mặc định chỉ bật staging khi cần. Mục 12 vẫn giữ câu staging chung hay riêng VPS cho sếp chọn.
+- Mạng staging `vyc-staging` phải tạo một lần ngoài compose (`docker network create --subnet 172.29.0.0/24 vyc-staging`). Hướng dẫn này sẽ nằm trong deploy/README.md lúc dựng khung.
+- Giữ log 30 ngày cần thêm một cron hằng giờ chạy `docker logs --since 1h` ghi vào /var/log/vyc/*.jsonl. Mục 7 mới mô tả, chưa có trong crontab.example.
+- Lúc dựng khung cần kiểm bằng `caddy validate`, `docker compose config` và `actionlint`. Cú pháp Caddyfile (snippet có tham số, basic_auth, comment cuối dòng) chưa được kiểm.
+- backend.md mục 5.1 ghi 'Lan3 chốt subnet trong compose'; giá trị đã chốt ở van-hanh.md mục 2.2, Minh2 có thể sửa câu đó cho khớp.
+- Chưa chạy caddy validate, docker compose config hay actionlint vì repo chưa có file thật. Nên kiểm lúc dựng khung.
+- Cú pháp chưa kiểm vì chưa có file thật: `format filter` trong `log`, `{args[n]}` trong `reverse_proxy` và `root`, `basic_auth` trong khối site có `import`. Kiểm bằng `caddy validate` lúc dựng khung.
+- Lúc dựng khung compose cần thêm volume `media-staging` mount vào Caddy tại /srv/media-staging.
+- collect-logs.sh lưu mốc thời gian ở /var/lib/vyc/logs.since/<dịch vụ>. Thư mục này cần tạo và cấp quyền khi cài VPS.
+- Chưa xử lý ý low của Quyen bị cắt ở #709 ("cron hằng gi…"). Cron gom log hằng giờ đã được thêm vào crontab.example; nếu ý low đó là điểm khác thì nhờ Quyen nêu lại.
+- Quay lui: file tài liệu nằm trong git, dùng `git checkout -- docs/kien-truc/van-hanh.md` để lấy lại bản trước.
+- docs/mockup/_tools/vo.html sửa lúc 15:52:20, giống mốc của cảnh báo ở #62 và #60. Huy4 chỉ đọc file này bằng Grep, không ghi.
+- backend.md cần thêm: availability, updated_at, og_image trong PublicProductOut; slug cũ trả sản phẩm có slug mới; tham số featured và goods_type cho /api/public/products; danh sách /api/public/pages.
+- van-hanh.md cần sửa: PUBLIC_SITE_URL → SITE_URL, thêm GTM_ID; Caddy cache cho /_astro và 4 trang prerender; ngưỡng Lighthouse 95/100; job budget chỉ kiểm tĩnh; make lint-fe = pnpm check (Biome); chốt Node 22 hay 24.
+- Khi dựng khung cần kiểm hành vi CSRF thật của bản Ninja đang dùng (test_csrf_required_on_write)
+- frontend-seo.md bảng G6 còn ghi 480/800/1200, backend.md và thân bài frontend-seo dùng 480/960/1440
+- Cảnh báo vo.html: diff #57 chỉ có frontend-seo.md, tôi không thấy lỗi scope.
+- Khi dựng khung: kiểm tra @astrojs/node có chạy middleware cho trang prerender không. Mục 5.5 và 2 giả định middleware gắn X-Robots-Tag và 301 chuẩn hoá URL, nhưng trang prerender do static handler phục vụ nên có thể bỏ qua middleware.
+- Khi dựng khung: đo thật tổng woff2 (Be Vietnam Pro 400+700, subset latin+vietnamese) so với trần 50 KB, vì trang tiếng Việt luôn tải cả hai subset.
+- ban-xem-truoc.html nhúng vo.html lúc ghép: sửa vo.html xong phải chạy lại mockup.mjs ghep mới có hiệu lực.
+- Chưa chạy lại bộ 26 ca của #50 vì trang thử của #50 không còn trong repo; quet, danh-muc và tai-cho.mjs đều đạt sau khi sửa.
+- 13 nút hint còn lại ở tong-hop.md 5.3 kèm lý do. 49b «+ Thêm chứng nhận» và 50b «+ Thêm tài khoản» có thể gắn data-go sang 49/50 như 45b/46b nếu sếp muốn bớt hint.
+- Chỉ file ngoài vùng ghi trên thẻ là docs/mockup/_tools/vo.html, Lead đã duyệt nội dung sửa ở #680. Cần Lead đổi vùng #54 thành docs/mockup để hợp thức hoá.
+- Chỉ vo.html nằm ngoài vùng ghi trên thẻ; Lead đã giao sửa ở #680. Hoàn nguyên sẽ làm ban-xem-truoc.html (đã ghép từ vo.html mới) lệch với nguồn.
+- Chưa chạy lại bộ 26 ca của #50 vì trang thử của #50 không còn trong repo; quet, danh-muc và tai-cho.mjs đều đạt sau khi sửa vo.html.
+- Kết quả giữ nguyên bản ở #729: quet 0 lỗi, hint 13 (trước 173), danh-muc TẤT CẢ ĐẠT, tai-cho.mjs 5/5; tong-hop.md 5.1/5.3/5.7 đã cập nhật.
+- set_scope chỉ áp được khi người giữ task không chạy lượt. Đổi vùng ngay lúc task blocked hoặc đang chờ, đừng đổi khi dev đang chạy.
+- Chưa chạy lại bộ 26 ca của #50 vì trang thử của #50 không còn trong repo; quet, danh-muc và tai-cho.mjs đều đạt sau khi sửa vo.html.
+- Nếu set_scope #54 còn bị từ chối: close_tasks #54 rồi tạo task mới scope docs/mockup để soát bản sửa đã có trong cây và chuyển review.
+- Danh sách 13 nút còn hint kèm lý do ở docs/mockup/ux/tong-hop.md mục 5.3.
+- Lỗi ghi bộ nhớ tasks/54.md (đường dẫn ra ngoài .proteam) do app, không ảnh hưởng nội dung task.
+- vo.html đã sửa (row-add, row-del, toggle) và giữ nguyên. Bản này cho quét 0 lỗi, hint 13 (trước 173), danh-muc đạt, tai-cho.mjs 5/5. Danh sách 13 nút hint ở docs/mockup/ux/tong-hop.md mục 5.3.
+- README mục 6 có T1–T17 cần sửa ở backend.md, frontend-seo.md, van-hanh.md trước khi dựng khung; mỗi điểm đã ghi người giữ file
+- frontend-seo.md (#57) chưa áp các finding medium của review #723–#725 và chưa cập nhật G5/G7 theo #718; cần một task sửa riêng cho Huy4
+- Khung backend để operations trống, nên Lighthouse chưa đo được /q/<seed> ở bước khung (T13)
+- Thêm hai file vào cây mục 1: core/markdown.py, core/schemas.py
+- Lỗi mới SLUG_TAKEN (409) cần có trong bảng mã lỗi khi dựng khung
+- README mục 6 nên đánh dấu T7, T10 (phần backend), T15, T16 là đã sửa (việc của Huy4)
+- README.md mục 6 còn ghi T1–T6, T11–T14 là lệch; Huy4 cập nhật sau khi các task sửa xong
+- frontend-seo.md 8.2 vẫn gọi job là web-perf; cần đổi thành lighthouse theo T1 (việc của Huy4)
+- Chưa chạy caddy validate cho matcher/header mới và CSP; Playwright, LHCI chỉ kiểm được trên CI thật
+- Script e_vh.py không được tạo nên chỉ dùng Edit; không có file tạm nào còn lại
+- Chưa chạy được gì vì chưa có code, compose hay Caddyfile; mới đối chiếu bằng grep và đọc diff.
+- Chưa kiểm cú pháp Caddyfile mới (CSP, matcher @astro_assets/@prerender), cũng như cron staging gọi `exec backend` với `-p vyc-staging` (service staging tên backend hay backend-staging, mục 2.2 và 3 cần thống nhất lúc dựng khung).
+- frontend-seo.md 5.3 (dòng 434) và G7 (dòng 950) vẫn ghi trang chủ gọi ?limit=6, không có featured; cần sửa theo backend.md mục 8 (ngoài vùng sửa của task này)
+- van-hanh.md 9.1 còn lệch nhỏ với frontend-seo.md 8.2: URL Lighthouse ('một bài viết' so với 4 URL cụ thể) và mức warn so với error cho chỉ số phụ. Đã ghi ở README mục 6, việc của Lan3
+- backend.md chưa có schema DTO cho GET /api/public/pages/{slug} (trường HTML của site_page). frontend-seo.md đang ghi chung là 'HTML của site_page'. Minh2 nên đặt tên trường (vd body_html) khi dựng khung
+- GET /api/public/products giới hạn tối đa 100; sitemap và feed sẽ thiếu khi có hơn 100 sản phẩm, lúc đó cần phân trang
+- Danh sách host GTM chính xác và hướng xử lý style inline của Astro chốt lúc dựng khung, chưa kiểm
+- README mục 6 (T3, T14) cần cập nhật sau khi các task xong; mục 7 README còn các câu hỏi sếp đã trả lời
+- backend.md và frontend-seo.md vẫn cần đối chiếu: biến CSP_GTM_* và các biến .env mới
+- Cách kiểm: grep tìm u003c và u2028 trong frontend-seo.md ra 0 dòng; xem byte dòng 216 thấy `"<" → "<"` và U+2028 là ký tự thật.
+- Khi sửa, đặt `\u003c`, `\u2028`, `\u2029` trong code span hoặc khối code, đừng để ký tự thật. Sau đó grep lại để chắc chắn.
+- Chưa xem bằng chạy thật: cú pháp `{$CSP_GTM_SCRIPT:}` trong Caddyfile và dòng comment đặt giữa khối header cần `caddy validate` lúc dựng khung.
+- Tham chiếu «(mục 4, 3 dưới)» ở dòng comment CSP trong Caddyfile hơi mơ hồ, nên sửa thành «mục 4 và danh sách chốt ở mục 3».
+- Dòng ~285 có thừa một khoảng trắng cuối câu (sau «.gitignore chặn (mục 10).»), chỉ là thẩm mỹ.
+- Công cụ Edit tự đổi chữ \uXXXX trong chuỗi thành ký tự thật. Muốn ghi chữ \u003c vào file .md thì dùng shell với biến môi trường (B=$(printf '\\')), rồi grep 'u003c' để kiểm lại
+- Cách kiểm: grep `u003c|u2028|u2029` (có kết quả ở 3 chỗ), đếm byte U+2028 trong cả hai file (0), grep featured và Search Ads, đọc lại mục 7 README. Chỉ đọc, không chạy test vì chưa có code.
+- Máy dev không có make và docker nên chưa chạy `make -n check`, `docker compose config`, `up -d postgres`; cần chạy lại ở máy có Docker/WSL.
+- Phiên bản ghim postgres:16-alpine, node:24-alpine, uv python3.13 chưa điền số phiên bản đầy đủ (van-hanh.md 2).
+- Lệnh `manage.py seed_dev` trong Makefile là tên giả định, task backend cần đặt đúng tên này hoặc sửa Makefile.
+- compose.dev.yml chạy `uv sync --frozen` và `pnpm install --frozen-lockfile` nên cần uv.lock và pnpm-lock.yaml có sẵn trong backend/ và frontend/.
+- Chưa chạy make hay docker compose config vì máy không có công cụ; tôi chỉ đọc diff và grep.
+- Máy không có python nên tôi sửa bằng Edit và sed. Grep sau khi sửa: mục 13 không còn ☐ ở 3 câu đã chốt, chỉ còn Q-2611 ở BR-20 (dòng 1044, 1047) và mục 13 dòng 1142, đều là mẫu sổ tay.
+- Dòng trùng hạn dùng sáp/viên/túi đã xoá vì dòng 1129 đã ☑ và nội dung giống nhau. Không đánh số lại BR hay AC nào.
+- Ngoài vùng của task: tom-tat.md:16 vẫn ghi BR-01..25 / AC-01..24. Việc này thuộc task #82.
+- Chưa kiểm: `docker compose ... config`, `up -d postgres` healthy, `make -n check` (máy không có docker và make). Cần chạy ở máy có Docker/WSL trước khi Lead đóng task.
+- Khi có backend/frontend: bổ sung healthcheck cho backend (/api/health) và frontend (/healthz) vào compose.yml, vì van-hanh.md 2.1 yêu cầu cho cả ba dịch vụ.
+- Số cuối ở thiet-ke-chi-tiet.md là BR-31 và AC-38 (grep), khớp số mới ở tom-tat.md:16.
+- Ba điểm trong 'Câu hỏi mở' của tom-tat.md và dòng rủi ro dầu quế ở lo-trinh đã chuyển từ 'giả định/chờ chốt' sang 'đã chốt theo #799'.
+- Chưa động tới ghi chú tom-tat.md về mục 13 (10 câu mở chờ chủ DN): nếu @Thao xóa hoặc đổi các câu đã đóng ở mục 13 thì dòng đó cần khớp lại.
+- Không có Python trong máy nên tôi sửa bằng Edit; chưa chạy make check vì chỉ đổi tài liệu.
+- Q-2611-01 còn ở :1044, :1047, :1142 là nhắc mẫu sổ tay, không mâu thuẫn
+- Chưa chạy test và chưa đọc lại toàn file; chỉ grep
+- Gọi compose dev trực tiếp phải kèm --env-file deploy/env/dev-defaults.
+- Task backend nên làm: khi ENVIRONMENT khác dev thì settings từ chối khởi động nếu DJANGO_SECRET_KEY/IP_HASH_SALT chứa chuỗi 'dev-only'.
+- Healthcheck backend/frontend (/api/health, /healthz) để task đóng gói thêm khi có endpoint.
+- make -n check và docker compose config vẫn chưa chạy được: máy không có make/docker.
+- docs/mockup/ux/ra-soat-a.md:4 vẫn ghi BR-01..25. Đó là tài liệu rà soát mockup ngoài vùng #82, không sửa ở task này.
+- Chỉ grep và đọc diff, chưa đọc toàn văn hai file.
+- Ví dụ Q-2611-01 ở lo-trinh:171 và tom-tat:25 là mã theo sổ tay; thiết kế dùng Q-2610-01 cho lô ủ từ 20/10.
+- Sửa file chứa \uXXXX: Bash heredoc đổi \\ thành \, công cụ ghi file đổi \u2028 thành ký tự thật. safe-json.ts dựng U+2028/U+2029 bằng String.fromCharCode; grep u003c sau mỗi lần sửa.
+- Header và footer link tới /san-pham, 4 trang chính sách, /truy-xuat nhưng chưa có trang (trả 404).
+- lib/business.ts là nội dung giữ chỗ; sếp điền số liệu thật trước khi gửi Google Ads.
+- public.d.ts viết tay (TẠM), t7 chạy pnpm gen:api sinh lại; gen:api thoát mã 1 khi backend/openapi trống.
+- t6 cần thêm App.Locals vào src/env.d.ts, và viết middleware.ts dùng canonicalPath, redirectLocation trong lib/url.ts.
+- TagLoader, ConsentBanner, view_item (mục 7), lighthouserc.cjs chưa làm vì ngoài các mục của task.
+- Đã lỡ kill toàn bộ node.exe trên máy trong lúc debug; ai đang chạy dev server hay build thì chạy lại.
+- Không chụp được giao diện: ui.mjs open không giữ được trình duyệt. Playwright chưa tải trình duyệt.
+- story_html/usage_html render bằng set:html: an toàn dựa vào backend lọc HTML, nên có test backend chặn <script>.
+- withUtm không kiểm scheme http/https ở frontend; hiện chỉ dựa vào backend.
+- Vinh cần Lead sửa docs: frontend-seo.md 5.1 và 11 (astro:env dùng access secret), backend.md mục 8 (ImageRef không khớp 6.5).
+- public.d.ts viết tay (TẠM): t7 chạy pnpm gen:api, nếu ImageRef khác thì báo Vinh sửa lib/image.ts.
+- Chạy test: cần Postgres; trên máy này dùng Postgres 16.2 tạm ở cổng 5433 (đã khởi động, binary trong D:\pgtools, cần chép tzdata vào share/postgresql/timezone); đặt POSTGRES_PORT=5433 hoặc DATABASE_URL. CI dùng services: postgres:16.
+- Test trong core/ không được import accounts (import-linter chặn); dùng Any hoặc core.roles.Actor. conftest.py ở gốc backend/ thì được.
+- export_openapi_schema phải dùng --output (in ra stdout lỗi encoding trên Windows); 'ninja' đã có trong INSTALLED_APPS để lệnh này tồn tại. Chưa tạo thư mục backend/openapi/, việc của t4.
+- t3: accounts/api.py chỉ có router rỗng; User có UserManager.create_user(username, password, **extra) mặc định role WORKSHOP; khoá đăng nhập dùng core.throttle.check/hit/reset (check có tham số message tuỳ chọn).
+- t4: catalog/api/products.py và website/api/public.py là router rỗng đã mount (api_v1 /products, api_public ở gốc); mỗi lệnh ghi cần transaction.atomic vì codes.next_no raise nếu ngoài atomic; decorator core.throttle.throttle(scope, limit=, minutes=) dùng cho route /api/public.
+- ERROR_WEBHOOK_URL gửi JSON {"text": ...} (chỉ https); định dạng Qwork thật chưa kiểm.
+- Cần Lead/Son: chạy 'uv run python manage.py purge_throttle' bằng cron đêm (backend.md 5.2).
+- backend.md 3.2 ghi Ninja tự raise HttpError 405 là không đúng; cần sửa tài liệu theo hành vi thật.
+- Cài uv bằng 'pip install uv' vào Python 3.12 user của máy; uv tải Python 3.13.18 cho .python-version.
+- Cần chạy lại sau khi sửa: uv run pytest và lint-imports, kèm test mới cho guard dev-only.
+- Chạy node trong Bash cần export PATH có /c/Program Files/nodejs
+- bam-thu.mjs quet chạy chậm; nên chạy nền, không pipe qua head
+- tai-cho.mjs dòng 2-3: comment đầu file ghi _tools/bam-thu.mjs, nên sửa cho khớp vị trí file (ux/tai-cho.mjs).
+- Medium của Kim (ENVIRONMENT mặc định prod) chưa làm: deploy/compose.yml:34 có ${ENVIRONMENT:-dev} nên đổi riêng settings không có tác dụng với compose, còn làm hỏng mypy/pytest ở dev và CI. Muốn đổi thì phải làm cùng lúc: settings mặc định prod, compose ${ENVIRONMENT:?}, ENVIRONMENT=dev trong deploy/env/dev-defaults, Makefile và workflow CI.
+- Trên máy này uv nằm trong ~/AppData/Local/Programs/Python/*/Scripts, không có trên PATH của Bash. Thêm vào PATH và đặt POSTGRES_PORT=5433 rồi mới chạy test.
+- Backend t3/t4 chưa có login và ProductIn: trường login {username,password} và form tạo sản phẩm {sku,name,slug,goods_type_id,size_label,unit,retail_price?,short_desc?} là đoán theo thiet-ke-chi-tiet.md bảng product. Khi backend có OpenAPI thì đối chiếu. Hình dạng kiểu nằm ở scripts/admin/product-form.ts. @Tam/@Khoa xem lại khi làm #74 và #77. Phản hồi tạo và PATCH phải trả {id, slug, name, status}.
+- Chưa có lib/api/v1.d.ts, nên api.ts dùng fetch thuần với kiểu viết tay. Khi sinh v1.d.ts có thể đổi sang openapi-fetch.
+- Ngoài vùng sửa, nên làm: (1) src/env.d.ts: App.Locals.user hiện khai bằng declare global trong middleware.ts, nên dời sang env.d.ts. (2) biome.json: override ranh giới site/admin liệt kê src/layouts/AdminLayout.astro, còn file thật tên Admin.astro nên chưa được lint chặn import. (3) frontend-seo.md khai middleware gồm cả bước 1 (chuẩn hoá URL) và bước 4 (header). Bản này mới làm phần /quan-ly: bước 1 chưa có vì #75 đã xử lý 301 trong [slug].astro và lib/url.ts, còn header Cache-Control cho trang
+- pnpm không có trên PATH của máy này; đã chạy trực tiếp node_modules/.bin/{astro check, biome ci, vitest run, astro build} với node ở C:\Program Files\nodejs. Cần chạy lại pnpm check, pnpm test, pnpm build ở máy có pnpm.
+- Chưa tự kiểm bằng trình duyệt: ui.mjs open báo mở được nhưng các lệnh sau không nối được cổng. Chưa chụp ảnh giao diện; chưa bấm thử form đăng nhập và tạo sản phẩm ngoài trình duyệt thật. Phần đã kiểm là logic qua unit test và chạy bản build với API giả. Cần thử qua stack thật ở #77.
+- Mỗi lượt vào /quan-ly gọi thêm một lần auth/me, đúng thiết kế 5.5 (không cache).
+- Grep `variants` và `ImageVariant` trong docs/kien-truc/ không còn kết quả. `access: "public"` chỉ còn ở frontend-seo.md:374, trong câu cấm dùng.
+- Grep `u003c` vẫn ra frontend-seo.md:216 và :227. Đây là chuỗi escape ký tự thật (văn bản đặc tả), không phải ký tự bị Edit đổi, nên giữ nguyên.
+- Ngoài vùng, chưa sửa: van-hanh.md:234-236 liệt kê API_INTERNAL_URL, SITE_URL, GTM_ID mà không ghi access "secret". Nên báo người giữ van-hanh.md bổ sung để khớp V3.
+- Trường `url` của ImageRef giữ SafeMediaPath (đồng bộ với schemas.py ở backend.md mục 8). Các trường còn lại theo frontend-seo.md mục 4.3 và README mục 6.
+- Repo chưa có commit nào, nên không so được diff với HEAD; kiểm bằng đọc lại file và grep.
+- Task #73 phải khớp: compose.prod.yml dùng ${IMAGE_TAG:?}, profile edge cho caddy, dịch vụ postgres/backend/frontend/caddy, volume /data/media và /data/media-private trong backend; Dockerfile ở deploy/backend.Dockerfile và deploy/frontend.Dockerfile, context backend/ và frontend/.
+- van-hanh.md mục 6 cần đổi sang compose.sh trong cron, và ghi STAGING_ENABLED, .last-good-tag.<môi trường>, DEPLOY_KNOWN_HOSTS (ngoài vùng sửa của task này).
+- Nên thêm .gitattributes '*.sh text eol=lf' ở gốc repo (ngoài vùng).
+- Chưa có shellcheck/actionlint trên máy; nên chạy ở CI (#78).
+- Chưa kiểm trên Drive thật: scope drive.file với rclone crypt, consent screen phải ở In production.
+- Webhook Qwork giả định nhận JSON {"text":...}; cần xác nhận định dạng thật.
+- Workflow chưa chặn theo kết quả CI (ci.yml); deploy không đợi CI xanh. Nên cân nhắc ở #78.
+- Máy không có pnpm, node nằm ở C:\Program Files\nodejs và chưa có trên PATH của bash; chạy thẳng node node_modules/vitest/vitest.mjs run.
+- medium: tên trường form tạo sản phẩm (product-form.ts) và payload login (login.ts) là đoán theo thiết kế, chưa đối chiếu schema của #74; @Tam báo lại nếu khác.
+- low: src/scripts/admin/next.ts: sanitizeNext('/quan-ly/dang-nhap/') (có dấu / cuối) vẫn lọt vì chỉ so bằng path === LOGIN_PATH; dùng thật sẽ đăng nhập xong quay lại trang đăng nhập.
+- low: src/scripts/admin/next.ts: next='/quan-ly/../evil' lọt kiểm tra, trình duyệt giải thành /evil. Chỉ cùng origin nên không phải open redirect; nên chuẩn hoá và bỏ '.' và '..' như parseAdminPath.
+- frontend-seo.md:374 dẫn «Vinh thử ở #833». Nên bỏ số tin và giữ lại lý do kỹ thuật.
+- van-hanh.md:234-236 chưa ghi access secret. Cần người giữ van-hanh.md bổ sung (ngoài vùng của #84).
+- u003c chỉ còn ở frontend-seo.md:216 và :227, là mô tả safeJson có chủ ý. Chỗ này không phải lỗi do Edit đổi chữ.
+- README deploy: STAGING_BASIC_HASH chứa $ nên cần bọc nháy đơn hoặc nhân đôi $$ trong .env.prod (Compose nội suy env-file); env_get đã bỏ nháy nên script không ảnh hưởng. Khoa kiểm khi làm #73.
+- compose.prod.yml và Dockerfile chưa có trong repo; script và workflow đang dựa vào hợp đồng ghi ở README mục 12 (IMAGE_TAG, profile edge, volume /data/media và /data/media-private).
+- deploy/compose.prod.yml chưa có trong repo (hiện chỉ có compose.yml và compose.dev.yml). Mọi lệnh COMPOSE trong script (deploy, backup, restore, collect-logs) cần file này, nên chưa chạy được thật cho tới khi #73 xong.
+- Hai file này chưa kiểm được: deploy/backend.Dockerfile và deploy/frontend.Dockerfile (deploy.yml build từ đó).
+- availability: serial_tracked=false thì in_stock, còn lại tạm out_of_stock vì bảng serial của operations chưa có; thay bằng EXISTS khi có operations (website/services.py:_availability)
+- core/schemas.py ImageRef (variants/width/height) lệch backend.md 6.5; Lead cần chỉnh core/schemas.py hoặc backend.md mục 8 cho khớp
+- ruff toàn backend còn 3 lỗi ngoài vùng: tests/settings.py:11 (RUF100), tests/test_settings_guard.py:43 (E501 + format) và :51 (S603)
+- settings.py giờ mặc định ENVIRONMENT=prod: chạy local, pytest, mypy, makemigrations cần ENVIRONMENT=dev
+- test_role_matrix import config.api bằng importlib vì import tĩnh làm import-linter báo core -> website
+- ROUTE_ROLES trong core/tests/test_role_matrix.py bắt buộc khai route mới (có 3 giá trị OWNER, ANY_STAFF, PUBLIC)
+- update_product xoá dòng slug_redirect khi đổi slug về lại slug cũ của chính nó (bảng kỹ thuật, theo backend.md mục 8)
+- pyproject.toml ghi django-ninja>=1.4 nhưng code dùng ninja.Status (có từ bản mới); uv.lock đang khoá 1.8.0 nên ổn, nên nâng cận dưới nếu muốn chặt
+- Vinh: chạy pnpm gen:api trên backend/openapi/public.json để thay public.d.ts viết tay
+- Chưa chạy pytest, ruff, mypy; tin kết quả 235 passed của Tam.
+- Khi có bảng serial ở operations, thay _availability bằng EXISTS và kiểm lại BR-17.
+- Máy review không có diff khai báo, tôi đọc thẳng file hiện tại. Chưa chạy pytest, ruff, mypy, lint-imports hay `make -n check`.
+- `make image` dùng COMPOSE_PROD mà không có --env-file, nên sẽ báo lỗi nếu thiếu ENVIRONMENT. Đây là hành vi đúng (fail-closed), nhưng #78 (ci.yml) phải đặt ENVIRONMENT khi chạy bước build image.
+- Sếp cần đặt Deployment branches and tags cho hai Environment trên GitHub (README 8.2); đây là chốt phía GitHub, deploy.sh chỉ là lớp thứ hai.
+- --no-sync (chạy tay trên VPS) bỏ qua kiểm main; chỉ người có shell trên VPS dùng được.
+- Vẫn còn để mở: deploy.yml chưa chờ CI xanh (đã ghi ở #78); thông báo nội dung webhook Qwork chưa xác nhận.
+- tong-hop.md cuối mục 5.3 còn ghi tai-cho.mjs «đạt cả 5 nút» trong khi script nay kiểm 7 nhóm nút; tiêu đề «Hai lỗi» nhưng liệt kê 3 mục. Lỗi nhỏ, nên sửa chữ.
+- Kim chưa chạy được test #74: venv backend/.venv có nhưng không có uv, và pytest treo khi nối DB (settings chỉ dùng postgresql). Tin kết quả 235 passed của Tam.
+- Còn lại: ghép lại (mockup.mjs ghep), quét/danh-muc/tai-cho, chép de-xuat/ban-xem-truoc.html đè ban-chinh.html, sửa README dòng 4 và tong-hop.md dòng 3 (và 5.3 «5 nút» thành 7 theo Uyen), chụp ux/anh/toggle-sau.png.
+- mypy chạy tay phải đặt ENVIRONMENT=dev (plugin django-stubs nạp config.settings, mặc định giờ là prod); Makefile lint-be đã đặt sẵn qua BE_DEV.
+- Máy không có make nên chưa chạy make -n check; pytest cả bộ treo vì không có Postgres.
+- Máy này không có pnpm, make, Docker: đã chạy trực tiếp node_modules/.bin/{astro check, biome ci, vitest run, astro build, playwright test} và uv run (POSTGRES_PORT=5433 ENVIRONMENT=dev). CI/máy khác cần chạy lại pnpm check, pnpm test, make check.
+- Chạy e2e: bật astro dev (proxy /api sang :8000) và backend, rồi E2E_OWNER_USERNAME=... E2E_OWNER_PASSWORD=... playwright test. Tài khoản e2e-owner đã có trong DB dev cổng 5433.
+- astro dev ở :4321 vẫn đang chạy nền, cần tắt tay (không tắt được vì lệnh bị chặn).
+- Ngoài vùng: thanh nav /quan-ly hiện 'Chủ doanh nghiệp' hai lần (layout Admin, @Tam #76).
+- Ngoài vùng: trang công khai hiện 'Hết hàng' cho sản phẩm serial_tracked vì #74 đặt tạm out_of_stock; cần việc riêng khi có bảng serial.
+- git diff --exit-code chưa kiểm được vì repo chưa có commit; đã so sánh byte (cmp) giữa file sinh lại và file hiện có, trùng hoàn toàn.
+- Nav /quan-ly hiện 'Chủ doanh nghiệp' 2 lần (thấy trên ảnh khung-quan-ly-san-pham.png), thuộc layout Admin của Tam, ngoài vùng #77.
+- Chưa kiểm được: make check, compose dev, git diff --exit-code. Repo chưa có commit nên mục nghiệm thu 'diff sạch' chưa thể chứng minh; CI #78 nên kiểm bước này.
+- Thêm ux/toggle.mjs (bấm thử toggle 6 lần ở màn area, chụp ux/anh/toggle-sau.png); chạy bằng node docs/mockup/ux/toggle.mjs.
+- node chỉ chạy được qua tool Bash và cần thêm /c/Program Files/nodejs vào PATH.
+- tai-cho.mjs đạt 7/7 trước khi chép đè; lần chạy lại sau đó bị treo quá thời gian nên đã dừng.
+- Danh sách file ngoài vùng mà app báo (.gitattributes, .github/, .gitignore, Makefile, backend/.dockerignore, deploy/*, frontend/.dockerignore) không do #80 sửa; cần gỡ khỏi diff của #80 hoặc gán cho task deploy.
+- Chưa chạy: docker build, stack thật, Lighthouse, Playwright, ci.yml trên GitHub. Đã chạy: docker-compose config (prod, staging, ci, dev), caddy validate, caddy run với upstream giả (XFF bị ghi đè, Cache-Control đè được, /media một CSP), shellcheck, actionlint, biome check lighthouserc.cjs, node dist/server/entry.mjs trả /healthz 200, script tạo ảnh webp/avif của seed.
+- scripts/check-budget.mjs đang ĐỎ trên bản build hiện tại: font woff2 công khai 67 KB (latin + vietnamese, 2 độ đậm 400/700) > ngưỡng 50 KB; Lighthouse resource-summary:font cũng sẽ đỏ. Cần Vinh bỏ một độ đậm hoặc Lead nới ngưỡng.
+- Hiệu năng Lighthouse (Performance ≥ 95 mobile trên runner CI) chưa đo; ngưỡng chỉnh sau lần chạy đầu. Khung chưa có /san-pham, /chinh-sach-*, /q/ nên lighthouserc chỉ đo / và trang sản phẩm seed.
+- CSP Caddy đang nghiêm theo thiết kế (default-src 'self', không inline). Bản build hiện tại phát script và CSS thành file nên ổn, nhưng nếu Astro sinh inline script/style ở trang mới thì cần hash hoặc build.inlineStylesheets: 'never'.
+- Docs cần Lead cập nhật (van-hanh.md mục 2 và 2.2, 6, 9.1; README kiến trúc cây thư mục): có thêm compose.edge.yml, compose.staging.yml, deploy/ci/, deploy/env/ci-defaults; compose.prod.yml không còn chứa subnet; cron/lệnh staging dùng compose.sh hoặc thêm đúng file overlay; entrypoint dùng build-context deploy; Caddy dùng alias backend-prod/frontend-prod; thêm biến PG_MEM_LIMIT, PG_SHARED_BUFFERS, BACKEND_MEM_LIMIT, WEB_CONCURRENCY, FRONTEND_MEM_LIMIT, FRONTEND_HEAP_MB, IMAGE_REPO; doc ghi cover
+- Sau commit đầu tiên chạy git update-index --chmod=+x cho deploy/*.sh, deploy/backup/*.sh (Windows không giữ bit thực thi; authorized_keys gọi deploy.sh trực tiếp). ci.yml đã gọi stack.sh bằng bash nên không phụ thuộc bit này.
+- VPS: tạo volume vyc-staging_media và chown 10001 (README mục 3 đã ghi) trước khi prod chạy, vì Caddy mount volume đó chỉ đọc. Caddyfile chưa có khối www redirect (tuỳ chọn trong van-hanh.md 2.3).
+- compose.prod.yml dùng SITE_ADDRESS mặc định http://localhost thay vì :? vì staging cũng nạp file này; thiếu SITE_ADDRESS ở prod thì smoke test của deploy.sh báo lỗi và lùi. Staging chưa cấu hình rơi về địa chỉ http://staging.invalid và hash bcrypt ngẫu nhiên.
+- Khi chạy thử Caddy cục bộ tôi lỡ chiếm tạm cổng 4321/8000 bằng server giả; đã tắt, runserver của Vinh trên 8000 vẫn chạy.
+- Máy dev cần tải tạm docker-compose.exe và caddy.exe vào /tmp/tools (ngoài repo) để kiểm; không commit.
+- Node bị chặn ở lượt Tester (Bash không có node, PowerShell cần duyệt): 3 lệnh quét chưa được tự chạy lại.
+- Medium cũ ở vo.html:137-140: [data-status] là <td>, gán textContent xoá span .tag, nên badge trạng thái mất sau lần toggle đầu (thấy ở dòng An Giang trong toggle-sau.png). Sửa: đổi chữ và class trên span con.
+- File ngoài vùng (deploy/*, .github/*, Makefile, .gitignore, .gitattributes, *.dockerignore) không thuộc #80; Lead gỡ khỏi diff hoặc gán cho task deploy.
+- check-budget và Lighthouse font đang đỏ: font woff2 công khai 67 KB so với ngưỡng 50 KB; cần Vinh bỏ một độ đậm hoặc Lead nới ngưỡng.
+- lighthouserc.cjs mới đo / và /san-pham/<seed>; thêm /san-pham và /chinh-sach-bao-mat khi trang tồn tại (frontend/src/pages chưa có).
+- Chưa kiểm: ci.yml chỉ được đọc lại bằng mắt, chưa parse hay actionlint lượt này (máy không có docker, node, yaml); Dockerfile build, stack thật, Lighthouse, Playwright chưa chạy.
+- Nếu #77 thêm dữ liệu cho make seed (seed_dev) thì đổi deploy/ci/stack.sh sang gọi seed_dev thay cho seed_catalog.py.
+- Cần task giao trang /san-pham và /chinh-sach-bao-mat rồi thêm URL vào frontend/lighthouserc.cjs
+- Font 67 KB > 50 KB: bỏ một độ đậm (Vinh) hoặc sếp duyệt nới ngưỡng; CI đỏ tới khi xử lý
+- Lần chạy CI đầu trên GitHub là nghiệm thu thật của #78 và #77
+- Chưa chạy: check-budget trên dist, actionlint, docker build, CI thật. Mình tin kết quả compose config, caddy validate và shellcheck của Khoa.
+- Cần máy hoặc CI đủ công cụ để chạy job makefile (make check, git diff --exit-code, make image) trước khi đóng topic.

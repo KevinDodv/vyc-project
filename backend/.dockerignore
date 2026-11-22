@@ -1,0 +1,16 @@
+# Context của deploy/backend.Dockerfile là backend/. Chỉ đưa vào image thứ cần để chạy.
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.import_linter_cache/
+.coverage
+var/
+.env
+.env.*
+# Test không chạy trong image
+tests/
+**/tests/
+conftest.py

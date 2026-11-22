@@ -1,0 +1,211 @@
+# Deploy lên VPS (docs/kien-truc/van-hanh.md mục 9.2).
+#   push main  -> staging (chỉ khi biến repo STAGING_ENABLED = 'true'; mặc định staging tắt)
+#   tag v*     -> prod, dừng chờ duyệt tay ở Environment `production`
+#   chạy tay   -> triển khai lại một sha/tag đã có image (quay lui), không build
+# Build image trên CI, đẩy GHCR, VPS pull qua SSH. Khoá SSH có `command=` nên mỗi khoá chỉ
+# chạy được deploy.sh của đúng một môi trường (deploy/README.md bước 8).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Môi trường cần triển khai"
+        type: choice
+        options: [staging, production]
+        required: true
+      tag:
+        description: "sha commit (7-40 hex) hoặc tag vX.Y.Z đã có image trên GHCR (dùng để quay lui)"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Chọn môi trường và tag
+    runs-on: ubuntu-24.04
+    outputs:
+      run: ${{ steps.pick.outputs.run }}
+      environment: ${{ steps.pick.outputs.environment }}
+      build: ${{ steps.pick.outputs.build }}
+      deploy_tag: ${{ steps.pick.outputs.deploy_tag }}
+      release_tag: ${{ steps.pick.outputs.release_tag }}
+    steps:
+      - name: Checkout (đủ lịch sử để kiểm tag nằm trên main)
+        if: github.ref_type == 'tag'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Quyết định
+        id: pick
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          STAGING_ENABLED: ${{ vars.STAGING_ENABLED }}
+          INPUT_ENV: ${{ inputs.environment }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          sha_re='^[0-9a-f]{7,40}$'
+          rel_re='^v[0-9]+\.[0-9]+\.[0-9]+$'
+          out() { echo "$1=$2" >> "$GITHUB_OUTPUT"; }
+
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            if ! [[ "$INPUT_TAG" =~ $sha_re ]] && ! [[ "$INPUT_TAG" =~ $rel_re ]]; then
+              echo "::error::tag phải là sha hex 7-40 ký tự hoặc vX.Y.Z"; exit 1
+            fi
+            # Chỉ chạy tay từ main (phòng thủ thêm; chốt chính là giới hạn nhánh của Environment).
+            if [ "$REF_NAME" != "main" ] || [ "$REF_TYPE" != "branch" ]; then
+              echo "::error::chạy tay chỉ được từ nhánh main (đang ở $REF_NAME)"; exit 1
+            fi
+            out run true
+            out build false
+            out environment "$INPUT_ENV"
+            out deploy_tag "$INPUT_TAG"
+            out release_tag ""
+          elif [ "$REF_TYPE" = "tag" ]; then
+            if ! [[ "$REF_NAME" =~ $rel_re ]]; then
+              echo "::error::tag phát hành phải có dạng vX.Y.Z (nhận: $REF_NAME)"; exit 1
+            fi
+            # Chỉ phát hành commit đã nằm trên main.
+            git fetch --no-tags origin main
+            if ! git merge-base --is-ancestor "$SHA" origin/main; then
+              echo "::error::commit của tag $REF_NAME không nằm trên main"; exit 1
+            fi
+            out run true
+            out build true
+            out environment production
+            out deploy_tag "$SHA"
+            out release_tag "$REF_NAME"
+          else
+            # push main -> staging, chỉ khi sếp đã bật staging (biến repo STAGING_ENABLED=true)
+            if [ "$STAGING_ENABLED" = "true" ]; then out run true; else out run false; fi
+            out build true
+            out environment staging
+            out deploy_tag "$SHA"
+            out release_tag ""
+          fi
+
+  build-push:
+    name: Build và đẩy image lên GHCR
+    needs: prepare
+    if: needs.prepare.outputs.run == 'true' && needs.prepare.outputs.build == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    env:
+      SHA: ${{ github.sha }}
+      RELEASE_TAG: ${{ needs.prepare.outputs.release_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Tên image (GHCR bắt buộc chữ thường) và danh sách tag
+        id: names
+        run: |
+          set -euo pipefail
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          for svc in backend frontend; do
+            tags="ghcr.io/${owner}/vyc-${svc}:${SHA}"
+            if [ -n "$RELEASE_TAG" ]; then tags="${tags}"$'\n'"ghcr.io/${owner}/vyc-${svc}:${RELEASE_TAG}"; fi
+            {
+              echo "${svc}_tags<<VYC_TAGS_END"
+              echo "$tags"
+              echo "VYC_TAGS_END"
+            } >> "$GITHUB_OUTPUT"
+          done
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build và đẩy backend
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: backend
+          file: deploy/backend.Dockerfile
+          build-contexts: |
+            deploy=deploy
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.names.outputs.backend_tags }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build và đẩy frontend
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: frontend
+          file: deploy/frontend.Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.names.outputs.frontend_tags }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+  deploy:
+    name: Deploy ${{ needs.prepare.outputs.environment }}
+    needs: [prepare, build-push]
+    # build-push bị bỏ qua khi chạy tay (quay lui): vẫn deploy, miễn không lỗi/huỷ.
+    if: ${{ !cancelled() && !failure() && needs.prepare.outputs.run == 'true' }}
+    runs-on: ubuntu-24.04
+    # Environment `production` bật "Required reviewers" (duyệt tay) trong Settings; secret
+    # DEPLOY_* khai riêng cho từng Environment nên khoá staging không dùng được cho prod.
+    environment: ${{ needs.prepare.outputs.environment }}
+    concurrency:
+      group: deploy-${{ needs.prepare.outputs.environment }}
+      cancel-in-progress: false
+    env:
+      DEPLOY_TAG: ${{ needs.prepare.outputs.deploy_tag }}
+    steps:
+      - name: Kiểm lại tag trước khi gửi lên VPS
+        run: |
+          set -euo pipefail
+          if ! [[ "$DEPLOY_TAG" =~ ^[0-9a-f]{7,40}$ ]] && ! [[ "$DEPLOY_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::tag không hợp lệ"; exit 1
+          fi
+
+      - name: Chuẩn bị SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          for v in DEPLOY_SSH_KEY DEPLOY_HOST DEPLOY_KNOWN_HOSTS; do
+            if [ -z "${!v}" ]; then echo "::error::thiếu secret $v ở Environment này"; exit 1; fi
+          done
+          umask 077
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          # known_hosts ghim sẵn (dòng khoá host của VPS), không dùng ssh-keyscan lúc chạy.
+          printf '%s %s\n' "$DEPLOY_HOST" "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+
+      - name: Deploy qua SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          # Môi trường do khoá SSH quyết định (command= trong authorized_keys), không phải client.
+          # Đối số duy nhất là tag đã kiểm; deploy.sh kiểm lại lần nữa phía VPS.
+          ssh -i "$HOME/.ssh/deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$HOME/.ssh/known_hosts" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" "$DEPLOY_TAG"
+
+      - name: Xoá khoá SSH
+        if: always()
+        run: rm -f "$HOME/.ssh/deploy_key" "$HOME/.ssh/known_hosts"

@@ -1,0 +1,99 @@
+[project]
+name = "vyc-backend"
+version = "0.1.0"
+description = "Backend Django + Django Ninja của hệ thống Quế Văn Yên"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    # CheckConstraint(condition=...) cần Django 5.1 trở lên; chọn dòng 5.2 LTS (backend.md 0).
+    "django>=5.1,<6.0",
+    "django-ninja>=1.4,<2.0",
+    "psycopg[binary]>=3.2",
+    "argon2-cffi>=23.1",
+    "pillow>=11.3",
+    "gunicorn>=23.0",
+    "markdown>=3.7",
+    "nh3>=0.2.20",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "django-stubs[compatible-mypy]>=5.1",
+    "import-linter>=2.1",
+]
+
+[tool.uv]
+package = false
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"  # đặt ENVIRONMENT=dev, xem tests/settings.py
+python_files = ["test_*.py"]
+testpaths = ["core", "accounts", "catalog", "operations", "website", "tests"]
+addopts = "-ra"
+
+# ------------------------------------------------------------------ ruff
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "DJ", "SIM", "RUF", "S"]
+# Meta.constraints và USERNAME_FIELD kiểu Django là list thường, không phải lỗi.
+ignore = ["RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "S105", "S106"]
+"**/tests/*.py" = ["S101", "S105", "S106"]
+"conftest.py" = ["S101", "S105", "S106"]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "core", "accounts", "catalog", "operations", "website"]
+
+# ------------------------------------------------------------------ mypy
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+exclude = ["/migrations/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[[tool.mypy.overrides]]
+module = ["*.services.*", "*.api.*", "core.*", "accounts.services", "accounts.api", "website.services", "website.api.*"]
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["*.tests.*", "conftest"]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["nh3", "markdown"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["*.migrations.*"]
+ignore_errors = true
+
+# --------------------------------------------------------- import-linter
+[tool.importlinter]
+root_packages = ["config", "core", "accounts", "catalog", "operations", "website"]
+
+[[tool.importlinter.contracts]]
+name = "Apps depend one way: core <- accounts <- catalog <- operations <- website"
+type = "layers"
+layers = ["website", "operations", "catalog", "accounts", "core"]
+
+[[tool.importlinter.contracts]]
+name = "Inside an app: api -> services -> models"
+type = "layers"
+containers = ["core", "accounts", "catalog", "operations", "website"]
+layers = ["(api)", "(services)", "(models)"]

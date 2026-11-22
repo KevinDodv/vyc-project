@@ -1,0 +1,19 @@
+---
+import { BUSINESS, POLICY_LINKS } from "../../lib/business";
+---
+<footer class="footer footer-vertical bg-neutral text-neutral-content p-8 sm:footer-horizontal">
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:flex-row sm:justify-between">
+    <address class="not-italic">
+      <p class="font-bold">{BUSINESS.name}</p>
+      <p>{BUSINESS.address}</p>
+      <p>SĐT: {BUSINESS.phone}</p>
+      <p>Email: {BUSINESS.email}</p>
+      <p>MST: {BUSINESS.taxId}</p>
+    </address>
+    <nav aria-label="Chính sách">
+      <ul class="flex flex-col gap-1">
+        {POLICY_LINKS.map((l) => <li><a href={l.href} class="link link-hover">{l.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</footer>

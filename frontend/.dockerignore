@@ -1,0 +1,9 @@
+# Context của deploy/frontend.Dockerfile là frontend/.
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+.lighthouseci/
+.env
+.env.*

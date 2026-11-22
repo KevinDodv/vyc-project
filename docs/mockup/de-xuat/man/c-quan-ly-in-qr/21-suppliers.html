@@ -1,0 +1,32 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Người bán (nhà cung cấp) · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Người bán (nhà cung cấp)</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Gõ tên hoặc số điện thoại để tìm" value=""></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="ACTIVE" selected="">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto"><a class="btn primary" id="add" href="/quan-ly/danh-muc/nguoi-ban?moi=1">+ Thêm người bán</a></div>
+</div>
+<div id="note"><p class="muted">Thương lái luôn là hàng chung. Loại «Vùng kiểm soát» chỉ chọn được khi người bán có ít nhất 1 đồi. Người bán do xưởng thêm nhanh cần chủ duyệt.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table><thead id="thead"><tr><th>Mã</th><th>Tên</th><th>Kiểu</th><th>Địa bàn</th><th>Loại hàng thu mua</th><th>Đồi</th><th>Cho khách thấy tên</th><th></th></tr></thead><tbody id="rows"><tr data-go="#supplier-edit" class="clickable"><td>NCC-CQ-001</td><td>Gia đình (đồi nhà)</td><td>Gia đình</td><td>Châu Quế › Thôn 3</td><td><span class="tag CONTROLLED">Vùng kiểm soát</span></td><td>2</td><td>✔ Có</td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr data-go="#supplier-edit" class="clickable"><td>NCC-DC-001</td><td>Hoàng Thị Mai</td><td>Hộ dân</td><td>Đông Cuông › Đồng Vối</td><td><span class="tag CONTROLLED">Vùng kiểm soát</span></td><td>1</td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr data-go="#supplier-edit" class="clickable"><td>NCC-CQ-002</td><td>Nguyễn Văn Hùng</td><td>Hộ dân</td><td>Châu Quế › Khe Hùm</td><td><span class="tag CONTROLLED">Vùng kiểm soát</span></td><td>1</td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr data-go="#supplier-edit" class="clickable"><td>NCC-DC-002</td><td>Thương lái Bình</td><td>Thương lái</td><td>Đông Cuông</td><td><span class="tag GENERAL">Hàng chung</span></td><td>0</td><td></td><td><span class="tag ACTIVE">Đang dùng</span></td></tr><tr data-go="#supplier-edit" class="clickable"><td>NCC-CQ-003</td><td>Đặng Văn Long</td><td>Hộ dân</td><td>Châu Quế › Thôn 3</td><td><span class="tag GENERAL">Hàng chung</span></td><td>0</td><td></td><td><span class="tag warn">Chờ duyệt </span><span class="tag ACTIVE">Đang dùng</span> <button data-go="#supplier-approve" class="small primary" type="button">✔ Duyệt</button></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

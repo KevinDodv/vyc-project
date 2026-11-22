@@ -1,0 +1,14 @@
+---
+import ErrorState from "../components/site/ErrorState.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { CACHE_PRIVATE } from "../lib/cache";
+
+export const prerender = false;
+
+Astro.response.status = 503;
+Astro.response.headers.set("Cache-Control", CACHE_PRIVATE);
+Astro.response.headers.set("Retry-After", "30");
+---
+<SiteLayout title="Tạm thời chưa xem được trang" description="Hệ thống đang bận, vui lòng thử lại sau ít phút." path="/" noindex>
+  <ErrorState heading="Tạm thời chưa xem được trang này" message="Hệ thống đang bận. Bạn vui lòng thử lại sau ít phút." />
+</SiteLayout>

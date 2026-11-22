@@ -1,0 +1,83 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Nhập hàng · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Nhập hàng</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div style="text-align:right"><a href="/phieu-nhap" style="display:inline-flex;align-items:center;min-height:48px;padding:0 .4rem;font-weight:700">Xem phiếu nhập hôm nay ›</a></div>
+<div class="tabs"><button type="button" class="active" data-pick>Quế</button><a class="btn" href="/nhap-hang/phu-lieu" style="border:0;border-radius:10px 10px 0 0;min-height:56px;background:transparent;color:var(--muted)">Phụ liệu</a></div>
+<div id="price-banner" class="hidden"></div>
+
+<section class="card hidden" id="step-supplier">
+  <div class="step-title"><span class="n">1</span>Chọn người bán</div>
+  <div id="sup-selected" class=""><div class="row" style="align-items: center;"><div style="flex: 1 1 auto;"><div style="font-size: 1.4rem; font-weight: 800;">Gia đình (đồi nhà)</div><div class="muted">Châu Quế › Thôn 3</div><span class="tag CONTROLLED">Vùng kiểm soát (làm được tinh dầu có QR)</span></div><button type="button" style="flex: 0 0 auto;" data-go="/nhap-hang">Đổi người bán</button></div></div>
+  <div id="sup-picker" class="hidden">
+    <input id="sup-q" placeholder="Gõ vài chữ đầu tên người bán (không cần dấu)…" autocomplete="off" data-scan-focus-ok="1" value="gia dinh">
+    <div id="sup-results" class="choice-grid" style="margin-top:.8rem"><button type="button" class="choice" data-pick>Gia đình (đồi nhà)<span class="sub">Thôn 3</span></button></div>
+    <p style="margin-top:.8rem"><a class="btn" id="sup-new" href="/nhap-hang/nguoi-ban-moi">+ Người bán mới</a></p>
+  </div>
+</section>
+
+<section class="card hidden" id="step-plot">
+  <div class="step-title"><span class="n">2</span>Chọn đồi quế</div>
+  <div id="plots" class="choice-grid"><button type="button" class="choice selected" data-pick>D-CQ-001-01<span class="sub">Thôn 3 · trồng 2012 · lần trước</span></button><button type="button" class="choice" data-pick>D-CQ-001-02<span class="sub">Khe Hùm · trồng 2016</span></button></div>
+</section>
+
+<section class="card hidden" id="step-lines">
+  <div class="step-title"><span class="n">3</span>Thêm dòng hàng</div>
+  <div><label>Hàng nhập (bấm một nút)</label><div id="materials" class="choice-grid"><button type="button" class="choice" data-id="1-1" data-pick>Vỏ quế loại 1<span class="sub">45.000 đ/kg</span></button><button type="button" class="choice" data-id="1-2" data-pick>Vỏ quế loại 2<span class="sub">38.000 đ/kg</span></button><button type="button" class="choice" data-id="1-3" data-pick>Vỏ quế loại 3<span class="sub">30.000 đ/kg</span></button><button type="button" class="choice selected" data-id="2-1" data-pick>Quế vụn loại 1<span class="sub">18.000 đ/kg</span></button><button type="button" class="choice" data-id="2-2" data-pick>Quế vụn loại 2<span class="sub">14.000 đ/kg</span></button><button type="button" class="choice" data-id="2-3" data-pick>Quế vụn loại 3<span class="sub">10.000 đ/kg</span></button></div></div>
+  <div class="row">
+    <div><label for="kg">Số cân (kg)</label><input id="kg" class="big-number" inputmode="decimal" placeholder="0" data-scan-focus-ok="1" value=""></div>
+    <div id="manual-price-box" class="hidden"><label for="manual-price">Đơn giá (đ/kg) — chưa có bảng giá</label><input id="manual-price" class="big-number" inputmode="numeric" value=""></div>
+    <div style="flex:0 0 auto"><button type="button" id="add-line" data-act="row-add">+ Thêm dòng</button></div>
+  </div>
+  <p class="muted">Gõ xong số cân thì bấm thẳng «Lưu và in» cũng được: dòng đang gõ tự được thêm vào phiếu.</p>
+  <div id="line-warn"></div>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table>
+      <thead><tr><th>#</th><th>Nguyên liệu</th><th>Loại</th><th class="num">Số cân (kg)</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th><th></th></tr></thead>
+      <tbody id="lines" data-rows><tr><td colspan="7" class="muted">Chưa có dòng nào</td></tr></tbody>
+    </table>
+  </div>
+  <details style="margin-top:.8rem"><summary>Thêm ghi chú</summary><textarea id="note" rows="2"></textarea></details>
+</section>
+
+<section class="card" id="saved"><div class="banner ok">✔ Đã lưu phiếu PN-261120-005 — 3 lô: NL-2611-0007, NL-2611-0008, NL-2611-0009</div><div class="row"><a class="btn" href="/nhap-hang/in-phieu">🖨 In lại phiếu và tem lô</a></div></section>
+
+<div class="totalbar">
+  <div class="figure"><span class="lbl">Tổng số cân</span><span class="val" id="t-kg">183,7 kg</span></div>
+  <div class="figure"><span class="lbl">Tổng tiền</span><span class="val money" id="t-money">7.460.100 đ</span></div>
+  <div class="spacer"></div>
+  <a class="btn primary" href="/nhap-hang" style="min-width:240px;min-height:72px;font-size:1.3rem">+ Phiếu mới</a>
+</div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+<dialog open=""><div class="dlg-head">In phiếu nhập và tem lô — PN-261120-005<button class="small" type="button" data-go="#receipt-3">✕</button></div><div class="dlg-body">
+<div class="banner ok">✔ Đã lưu phiếu PN-261120-005 — 3 lô. Máy in sẽ in 1 phiếu nhập và 3 tem lô (mỗi dòng hàng một tem).</div>
+<h3 style="margin:.8rem 0 .4rem">Phiếu nhập (A5) <span class="muted" style="font-weight:500;font-size:.85rem">— có tiền, vì là phiếu đang lập</span></h3>
+<div style="border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;background:#fff">
+<div style="display:flex;justify-content:space-between"><b>PHIẾU NHẬP QUẾ</b><span class="mono">PN-261120-005</span></div>
+<div class="muted">20/11/2026 · Người bán: Gia đình (đồi nhà) · Người lập: Thủ kho (mẫu)</div>
+<table style="margin-top:.5rem;font-size:.85rem"><thead><tr><th>#</th><th>Nguyên liệu</th><th>Loại</th><th class="num">Số cân (kg)</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th><th>Mã lô</th></tr></thead><tbody><tr><td>1</td><td>Vỏ quế</td><td>Loại 1</td><td class="num">120,5</td><td class="num">45.000 đ</td><td class="num">5.422.500 đ</td><td class="mono">NL-2611-0007</td></tr><tr><td>2</td><td>Vỏ quế</td><td>Loại 2</td><td class="num">45</td><td class="num">38.000 đ</td><td class="num">1.710.000 đ</td><td class="mono">NL-2611-0008</td></tr><tr><td>3</td><td>Quế vụn</td><td>Loại 1</td><td class="num">18,2</td><td class="num">18.000 đ</td><td class="num">327.600 đ</td><td class="mono">NL-2611-0009</td></tr><tr><td colspan="3"><b>Tổng</b></td><td class="num"><b>183,7</b></td><td></td><td class="num"><b>7.460.100 đ</b></td><td></td></tr></tbody></table></div>
+<h3 style="margin:1rem 0 .4rem">Tem lô 50 × 30 mm <span class="muted" style="font-weight:500;font-size:.85rem">— QR ≥ 18 mm, không có giá</span></h3>
+<div style="display:flex;gap:1rem;flex-wrap:wrap">
+<div><div style="width:250px;height:150px;border:2px solid #222;border-radius:4px;background:#fff;padding:6px;display:flex;flex-direction:column;gap:4px;font-size:11px;line-height:1.3;color:#000;flex:0 0 auto"><div style="display:flex;gap:8px;flex:1;min-height:0"><div style="flex:0 0 100px;height:100px;background:repeating-conic-gradient(#000 0 25%,#fff 0 50%) 0 0/10px 10px;border:3px solid #000"></div><div style="flex:1;min-width:0"><b class="mono" style="font-size:12px">NL-2611-0007</b><br>Vỏ quế · Loại 1<br>120,5 kg<br>20/11/2026<br>Gia đình (đồi nhà)</div></div></div><div class="muted" style="font-size:.8rem;margin-top:.3rem">Tem lô 1/3 (vùng kiểm soát)</div></div>
+<div><div style="width:250px;height:150px;border:2px solid #222;border-radius:4px;background:#fff;padding:6px;display:flex;flex-direction:column;gap:4px;font-size:11px;line-height:1.3;color:#000;flex:0 0 auto"><div style="background:#000;color:#fff;text-align:center;font-weight:900;font-size:14px;letter-spacing:.25em;padding:1px 0">CHUNG</div><div style="display:flex;gap:8px;flex:1;min-height:0"><div style="flex:0 0 100px;height:100px;background:repeating-conic-gradient(#000 0 25%,#fff 0 50%) 0 0/10px 10px;border:3px solid #000"></div><div style="flex:1;min-width:0"><b class="mono" style="font-size:12px">NL-2611-0003</b><br>Vỏ quế · Loại 2<br>500 kg<br>20/11/2026<br>Thương lái Bình</div></div></div><div class="muted" style="font-size:.8rem;margin-top:.3rem">Ví dụ tem lô hàng chung (phiếu PN-261120-002): có dải «CHUNG»</div></div>
+</div></div>
+<div class="dlg-foot"><button type="button" data-act="print">🖨 In phiếu</button><button type="button" data-act="print">🏷 In 3 tem lô</button><button class="primary" type="button" data-go="#receipt-list">Xong</button></div></dialog></body></html>

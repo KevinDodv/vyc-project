@@ -1,0 +1,78 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Sản phẩm · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+.annot{border:2px dashed var(--line);border-radius:var(--radius);padding:.6rem .9rem;color:var(--muted);font-size:.9rem;margin:.6rem 0}
+.rowerr td{background:var(--err-soft)}
+.rowwarn td{background:#fff8e6}
+.dim{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{min-height:48px;border:2px solid var(--line);border-radius:10px;padding:.3rem .7rem;background:#fff;display:flex;gap:.4rem;align-items:center;font-variant-numeric:tabular-nums}
+.chip.due{border-color:#f0d58a;background:var(--warn-soft)}
+td input,td select{min-height:48px;padding:.3rem .5rem}
+td input.g{text-align:right;font-variant-numeric:tabular-nums;width:130px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-left:.3rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+button.small,.btn.small{min-height:48px}
+.annot b{color:var(--ink)}
+summary.btnlike{list-style:none;min-height:64px;border:2px solid var(--que);border-radius:10px;padding:.6rem .9rem;font-weight:600;color:var(--que);background:#fff;justify-content:center;gap:.4rem}
+summary.btnlike::-webkit-details-marker{display:none}
+summary.btnlike.primary{background:var(--cta);border-color:var(--cta);color:#fff;font-size:1.15rem}
+summary.btnlike.danger{border-color:var(--err);color:var(--err)}
+details[open]>summary.btnlike:not(.primary){background:var(--que-soft)}
+details.dt>div.in{padding:.6rem 0 0}
+details.dt>summary:not(.btnlike){color:var(--que);text-decoration:underline;font-weight:600}
+details.dt>summary:not(.btnlike)::before{content:"▸ ";white-space:pre}
+details.dt[open]>summary:not(.btnlike)::before{content:"▾ "}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về trang chủ</a>
+  <div class="title">Sản phẩm</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Tìm kiếm…" value=""></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="" selected="">Tất cả</option><option value="DRAFT">Nháp</option><option value="PUBLISHED">Đang bán</option><option value="HIDDEN">Ẩn</option></select></div>
+  <div style="flex:0 0 auto"><button class="primary" id="add" data-act="row-add">+ Thêm mới</button> <button data-go="#recipe-list">Công thức</button></div>
+</div>
+<div id="note"><p class="muted">Sản phẩm thực phẩm (trà, bột) chỉ chuyển “Đang bán” khi có hồ sơ công bố và giấy ATTP còn hiệu lực. Trà, bột thuộc giai đoạn 4.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table>
+<thead id="thead"><tr><th>SKU</th><th>Tên</th><th>Loại</th><th>Công thức</th><th>Quy cách</th><th>Giá bán lẻ</th><th>Hạn dùng</th><th>Lưu mẫu</th><th>Dán tem</th><th></th></tr></thead>
+<tbody id="rows" data-rows>
+<tr class="clickable"><td>Q100-10</td><td>Tinh dầu Quế Văn Yên 100% 10 ml</td><td>Tinh dầu</td><td class="mono">Q100</td><td>10 ml</td><td>150.000 đ</td><td>24 tháng</td><td>Không</td><td>Có</td><td><span class="tag PUBLISHED">Đang bán</span></td></tr>
+<tr class="clickable"><td>TD-QC1-10</td><td>Tinh dầu Quế Cam dịu nhẹ 10 ml</td><td>Tinh dầu</td><td class="mono">QC1</td><td>10 ml</td><td class="muted">chưa đặt</td><td>18 tháng</td><td>Có</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+<tr class="clickable"><td>TD-QC2-10</td><td>Tinh dầu Quế Cam đậm đà 10 ml</td><td>Tinh dầu</td><td class="mono">QC2</td><td>10 ml</td><td class="muted">chưa đặt</td><td>18 tháng</td><td>Có</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+<tr class="clickable"><td>TT25</td><td>Túi thơm vỏ quế Văn Yên 25 g</td><td>Túi thơm</td><td class="mono">TUI</td><td>25 g</td><td class="muted">chưa đặt</td><td class="muted">chưa có</td><td>Không</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+<tr class="clickable"><td>SAP-55</td><td>Sáp thơm quế 55 g</td><td>Sáp thơm</td><td class="mono">SAP</td><td>55 g</td><td class="muted">chưa đặt</td><td class="muted">chưa có</td><td>Không</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+<tr class="clickable"><td>VTC-20</td><td>Viên thơm thạch cao 20 g</td><td>Viên thơm</td><td class="mono">VTC</td><td>20 g</td><td class="muted">chưa đặt</td><td class="muted">chưa có</td><td>Không</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+<tr class="clickable"><td>THIEP</td><td>Thiệp cảm ơn</td><td>Quà tặng kèm (không dán tem)</td><td>—</td><td>1 tấm</td><td>0 đ</td><td>120 tháng</td><td>Không</td><td>Không</td><td><span class="tag HIDDEN">Ẩn</span></td></tr>
+<tr class="clickable dim"><td>TRA100</td><td>Trà quế Văn Yên 100 g<div class="muted">Giai đoạn 4, chờ giấy tờ ATTP</div></td><td>Trà</td><td>—</td><td>100 g</td><td>90.000 đ</td><td>18 tháng</td><td>Không</td><td>Có</td><td><span class="tag DRAFT">Nháp</span></td></tr>
+</tbody></table></div>
+<p class="muted">Hạn dùng «chưa có»: sổ tay chưa ghi cho sáp, viên, túi; xưởng nhập tay khi hoàn thành lệnh.</p>
+
+<section class="card" style="margin-top:1rem">
+  <div class="step-title">Sửa sản phẩm: Tinh dầu Quế Cam dịu nhẹ 10 ml (TD-QC1-10)</div>
+  <div class="form-grid">
+    <div><label>Công thức mặc định</label><select><option selected>QC1 v1 · Quế Cam, dầu nhẹ</option><option>QC2 v1 · Quế Cam, đậm đà</option><option>Q100 v1 · Quế Văn Yên 100%</option><option>— Không có công thức —</option></select></div>
+    <div><label>Hạn dùng (tháng)</label><input inputmode="numeric" value="18"></div>
+    <div><label>Đơn vị đếm</label><select><option selected>chai</option><option>túi</option><option>viên</option><option>tấm</option></select></div>
+    <div><label>Lưu mẫu mỗi lô</label><label style="font-weight:500"><input type="checkbox" checked> Có, giữ 1 chai 12 tháng</label></div>
+  </div>
+  <label>Cách dùng và cảnh báo (in lên nhãn)</label>
+  <textarea rows="3">Nhỏ 4–5 giọt vào máy khuếch tán có 100 ml nước. Không bôi lên da, không uống. Để xa tầm tay trẻ em và thú cưng.</textarea>
+  <p style="margin-bottom:0"><button class="primary" data-act="save">Lưu</button> <button data-go="#admin">Hủy</button></p>
+</section>
+
+</main>
+<div id="toast"></div>
+</body></html>

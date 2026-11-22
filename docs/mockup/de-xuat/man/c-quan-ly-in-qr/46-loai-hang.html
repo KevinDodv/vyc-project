@@ -1,0 +1,31 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Loại hàng hóa · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/quan-ly">← Về Quản lý</a>
+  <div class="title">Loại hàng hóa</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row" style="align-items:center">
+  <div><input id="q" placeholder="Gõ mã hoặc tên loại hàng để tìm" value=""></div>
+  <div style="flex:0 0 220px"><select id="status"><option value="ACTIVE">Đang dùng</option><option value="INACTIVE">Ngừng dùng</option><option value="" selected="">Tất cả</option></select></div>
+  <div style="flex:0 0 auto"><button class="primary" id="add" data-go="#goods-type-edit" type="button">+ Thêm</button></div>
+</div>
+<div id="note"><p class="muted">Loại hàng chia mọi thứ trong kho thành hai nhóm: «Nguyên liệu» cho nguyên vật liệu và phụ liệu, «Thành phẩm» cho sản phẩm bán ra. Loại đã có sản phẩm dùng thì không đổi nhóm được. Loại «Là thực phẩm» là loại hàng ăn, uống được.</p></div>
+<div class="table-wrap" style="margin-top:1rem"><table><thead id="thead"><tr><th>Mã</th><th>Tên</th><th>Nhóm</th><th>Là thực phẩm</th><th class="num">Số mục đang dùng</th><th>Tình trạng</th><th></th></tr></thead><tbody id="rows"><tr data-go="#goods-type-edit" class="clickable"><td class="mono">NL-QUE</td><td>Quế (vỏ quế, quế vụn)</td><td><span class="tag GENERAL">Nguyên liệu</span></td><td></td><td class="num">2</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">NL-PL</td><td>Phụ liệu (tinh dầu, sáp, thạch cao...)</td><td><span class="tag GENERAL">Nguyên liệu</span></td><td></td><td class="num">19</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-TD</td><td>Tinh dầu</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td></td><td class="num">7</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-SAP</td><td>Sáp thơm</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td></td><td class="num">1</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-TUI</td><td>Túi thơm</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td></td><td class="num">1</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-VTC</td><td>Viên thạch cao thơm</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td></td><td class="num">1</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-TRA</td><td>Trà quế</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td>✔ Có</td><td class="num">0</td><td data-status><span class="tag ACTIVE">Đang dùng</span></td><td><button data-act="toggle" class="small danger" type="button">Ngừng dùng</button></td></tr><tr data-go="#goods-type-edit" class="clickable"><td class="mono">TP-ONG</td><td>Ống quế</td><td><span class="tag CONTROLLED">Thành phẩm</span></td><td>✔ Có</td><td class="num">0</td><td data-status><span class="tag">Ngừng dùng</span></td><td><button data-act="toggle" class="small" type="button">Dùng lại</button></td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+</body></html>

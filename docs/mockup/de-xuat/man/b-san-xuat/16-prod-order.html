@@ -1,0 +1,140 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Lệnh sản xuất · Quế Văn Yên</title>
+<!--APPCSS-->
+<style>
+.annot{border:2px dashed var(--line);border-radius:var(--radius);padding:.6rem .9rem;color:var(--muted);font-size:.9rem;margin:.6rem 0}
+.rowerr td{background:var(--err-soft)}
+.rowwarn td{background:#fff8e6}
+.dim{opacity:.55}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{min-height:48px;border:2px solid var(--line);border-radius:10px;padding:.3rem .7rem;background:#fff;display:flex;gap:.4rem;align-items:center;font-variant-numeric:tabular-nums}
+.chip.due{border-color:#f0d58a;background:var(--warn-soft)}
+td input,td select{min-height:48px;padding:.3rem .5rem}
+td input.g{text-align:right;font-variant-numeric:tabular-nums;width:130px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-left:.3rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+/* cụm B, #36: thành phần dùng chung */
+button.small,.btn.small{min-height:48px}
+.bigbtn{min-height:72px;font-size:1.25rem;width:100%}
+.job{background:#fff;border:2px solid var(--line);border-radius:16px;padding:1rem 1.2rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.35rem}
+.job .jt{font-size:1.3rem;font-weight:800}
+.job .js{color:var(--muted);font-size:1rem}
+.job .jx{font-size:1.15rem;font-weight:700}
+.job .btn,.job button{min-height:64px;font-size:1.15rem;margin-top:.4rem;width:100%}
+.job.due{border-color:#f0d58a;background:var(--warn-soft)}
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin:.6rem 0 1.2rem}
+.pick{display:flex;gap:.7rem;flex-wrap:wrap}
+.pick .choice{min-height:64px}
+summary.btnlike{list-style:none;min-height:64px;border:2px solid var(--que);border-radius:10px;padding:.6rem 1.1rem;font-weight:600;color:var(--que);background:#fff;justify-content:center;gap:.4rem}
+summary.btnlike::-webkit-details-marker{display:none}
+summary.btnlike.primary{background:var(--cta);border-color:var(--cta);color:#fff;font-size:1.25rem;min-height:72px}
+summary.btnlike.danger{border-color:var(--err);color:var(--err)}
+details[open]>summary.btnlike:not(.primary){background:var(--que-soft)}
+details.dt>div.in{padding:.8rem 0 0}
+.annot b{color:var(--ink)}
+.ing{background:#fff;border:2px solid var(--line);border-radius:16px;padding:1rem 1.2rem;margin-bottom:.9rem;box-shadow:var(--shadow)}
+.ing.done{border-color:#a8dcb7;background:#f6fcf8}
+.ing.off{border-color:#f0d58a;background:var(--warn-soft)}
+.ing.now{border-color:var(--que);border-width:3px}
+.ing-h{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap}
+.ing-name{font-size:1.3rem;font-weight:800}
+.ing-need{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums}
+.ing-meta{color:var(--muted);font-size:1rem}
+.ing label{font-size:1.05rem}
+.need-line{font-size:1.15rem;font-weight:700;margin:.2rem 0 .6rem}
+details.dt>summary:not(.btnlike){color:var(--que);text-decoration:underline;font-weight:600}
+details.dt>summary:not(.btnlike)::before{content:"▸ ";white-space:pre}
+details.dt[open]>summary:not(.btnlike)::before{content:"▾ "}
+</style>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/san-xuat">← Về trang chủ</a>
+  <div class="title">Lệnh sản xuất</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+
+<div id="head" class="card"><div><div style="font-size: 1.4rem; font-weight: 800;">Túi thơm vỏ quế Văn Yên 25 g</div><div class="muted">LSX-2611-003 · ngày 20/11/2026 · <span class="tag DRAFT">Nháp</span></div><div>Túi thơm đợt quà Tết</div></div></div>
+
+<section class="card">
+  <div class="step-title"><span class="n">1</span>Mẻ này làm gì</div>
+  <div style="font-size:1.15rem">Làm <b>40 túi</b> (1.100 g) theo công thức <b>Túi vỏ quế 25 g (TUI v1)</b>. Ủ 5–7 ngày sau khi pha. <span class="muted">Chủ doanh nghiệp đã chọn lúc tạo lệnh.</span></div>
+</section>
+
+<section class="card" data-rows>
+  <div class="step-title"><span class="n">2</span>Cân và ghi từng thứ <small class="muted" style="font-weight:500">(xong 3/4 thứ)</small></div>
+  <p class="muted" style="margin-top:0">Quét tem lô, rồi gõ số cân. Cân sai thì ghi số thật, không múc bớt ra. Nhớ bấm TARE (trừ bì) trước mỗi thứ; cân chính xác 0,01 g.</p>
+
+  <div class="ing done">
+    <div class="ing-h"><span class="ing-name">Vỏ quế cắt hạt</span><span class="tag ok">Đủ ✔</span></div>
+    <div class="ing-need">Cân 480,00 g</div>
+    <div class="ing-meta">Lô VQH-2611-01 · đã cân 480,02 g</div>
+    <button data-act="row-del" class="small" style="margin-top:.5rem">Bỏ dòng này</button>
+  </div>
+
+  <div class="ing done">
+    <div class="ing-h"><span class="ing-name">Dăm gỗ</span><span class="tag ok">Đủ ✔</span></div>
+    <div class="ing-need">Cân 320,00 g</div>
+    <div class="ing-meta">Lô DG-2611-01 · đã cân 320,00 g</div>
+    <button data-act="row-del" class="small" style="margin-top:.5rem">Bỏ dòng này</button>
+  </div>
+
+  <div class="ing now" id="ing-ht">
+    <div class="ing-h"><span class="ing-name">Hạt thạch cao</span><span class="tag warn">Chưa cân</span></div>
+    <div class="ing-need">Cân 200,00 g</div>
+    <div class="ing-meta">Lấy lô HT-2611-01 (hạn gần nhất, còn đủ tồn)</div>
+    <label>Quét tem lô</label>
+    <input class="scan-input" placeholder="Quét tem lô HT-…" value="" autocomplete="off">
+    <details class="dt">
+      <summary>Tem không quét được? Chọn lô</summary>
+      <div class="in pick"><button type="button" data-pick class="choice">HT-2611-01<span class="sub">hạn gần nhất</span></button><button type="button" data-pick class="choice">HT-2610-02<span class="sub">còn ít</span></button></div>
+    </details>
+    <label>Số cân thực tế (g)</label>
+    <button type="button" data-pick class="small" style="margin-bottom:.5rem">Điền sẵn số cân theo gợi ý (200,00 g)</button>
+    <input class="big-number" inputmode="decimal" placeholder="0,00" value="">
+    <div class="ing-meta" style="margin-top:.3rem">Quét xong, con trỏ tự nhảy xuống ô số cân. Gõ số thật rồi Enter để sang thứ kế tiếp, hoặc bấm nút trên để điền sẵn số gợi ý.</div>
+    <details class="dt" style="margin-top:.6rem">
+      <summary>Xem ô sau khi bấm «Điền sẵn»</summary>
+      <div class="in">
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap"><input class="big-number" style="opacity:.55;font-style:italic;max-width:220px" value="200,00" readonly><span class="tag warn">gợi ý</span></div>
+        <div class="need-line" style="margin-top:.4rem">Số này chỉ là gợi ý, chưa lưu. Cân thật rồi gõ số thật nếu khác. Bấm «Xác nhận số cân» mới ghi.</div>
+        <button type="button" data-go="#cure-list" style="margin-top:.5rem;min-height:64px">Xác nhận số cân</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="ing off">
+    <div class="ing-h"><span class="ing-name">Dung dịch tẩm</span><span class="tag warn">Hơi lệch</span></div>
+    <div class="ing-need">Cân 100,00 g</div>
+    <div class="ing-meta">Lô DDT-2611-01 · đã cân 100,09 g</div>
+    <div class="need-line" style="margin-top:.4rem">Nhiều hơn 0,09 g so với cần cân (cho phép 0,05 g). Vẫn lưu được.</div>
+    <button data-act="row-del" class="small">Bỏ dòng này</button>
+  </div>
+
+  <div class="kpis" style="margin:.4rem 0 .8rem">
+    <div class="kpi"><div class="v">900,11 g</div><div class="l">đã cân, cần 1.100,00 g</div></div>
+    <div class="kpi"><div class="v">3/4</div><div class="l">thứ đã xong</div></div>
+  </div>
+  <button data-act="row-add">+ Thêm phụ liệu ngoài công thức</button>
+  <p class="muted" style="margin-bottom:0">Túi thơm lấy vỏ quế từ lô bán thành phẩm VQH nên không có bước «chọn loại sau sàng».</p>
+  <div class="annot"><b>Sếp chốt (B2-17):</b> vẫn quét tem lô cho mọi thứ (truy xuất lô phụ liệu, BR-01/BR-27); chỉ có nút «Tem không quét được? Chọn lô» khi tem hỏng. <b>Sếp chốt LÀM (B2-18):</b> nút «Điền sẵn số cân theo gợi ý» ở mỗi thẻ thành phần. Số điền sẵn hiện mờ, nghiêng, kèm nhãn «gợi ý»; người dùng vẫn phải cân thật, sửa nếu khác, rồi bấm «Xác nhận số cân». Máy chủ chỉ lưu số đã xác nhận, không coi gợi ý là số cân.</div>
+</section>
+
+<section class="card">
+  <div class="step-title"><span class="n">3</span>Pha xong thì đưa vào ủ</div>
+  <div class="need-line">Còn thiếu: Hạt thạch cao ↑</div>
+  <button class="primary bigbtn" data-go="#cure-list" disabled>▶ Đã pha xong, đưa vào ủ</button>
+  <p class="muted" style="margin-bottom:0">Mã mẻ <span class="mono">TUI-261120-01</span> ra khi bấm. Sớm nhất ủ xong 25/11/2026 (5 ngày).</p>
+  <div class="annot">Đủ 4 thứ thì nút xanh sáng lên. Bấm xong: hiện «Đã đưa vào ủ. Dán tem TUI-261120-01 lên lọ.» rồi quay về màn Sản xuất. Phần «Nhập kết quả» không hiện ở đây; nó nằm ở màn riêng khi mẻ ủ đủ ngày.</div>
+</section>
+
+</main>
+<div id="toast"></div>
+</body></html>

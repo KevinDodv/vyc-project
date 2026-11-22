@@ -1,0 +1,39 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Ux4yLWS1Y-dqxGaCvpCjdj2os5TDAE-v">
+<meta name="robots" content="noindex, nofollow">
+<title>Khách hàng đã mua · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="OWNER">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Khách hàng đã mua</div>
+  <div class="who">Chủ doanh nghiệp (mẫu) · Chủ DN<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="row">
+  <div><label>Tìm (tên / số cuối SĐT / mã)</label><input id="q" value=""></div>
+  <div><label>Sản phẩm</label><select id="product"><option value="" selected="">Tất cả</option><option value="4">Thiệp cảm ơn</option><option value="1">Tinh dầu quế Văn Yên 10 ml</option><option value="3">Trà quế Văn Yên 100 g</option><option value="2">Túi thơm quế Văn Yên 25 g</option></select></div>
+  <div><label>Kênh</label><select id="channel"><option value="" selected="">Tất cả</option><option value="DIRECT">Bán trực tiếp</option><option value="WEBSITE">Website</option><option value="SHOPEE">Shopee</option><option value="TIKTOK">TikTok Shop</option><option value="LAZADA">Lazada</option><option value="FACEBOOK_ZALO">Facebook / Zalo</option><option value="AGENT">Đại lý</option><option value="CORPORATE">Quà tặng DN</option><option value="EXPORTER">DN xuất khẩu</option><option value="OTHER">Khác</option></select></div>
+  <div><label>Tỉnh / xã</label><select id="area"><option value="" selected="">Tất cả</option><option>Lào Cai</option><option>Lào Cai › Châu Quế</option><option>Lào Cai › Đông Cuông</option></select></div>
+  <div><label>Từ ngày</label><input type="date" id="from" value=""></div>
+  <div><label>Đến ngày</label><input type="date" id="to" value=""></div>
+  <div style="flex:0 0 auto"><label><input type="checkbox" id="inactive"> Đã mua trên 60 ngày</label></div>
+  <div style="flex:0 0 auto"><button data-pick class="primary" id="load">Lọc</button></div>
+  <div style="flex:0 0 auto"><a class="btn" href="/api/v1/buyers/export.csv">⬇ Tải bảng Excel (.csv): khách đồng ý nhận tin (SĐT đầy đủ, có ghi nhật ký)</a></div>
+</div>
+<div class="table-wrap" style="margin-top:1rem"><table>
+  <thead><tr><th>Mã</th><th>Tên</th><th>SĐT</th><th>Địa bàn</th><th class="num">Số lần mua</th><th class="num">Tổng tiền</th><th>Sản phẩm đã mua</th><th>Mua gần nhất</th><th>Nhận tin</th></tr></thead>
+  <tbody id="rows"><tr data-go="#buyer-detail" class="clickable"><td class="mono">NM-000003</td><td>L M T</td><td class="mono"></td><td>Lào Cai</td><td class="num">1</td><td class="num">300.000 đ</td><td>Tinh dầu quế Văn Yên 10 ml</td><td>20/11/2026</td><td></td></tr><tr data-go="#buyer-detail" class="clickable"><td class="mono">NM-000002</td><td>T T H</td><td class="mono">*******222</td><td>Lào Cai › Châu Quế</td><td class="num">1</td><td class="num">450.000 đ</td><td>Tinh dầu quế Văn Yên 10 ml</td><td>20/11/2026</td><td>✔</td></tr><tr data-go="#buyer-detail" class="clickable"><td class="mono">NM-000001</td><td>N V A</td><td class="mono">*******678</td><td>Lào Cai</td><td class="num">1</td><td class="num">300.000 đ</td><td>Tinh dầu quế Văn Yên 10 ml</td><td>20/11/2026</td><td>✔</td></tr></tbody></table></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,393 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VYC công khai",
+    "version": "1",
+    "description": ""
+  },
+  "paths": {
+    "/api/public/products": {
+      "get": {
+        "operationId": "website_api_public_list_products",
+        "summary": "Danh sách sản phẩm đã đăng",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "goods_type",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Goods Type"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "featured",
+            "schema": {
+              "default": false,
+              "title": "Featured",
+              "type": "boolean"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PublicProductOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công khai"
+        ]
+      }
+    },
+    "/api/public/products/{slug}": {
+      "get": {
+        "operationId": "website_api_public_get_product",
+        "summary": "Một sản phẩm theo slug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProductOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công khai"
+        ]
+      }
+    },
+    "/api/public/pages": {
+      "get": {
+        "operationId": "website_api_public_list_pages",
+        "summary": "Trang tĩnh đã đăng (cho sitemap)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PublicPageOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công khai"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BuyLink": {
+        "properties": {
+          "channel": {
+            "enum": [
+              "shopee",
+              "tiktok",
+              "zalo",
+              "other"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel",
+          "url"
+        ],
+        "title": "BuyLink",
+        "type": "object"
+      },
+      "ImageRef": {
+        "description": "Ảnh đã xử lý ở backend (backend.md 6.5). Bản lớn nhất ở `url`, các bề rộng ở `widths`.",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "alt": {
+            "title": "Alt",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "widths": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Widths",
+            "type": "array"
+          }
+        },
+        "required": [
+          "url",
+          "alt",
+          "key",
+          "w",
+          "h",
+          "widths"
+        ],
+        "title": "ImageRef",
+        "type": "object"
+      },
+      "PublicOrigin": {
+        "description": "Khối «Nguồn gốc» (mục 8.2). Khung để trống, làm ở GĐ3.",
+        "properties": {},
+        "title": "PublicOrigin",
+        "type": "object"
+      },
+      "PublicProductOut": {
+        "properties": {
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "sku": {
+            "title": "Sku",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "spec": {
+            "title": "Spec",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "retail_price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retail Price"
+          },
+          "availability": {
+            "enum": [
+              "in_stock",
+              "out_of_stock"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "short_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Description"
+          },
+          "story_html": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Story Html"
+          },
+          "usage_html": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Html"
+          },
+          "images": {
+            "items": {
+              "$ref": "#/components/schemas/ImageRef"
+            },
+            "title": "Images",
+            "type": "array"
+          },
+          "og_image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Og Image"
+          },
+          "buy_links": {
+            "items": {
+              "$ref": "#/components/schemas/BuyLink"
+            },
+            "title": "Buy Links",
+            "type": "array"
+          },
+          "seo_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seo Title"
+          },
+          "seo_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seo Description"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrigin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "slug",
+          "sku",
+          "name",
+          "spec",
+          "unit",
+          "retail_price",
+          "availability",
+          "short_description",
+          "story_html",
+          "usage_html",
+          "images",
+          "og_image",
+          "buy_links",
+          "seo_title",
+          "seo_description",
+          "updated_at",
+          "origin"
+        ],
+        "title": "PublicProductOut",
+        "type": "object"
+      },
+      "PublicPageOut": {
+        "properties": {
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "updated_at"
+        ],
+        "title": "PublicPageOut",
+        "type": "object"
+      }
+    }
+  },
+  "servers": []
+}

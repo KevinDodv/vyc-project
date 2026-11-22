@@ -1,0 +1,41 @@
+<!doctype html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf" content="Rc0_mgBGOnoJ9VLGZmwHvIVY-aHp-cG8">
+<meta name="robots" content="noindex, nofollow">
+<title>Xem tồn kho · Quế Văn Yên</title>
+<!--APPCSS-->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiM4YTNiMTIiLz48cGF0aCBkPSJNMTggNDZjNi0xOCAxNi0yNiAyOC0yOC00IDEwLTEyIDIyLTI4IDI4eiIgZmlsbD0iI2Y2ZTdkYSIvPjwvc3ZnPgo=">
+</head>
+<body data-role="WORKSHOP">
+<header class="topbar">
+  <a class="back" href="/">← Về trang chủ</a>
+  <div class="title">Xem tồn kho</div>
+  <div class="who">Thủ kho (mẫu) · Xưởng<a href="/logout">Đăng xuất</a></div>
+</header>
+<main>
+<div class="tabs"><button class="active" data-tab="nl" data-pick>Quế</button><button data-tab="tp" data-go="#inv-tp">Thành phẩm</button><a class="btn" href="/ton-kho/phu-lieu" style="border:0;border-radius:10px 10px 0 0;min-height:56px;background:transparent;color:var(--muted)">Phụ liệu</a></div>
+<section id="tab-nl">
+  <p class="muted">Số kg tính theo cân lúc mua. Bấm số kg để xem từng lô.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Nguyên liệu</th><th>Loại</th><th class="num">Vùng kiểm soát<br><span class="muted" style="font-weight:500">làm được tinh dầu có QR</span></th><th class="num">Hàng chung<br><span class="muted" style="font-weight:500">chỉ bán quế khô</span></th><th>Nhập cũ nhất</th></tr></thead>
+    <tbody id="nl"><tr><td>Vỏ quế</td><td>Loại 1</td><td class="num clickable" style="cursor: pointer;"><div><b>120,5 kg</b><div class="muted">1 lô ›</div></div></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td>20/11/2026</td></tr><tr><td>Vỏ quế</td><td>Loại 2</td><td class="num clickable" style="cursor: pointer;"><div><b>75 kg</b><div class="muted">2 lô ›</div></div></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td>20/11/2026</td></tr><tr><td>Vỏ quế</td><td>Loại 3</td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td></td></tr><tr><td>Quế vụn</td><td>Loại 1</td><td class="num clickable" style="cursor: pointer;"><div><b>18,2 kg</b><div class="muted">1 lô ›</div></div></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td>20/11/2026</td></tr><tr><td>Quế vụn</td><td>Loại 2</td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td></td></tr><tr><td>Quế vụn</td><td>Loại 3</td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td class="num clickable" style="cursor: default;"><span class="muted">—</span></td><td></td></tr></tbody></table></div>
+  <div id="reserved" class="muted" style="margin-top:.6rem">Đang nằm trong lệnh sản xuất: 1 lô, 22,5 kg</div>
+  <div id="lot-list" style="margin-top:1rem"><h3>Vỏ quế Loại 1 — vùng kiểm soát</h3><div class="table-wrap"><table><thead><tr><th>Mã lô</th><th>Ngày nhập</th><th>Người bán</th><th>Đồi</th><th class="num">Kg</th></tr></thead><tbody><tr><td class="mono">NL-2611-0007</td><td>20/11/2026</td><td>Gia đình (đồi nhà)</td><td>D-CQ-001-01</td><td class="num">120,5</td></tr></tbody></table></div></div>
+</section>
+<section id="tab-tp" class="hidden">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Sản phẩm</th><th>Lô</th><th class="num">Số tem trong kho<br><span class="muted" style="font-weight:500">không tính chai lưu mẫu</span></th><th>Ngày SX</th><th>Hạn dùng</th></tr></thead>
+    <tbody id="tp"><tr class="warn"><td>Tinh dầu quế Văn Yên 10 ml</td><td class="mono">Q100-250105-01</td><td class="num">38</td><td>05/01/2025</td><td>05/01/2027 <span class="tag" style="background:var(--warn-soft);color:var(--warn)">còn 46 ngày</span></td></tr><tr class=""><td>Tinh dầu quế Văn Yên 10 ml</td><td class="mono">Q100-261120-02</td><td class="num">145</td><td>20/11/2026</td><td>20/11/2028</td></tr></tbody></table></div>
+  <p class="muted" style="margin-top:.6rem">Hạn dùng dưới 60 ngày được tô màu cam.</p>
+</section>
+<div style="margin-top:1.5rem"><a class="btn" href="/ton-kho/kiem-ke">📋 Kiểm kê kho</a></div>
+</main>
+<div id="toast"></div>
+
+
+
+
+
+
+</body></html>

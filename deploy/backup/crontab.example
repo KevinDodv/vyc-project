@@ -1,0 +1,23 @@
+# Mẫu crontab cho user `deploy` trên VPS (chạy `crontab -e` rồi dán, KHÔNG chạy bằng root).
+# Căn cứ: docs/kien-truc/van-hanh.md mục 6, 7. Mọi đường dẫn là tuyệt đối vì cron chạy với
+# PATH và thư mục làm việc tối thiểu. Thư mục /var/log/vyc phải có sẵn, thuộc user deploy.
+#
+# Giờ chạy theo giờ Việt Nam. Nếu cron của VPS không hiểu CRON_TZ thì xoá dòng CRON_TZ và đổi
+# giờ sang UTC (23:00 VN = 16:00 UTC).
+CRON_TZ=Asia/Ho_Chi_Minh
+PATH=/usr/local/bin:/usr/bin:/bin
+
+# --- prod ---
+# 23:00 sao lưu DB + media, đẩy lên Google Drive (rclone crypt), giữ 30 bản
+0 23 * * * /bin/bash /opt/vyc/deploy/backup/backup.sh prod >> /var/log/vyc/backup.log 2>&1
+# 23:30 dọn bảng throttle (sau sao lưu để hai việc không tranh DB)
+30 23 * * * /bin/bash /opt/vyc/deploy/backup/compose.sh prod exec -T backend python manage.py purge_throttle >> /var/log/vyc/purge-throttle.log 2>&1
+# Phút 05 mỗi giờ: gom log container ra /var/log/vyc/*.jsonl (logrotate giữ 30 ngày)
+5 * * * * /bin/bash /opt/vyc/deploy/backup/collect-logs.sh prod >> /var/log/vyc/collect-logs.log 2>&1
+
+# --- staging (chỉ khi staging cùng VPS và đang bật; staging tắt thì các dòng này báo lỗi vô hại) ---
+# Staging chỉ có dữ liệu giả: sao lưu giữ cục bộ ở /var/backups/vyc/staging/, KHÔNG đẩy ra Drive.
+# Bỏ comment (xoá dấu # đầu dòng) khi dùng staging thường xuyên.
+#0 22 * * * /bin/bash /opt/vyc/deploy/backup/backup.sh staging >> /var/log/vyc/backup-staging.log 2>&1
+#40 23 * * * /bin/bash /opt/vyc/deploy/backup/compose.sh staging exec -T backend python manage.py purge_throttle >> /var/log/vyc/purge-throttle-staging.log 2>&1
+#15 * * * * /bin/bash /opt/vyc/deploy/backup/collect-logs.sh staging >> /var/log/vyc/collect-logs-staging.log 2>&1
