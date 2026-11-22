@@ -5,7 +5,7 @@ description = "Backend Django + Django Ninja của hệ thống Quế Văn Yên"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     # CheckConstraint(condition=...) cần Django 5.1 trở lên; chọn dòng 5.2 LTS (backend.md 0).
-    "django>=5.1,<6.0",
+    "django>=5.1,<7.0",
     "django-ninja>=1.4,<2.0",
     "psycopg[binary]>=3.2",
     "argon2-cffi>=23.1",
