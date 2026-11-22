@@ -4,7 +4,7 @@
 # (compose.prod.yml và deploy.yml đã khai sẵn). Ghim phiên bản: cập nhật có chủ đích, ghi vào PR.
 FROM ghcr.io/astral-sh/uv:0.13.9 AS uv
 
-FROM python:3.13-slim-bookworm AS build
+FROM python:3.15-slim-bookworm AS build
 COPY --from=uv /uv /uvx /bin/
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
@@ -15,7 +15,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --frozen --no-dev --no-install-project
 
-FROM python:3.13-slim-bookworm AS runtime
+FROM python:3.15-slim-bookworm AS runtime
 ENV PATH="/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
