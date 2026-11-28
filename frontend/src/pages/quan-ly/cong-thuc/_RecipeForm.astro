@@ -1,0 +1,202 @@
+---
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import type { AdminRole } from "../../../lib/admin/catalog";
+import { displayGram, parseGram } from "../../../lib/admin/catalog-recipes/math";
+import {
+  type IngredientOut,
+  OUTPUT_KIND_LABEL,
+  type OutputKind,
+  type RecipeDetailOut,
+  recipeAbilities,
+} from "../../../lib/admin/catalog-recipes/model";
+import ItemRow, { type IngredientChoice } from "./_ItemRow.astro";
+import RecipeStatusBadge from "./_RecipeStatusBadge.astro";
+
+interface Props {
+  /** Công thức đang xem; null là form tạo mới. */
+  recipe: RecipeDetailOut | null;
+  /** Mọi phụ liệu, để dựng ô chọn (phụ liệu đã ngừng chỉ hiện nếu đang nằm trong công thức này). */
+  ingredients: IngredientOut[];
+  role: AdminRole | undefined;
+}
+
+const { recipe, ingredients, role } = Astro.props;
+const abilities = recipeAbilities(role, recipe);
+const editable = abilities.edit;
+
+const label = (i: { code: string; name: string }) => `${i.code} — ${i.name}`;
+const activeChoices: IngredientChoice[] = ingredients
+  .filter((i) => i.status === "ACTIVE")
+  .map((i) => ({ id: i.id, label: label(i) }));
+// Dòng đã lưu có thể trỏ tới phụ liệu đã ngừng: vẫn hiện được để không mất dữ liệu khi xem.
+const usedExtra: IngredientChoice[] = (recipe?.items ?? [])
+  .filter((it) => !activeChoices.some((c) => c.id === it.ingredient_id))
+  .map((it) => ({
+    id: it.ingredient_id,
+    label: label({ code: it.ingredient_code, name: it.ingredient_name }),
+  }));
+const rowChoices = [...activeChoices, ...usedExtra];
+const outputChoices = ingredients
+  .filter((i) => i.status === "ACTIVE" || i.id === recipe?.output_ingredient_id)
+  .map((i) => ({ id: i.id, label: label(i) }));
+
+const rows = recipe?.items ?? [];
+const baseCenti = recipe ? parseGram(recipe.base_batch_g) : null;
+const baseText = baseCenti === null ? "0" : displayGram(baseCenti);
+const outputKind: OutputKind = recipe?.output_kind === "INTERMEDIATE" ? "INTERMEDIATE" : "PRODUCT";
+const val = (v: string | number | null | undefined) =>
+  v === null || v === undefined ? "" : String(v);
+const lockedReason =
+  role !== "OWNER"
+    ? "Chỉ chủ doanh nghiệp sửa được công thức; bạn chỉ xem."
+    : recipe && !editable
+      ? recipe.status === "DRAFT"
+        ? "Bản nháp này đã có lệnh sản xuất dùng nên không sửa trực tiếp. Muốn đổi công thức hãy bấm «Kích hoạt» rồi «Tạo phiên bản mới»."
+        : "Bản này đã khoá, chỉ đọc. Muốn đổi công thức hãy bấm «Tạo phiên bản mới»."
+      : null;
+const formTitle = recipe ? `${recipe.code} · phiên bản ${recipe.version}` : "Công thức mới";
+---
+<section class="card border border-base-300 bg-base-100">
+  <form
+    class="card-body gap-5"
+    novalidate
+    aria-labelledby="recipe-form-title"
+    data-recipe-form
+    data-recipe-id={recipe?.id}
+    data-status={recipe?.status}
+    data-saved-base={recipe?.base_batch_g}
+    data-readonly={editable ? undefined : ""}
+  >
+    <div class="flex flex-wrap items-center gap-3">
+      <h2 id="recipe-form-title" class="card-title">{formTitle}</h2>
+      {recipe && <RecipeStatusBadge status={recipe.status} />}
+    </div>
+
+    {lockedReason && <p class="alert alert-info" data-locked>{lockedReason}</p>}
+    <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <CatalogField name="code" label="Mã công thức" required hint="Chữ in hoa, số hoặc dấu gạch ngang. Không đổi được sau khi tạo.">
+        <input id="f-code" name="code" class="input w-full font-mono uppercase" maxlength="40" placeholder="TD10" value={recipe?.code ?? ""} disabled={!editable || recipe !== null} aria-describedby="f-code-hint f-code-error" />
+      </CatalogField>
+      <CatalogField name="name" label="Tên công thức" required>
+        <input id="f-name" name="name" class="input w-full" maxlength="200" value={recipe?.name ?? ""} disabled={!editable} aria-describedby="f-name-error" />
+      </CatalogField>
+      <CatalogField name="output_kind" label="Loại đầu ra" required>
+        <select id="f-output_kind" name="output_kind" class="select w-full" disabled={!editable} aria-describedby="f-output_kind-error">
+          {(Object.keys(OUTPUT_KIND_LABEL) as OutputKind[]).map((k) => (
+            <option value={k} selected={outputKind === k}>{OUTPUT_KIND_LABEL[k]}</option>
+          ))}
+        </select>
+      </CatalogField>
+      <CatalogField name="output_ingredient_id" label="Phụ liệu làm ra" hint="Chỉ với bán thành phẩm: công thức này làm ra phụ liệu nào.">
+        <select id="f-output_ingredient_id" name="output_ingredient_id" class="select w-full" disabled={!editable} aria-describedby="f-output_ingredient_id-hint f-output_ingredient_id-error">
+          <option value="">— Chọn —</option>
+          {outputChoices.map((c) => (
+            <option value={String(c.id)} selected={recipe?.output_ingredient_id === c.id}>{c.label}</option>
+          ))}
+        </select>
+      </CatalogField>
+      <CatalogField name="base_label" label="Nhãn mẻ chuẩn" hint="Ví dụ «1 mẻ ≈ 100 chai 10 ml».">
+        <input id="f-base_label" name="base_label" class="input w-full" maxlength="200" value={val(recipe?.base_label)} disabled={!editable} aria-describedby="f-base_label-hint f-base_label-error" />
+      </CatalogField>
+      <CatalogField name="cure_min_days" label="Ngày ủ tối thiểu" required>
+        <input id="f-cure_min_days" name="cure_min_days" class="input w-full" type="number" min="0" max="365" step="1" value={val(recipe?.cure_min_days ?? 0)} disabled={!editable} aria-describedby="f-cure_min_days-error" />
+      </CatalogField>
+      <CatalogField name="cure_max_days" label="Ngày ủ tối đa">
+        <input id="f-cure_max_days" name="cure_max_days" class="input w-full" type="number" min="0" max="365" step="1" value={val(recipe?.cure_max_days)} disabled={!editable} aria-describedby="f-cure_max_days-error" />
+      </CatalogField>
+      <CatalogField name="retain_months" label="Lưu mẫu (tháng)">
+        <input id="f-retain_months" name="retain_months" class="input w-full" type="number" min="1" max="120" step="1" value={val(recipe?.retain_months)} disabled={!editable} aria-describedby="f-retain_months-error" />
+      </CatalogField>
+      <CatalogField name="note" label="Ghi chú" wide>
+        <textarea id="f-note" name="note" class="textarea w-full" rows="2" maxlength="2000" disabled={!editable} aria-describedby="f-note-error">{val(recipe?.note)}</textarea>
+      </CatalogField>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg font-semibold">Thành phần (gram trên một mẻ chuẩn)</h3>
+      <p class="text-sm opacity-70">
+        Đơn vị là gram. Các dòng cùng một nhóm lựa chọn là phương án thay nhau, ví dụ TT1 hoặc TT2 cùng ở Nhóm 1: mẻ chuẩn chỉ tính phương án nặng nhất của mỗi nhóm.
+      </p>
+      <div class="overflow-x-auto rounded-box border border-base-300">
+        <table class="table table-sm" data-items-table>
+          <caption class="sr-only">Thành phần công thức</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">#</th>
+              <th scope="col">Phụ liệu</th>
+              <th scope="col" class="text-end">Gram</th>
+              <th scope="col">Nhóm lựa chọn</th>
+              <th scope="col" class="text-center">Tuỳ chọn</th>
+              <th scope="col">Ghi chú</th>
+              <th scope="col" class="text-end">% khối lượng</th>
+              <th scope="col"><span class="sr-only">Xoá</span></th>
+            </tr>
+          </thead>
+          <tbody data-item-body>
+            {rows.map((item, index) => (
+              <ItemRow item={item} choices={rowChoices} editable={editable} lineNo={index + 1} />
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" colspan="6" class="text-end">Mẻ chuẩn (tự cộng)</th>
+              <td class="text-end font-mono font-bold" data-base-total>{baseText} g</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <template data-item-template>
+        <ItemRow choices={activeChoices} editable lineNo={0} />
+      </template>
+      <p class="text-sm text-error" role="alert" data-error-for="items" hidden></p>
+      {editable && (
+        <div><button type="button" class="btn btn-sm" data-action="add-item">+ Thêm dòng</button></div>
+      )}
+    </div>
+
+    <div class="flex flex-col gap-2 rounded-box border border-base-300 bg-base-200 p-4" data-scale>
+      <h3 class="text-lg font-semibold">Thử scale theo mẻ cần làm</h3>
+      <label class="flex flex-wrap items-center gap-2">
+        <span class="label text-base-content">Mẻ cần làm (gram)</span>
+        <input class="input input-sm w-40 text-end font-mono" data-scale-batch inputmode="decimal" placeholder="1000" aria-describedby="scale-message" />
+      </label>
+      <p id="scale-message" class="text-sm text-error" role="alert" data-scale-message hidden></p>
+      <div class="overflow-x-auto" data-scale-table hidden>
+        <table class="table table-sm">
+          <caption class="sr-only">Lượng cân gợi ý theo mẻ cần làm</caption>
+          <thead>
+            <tr>
+              <th scope="col">Phụ liệu</th>
+              <th scope="col">Nhóm</th>
+              <th scope="col" class="text-end">Gram trên mẻ chuẩn</th>
+              <th scope="col" class="text-end">Gram gợi ý</th>
+            </tr>
+          </thead>
+          <tbody data-scale-body></tbody>
+        </table>
+      </div>
+      <p class="text-sm opacity-70">Chỉ để tham khảo, không ghi vào dữ liệu. Làm tròn 2 số lẻ (nửa lên).</p>
+    </div>
+
+    <div class="card-actions items-center justify-end gap-2">
+      {abilities.retire && (
+        <button type="button" class="btn btn-error btn-outline mr-auto" data-action="retire">Ngừng</button>
+      )}
+      <a href="/quan-ly/cong-thuc" class="btn btn-ghost">Đóng</a>
+      {abilities.newVersion && (
+        <button type="button" class="btn btn-secondary" data-action="new-version">Tạo phiên bản mới</button>
+      )}
+      {abilities.activate && (
+        <button type="button" class="btn btn-secondary" data-action="activate">Kích hoạt</button>
+      )}
+      {editable && <button type="submit" class="btn btn-primary" data-action="save">{recipe ? "Lưu nháp" : "Tạo công thức"}</button>}
+    </div>
+  </form>
+  <script>
+    import { bindAllRecipeForms } from "../../../lib/admin/catalog-recipes/recipe-form";
+    bindAllRecipeForms();
+  </script>
+</section>

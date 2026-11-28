@@ -1,0 +1,16 @@
+---
+import { parseListQuery } from "../../../lib/admin/catalog";
+import { loadSupplierList } from "../../../lib/admin/catalog-suppliers/loaders";
+import { LOGIN_PATH } from "../../../scripts/admin/next";
+import SupplierList from "./_SupplierList.astro";
+
+export const prerender = false;
+
+const query = parseListQuery(Astro.url.searchParams);
+const data = await loadSupplierList(Astro.request, query, true);
+if (data.kind === "unauthorized") {
+  return Astro.redirect(`${LOGIN_PATH}?next=${encodeURIComponent(Astro.url.pathname)}`);
+}
+if (data.kind === "unavailable") Astro.response.status = 503;
+---
+<SupplierList data={data} query={query} pending={true} />

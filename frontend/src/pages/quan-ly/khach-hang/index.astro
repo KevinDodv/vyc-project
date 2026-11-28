@@ -1,0 +1,48 @@
+---
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { parseListQuery } from "../../../lib/admin/catalog";
+import {
+  CUSTOMER_COLUMNS,
+  CUSTOMERS_PATH,
+  toCustomerRow,
+} from "../../../lib/admin/catalog-suppliers/customers";
+import { loadCustomerList } from "../../../lib/admin/catalog-suppliers/loaders";
+import { LOGIN_PATH } from "../../../scripts/admin/next";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const query = parseListQuery(Astro.url.searchParams);
+const data = await loadCustomerList(Astro.request, query);
+if (data.kind === "unauthorized") {
+  return Astro.redirect(`${LOGIN_PATH}?next=${encodeURIComponent(Astro.url.pathname)}`);
+}
+if (data.kind === "unavailable") Astro.response.status = 503;
+---
+<Admin title="Khách hàng">
+  <h1 class="text-2xl font-bold">Khách hàng</h1>
+  <div class="mt-4">
+    {data.kind === "ok" ? (
+      <CatalogList
+        columns={CUSTOMER_COLUMNS}
+        rows={data.page.items.map(toCustomerRow)}
+        total={data.page.total}
+        page={query.page}
+        pageSize={query.pageSize}
+        basePath={CUSTOMERS_PATH}
+        query={{ q: query.q, status: query.status }}
+        role={role}
+        searchPlaceholder="Gõ tên, mã hoặc số điện thoại để tìm"
+        emptyText="Chưa có khách hàng nào khớp."
+        caption="Danh sách khách hàng"
+      >
+        <p slot="note" class="text-sm opacity-70">
+          Mã KH-NNNN tự sinh. Có sẵn «Khách lẻ» và mỗi sàn một khách; đừng ngừng dùng nếu còn bán qua kênh đó.
+        </p>
+      </CatalogList>
+    ) : (
+      <p role="alert" class="alert alert-error">Chưa tải được danh sách khách hàng, bạn tải lại trang sau ít phút.</p>
+    )}
+  </div>
+</Admin>

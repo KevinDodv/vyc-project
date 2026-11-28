@@ -1,0 +1,134 @@
+---
+// Form chứng nhận (TK mục 5, dòng Chứng nhận). Dùng CatalogForm cho phần gửi/báo lỗi; ô ngày, số sao,
+// «Áp dụng cho» và công khai nằm trong slot vì CatalogForm chưa có kiểu ô ngày hay chọn một trong hai.
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import type { FieldDef } from "../../../lib/admin/catalog";
+import {
+  CERTIFICATE_KIND_OPTIONS,
+  type Certificate,
+  OCOP_STAR_OPTIONS,
+  type Plot,
+  plotOptions,
+} from "../../../lib/admin/catalog-products/certificate";
+import type { ProductChoice, SupplierChoice } from "../../../lib/admin/catalog-products/load";
+
+interface Props {
+  certificate?: Certificate;
+  /** Sản phẩm để chọn ở «Áp dụng cho». */
+  products: ProductChoice[];
+  /** Người bán để chọn trước khi chọn đồi. */
+  suppliers: SupplierChoice[];
+  /** Đồi đang gắn và mọi đồi của người bán đó (khi sửa chứng nhận của đồi). */
+  currentPlot?: Plot;
+  currentPlots?: Plot[];
+}
+
+const { certificate, products, suppliers, currentPlot, currentPlots = [] } = Astro.props;
+const edit = certificate !== undefined;
+const c = certificate;
+const forPlot = c !== undefined && c.plot_id !== null;
+const supplierOptions = suppliers.filter(
+  (s) => s.plots_count > 0 || s.id === currentPlot?.supplier_id,
+);
+// Không tra được đồi đang gắn thì vẫn giữ nó trong ô, để lưu không làm mất liên kết.
+const plotSelect = currentPlot
+  ? plotOptions(currentPlots, currentPlot.id)
+  : forPlot
+    ? [{ value: String(c.plot_id), label: `Đồi đang gắn (#${c.plot_id})` }]
+    : [];
+const plotPlaceholder = currentPlot ? "— Chọn đồi —" : "— Chọn người bán trước —";
+// Sản phẩm đang gắn không có trong danh sách vẫn phải còn trong ô.
+const missingProduct =
+  c && c.product_id !== null && !products.some((p) => p.id === c.product_id) ? c.product_id : null;
+
+const fields: FieldDef[] = [
+  {
+    name: "kind",
+    label: "Loại",
+    type: "select",
+    required: true,
+    value: c?.kind ?? "",
+    options: [...CERTIFICATE_KIND_OPTIONS],
+  },
+  {
+    name: "number",
+    label: "Số",
+    required: true,
+    maxlength: 100,
+    mono: true,
+    value: c?.number ?? "",
+  },
+  { name: "issuer", label: "Cơ quan cấp", maxlength: 200, value: c?.issuer ?? "", wide: true },
+];
+---
+<CatalogForm
+  title={edit ? `Sửa chứng nhận ${c?.number}` : "Thêm chứng nhận"}
+  fields={fields}
+  role={Astro.locals.user?.role}
+  apiPath={edit ? `/certificates/${c?.id}` : "/certificates"}
+  method={edit ? "PATCH" : "POST"}
+  redirect="/quan-ly/chung-nhan"
+  backHref="/quan-ly/chung-nhan"
+>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <CatalogField name="issued_on" label="Ngày cấp">
+      <input id="f-issued_on" name="issued_on" type="date" class="input w-full" value={c?.issued_on ?? ""} data-kind="text" data-label="Ngày cấp" aria-describedby="f-issued_on-error" />
+    </CatalogField>
+    <CatalogField name="expires_on" label="Hết hạn" hint="Phải từ ngày cấp trở đi. Để trống nếu không có hạn.">
+      <input id="f-expires_on" name="expires_on" type="date" class="input w-full" value={c?.expires_on ?? ""} data-kind="text" data-label="Hết hạn" aria-describedby="f-expires_on-hint f-expires_on-error" />
+    </CatalogField>
+    <div data-stars>
+      <CatalogField name="stars" label="Số sao (chỉ với OCOP)">
+        <select id="f-stars" name="stars" class="select w-full" data-kind="int" data-label="Số sao" aria-describedby="f-stars-error">
+          <option value="">— Không áp dụng —</option>
+          {OCOP_STAR_OPTIONS.map((n) => (<option value={String(n)} selected={c?.stars === n}>{n} sao</option>))}
+        </select>
+      </CatalogField>
+    </div>
+    <CatalogField name="file_url" label="File chứng nhận (đường dẫn)" hint="Dạng /media/... hoặc https://... Màn này chưa tải file lên.">
+      <input id="f-file_url" name="file_url" class="input w-full" maxlength="500" value={c?.file_url ?? ""} data-kind="text" data-label="File chứng nhận" aria-describedby="f-file_url-hint f-file_url-error" />
+    </CatalogField>
+
+    <div class="flex flex-col gap-2 sm:col-span-2" data-cert-target data-current-plot={c?.plot_id ?? ""}>
+      <span class="label text-base-content">Áp dụng cho <span class="text-error" aria-hidden="true">*</span><span class="sr-only">(bắt buộc)</span></span>
+      <div class="flex flex-wrap gap-4">
+        <label class="flex items-center gap-2"><input type="radio" name="_target" value="product" class="size-4 accent-primary" checked={!forPlot} /> Sản phẩm</label>
+        <label class="flex items-center gap-2"><input type="radio" name="_target" value="plot" class="size-4 accent-primary" checked={forPlot} /> Đồi quế</label>
+      </div>
+      <div data-target-product hidden={forPlot}>
+        <CatalogField name="product_id" label="Sản phẩm">
+          <select id="f-product_id" name="product_id" class="select w-full" data-kind="int" data-label="Sản phẩm" aria-describedby="f-product_id-error">
+            <option value="">— Chọn sản phẩm —</option>
+            {missingProduct !== null && (<option value={String(missingProduct)} selected>Sản phẩm đang gắn (#{missingProduct})</option>)}
+            {products.map((p) => (<option value={String(p.id)} selected={c?.product_id === p.id}>{p.sku} – {p.name}</option>))}
+          </select>
+        </CatalogField>
+      </div>
+      <div data-target-plot hidden={!forPlot}>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <CatalogField name="_supplier_id" label="Người bán">
+            <select id="f-_supplier_id" name="_supplier_id" class="select w-full" aria-describedby="f-_supplier_id-error">
+              <option value="">— Chọn người bán —</option>
+              {supplierOptions.map((s) => (<option value={String(s.id)} selected={currentPlot?.supplier_id === s.id}>{s.code} – {s.name}</option>))}
+            </select>
+          </CatalogField>
+          <CatalogField name="plot_id" label="Đồi quế" hint="Mã đồi giống ở màn Người bán & đồi quế.">
+            <select id="f-plot_id" name="plot_id" class="select w-full" data-kind="int" data-label="Đồi quế" aria-describedby="f-plot_id-hint f-plot_id-error">
+              <option value="">{plotPlaceholder}</option>
+              {plotSelect.map((o) => (<option value={o.value} selected={o.value === String(c?.plot_id)}>{o.label}</option>))}
+            </select>
+          </CatalogField>
+        </div>
+      </div>
+    </div>
+
+    <CatalogField name="is_public" label="Công khai" wide hint="Hiện trên trang quét QR và website khi còn hiệu lực.">
+      <input id="f-is_public" name="is_public" type="checkbox" class="checkbox" checked={c ? c.is_public : true} data-kind="boolean" data-label="Công khai" aria-describedby="f-is_public-hint f-is_public-error" />
+    </CatalogField>
+  </div>
+  <script>
+    import { bindCertificateForms } from "../../../lib/admin/catalog-products/certificate-form";
+    bindCertificateForms();
+  </script>
+</CatalogForm>

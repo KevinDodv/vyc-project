@@ -2,18 +2,32 @@
 
 Không biết tới request hay schema Ninja; api chuyển schema sang dataclass ở file này.
 BR-14 (sản phẩm is_food cần giấy tờ ATTP mới được PUBLISHED) làm ở GĐ3 cùng màn chứng nhận.
+
+`recipe_code` phải trỏ tới công thức thành phẩm đang có bản ACTIVE (kiểm khi gán hoặc đổi). Sau
+đó công thức hết bản ACTIVE thì sản phẩm PUBLISHED chỉ nhận cảnh báo (`product_warnings`),
+không bị chặn.
 """
 
 from __future__ import annotations
 
 import dataclasses
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any, Final
 
 from django.db import IntegrityError, transaction
 
 from accounts.models import User
-from catalog.models import GoodsType, GoodsTypeStatus, Product, ProductStatus, SlugRedirect
+from catalog.models import (
+    GoodsType,
+    GoodsTypeStatus,
+    Product,
+    ProductStatus,
+    Recipe,
+    RecipeOutputKind,
+    RecipeStatus,
+    SlugRedirect,
+)
 from core import audit
 from core.errors import ApiError
 
@@ -87,6 +101,50 @@ class ProductUpdate:
     status: str | _Unset = UNSET
 
 
+def _check_recipe_code(recipe_code: str | None) -> None:
+    if recipe_code is None:
+        return
+    recipe = Recipe.objects.filter(code=recipe_code, status=RecipeStatus.ACTIVE).first()
+    if recipe is None:
+        raise ApiError(
+            "RECIPE_NOT_ACTIVE",
+            f"Công thức {recipe_code} không có hoặc chưa có bản đang dùng",
+            status=400,
+            field="recipe_code",
+        )
+    if recipe.output_kind != RecipeOutputKind.PRODUCT:
+        raise ApiError(
+            "RECIPE_NOT_PRODUCT",
+            f"Công thức {recipe_code} là bán thành phẩm, sản phẩm chỉ nối công thức thành phẩm",
+            status=400,
+            field="recipe_code",
+        )
+
+
+def product_warnings(products: Iterable[Product]) -> dict[int, list[dict[str, str]]]:
+    """Cảnh báo không chặn: sản phẩm PUBLISHED mà công thức nối vào hết bản ACTIVE."""
+    watched = [p for p in products if p.status == ProductStatus.PUBLISHED and p.recipe_code]
+    if not watched:
+        return {}
+    codes = {p.recipe_code for p in watched}
+    active = set(
+        Recipe.objects.filter(status=RecipeStatus.ACTIVE, code__in=codes).values_list(
+            "code", flat=True
+        )
+    )
+    return {
+        p.pk: [
+            {
+                "code": "RECIPE_NOT_ACTIVE",
+                "message": f"Công thức {p.recipe_code} hiện không có bản đang dùng",
+                "field": "recipe_code",
+            }
+        ]
+        for p in watched
+        if p.recipe_code not in active
+    }
+
+
 def _other_than(product_id: int | None) -> int:
     """Id để `.exclude(...)`: tạo mới (None) thì không loại dòng nào (bigserial bắt đầu từ 1)."""
     return product_id if product_id is not None else 0
@@ -124,6 +182,7 @@ def _get_goods_type(goods_type_id: int) -> GoodsType:
 def create_product(*, data: ProductCreate, actor: User) -> Product:
     """Tạo sản phẩm ở trạng thái DRAFT (đăng bán qua `update_product`)."""
     _get_goods_type(data.goods_type_id)
+    _check_recipe_code(data.recipe_code)
     _check_unique(sku=data.sku, slug=data.slug, product_id=None)
     values = {f.name: getattr(data, f.name) for f in dataclasses.fields(data)}
     product = Product(status=ProductStatus.DRAFT, **values)
@@ -155,6 +214,8 @@ def update_product(*, product_id: int, data: ProductUpdate, actor: User) -> Prod
     before = audit.snapshot(product)
     if "goods_type_id" in changes:
         _get_goods_type(changes["goods_type_id"])
+    if "recipe_code" in changes:
+        _check_recipe_code(changes["recipe_code"])
     _check_unique(sku=changes.get("sku"), slug=changes.get("slug"), product_id=product.pk)
 
     old_slug = product.slug

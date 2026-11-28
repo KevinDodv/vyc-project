@@ -1,0 +1,42 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { type AreaNode, editFields, findArea } from "../../../lib/admin/catalog-ph1a/areas";
+import DateField from "../../../lib/admin/catalog-ph1a/DateField.astro";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const { id } = Astro.params;
+if (!id || !/^\d{1,18}$/.test(id)) return Astro.rewrite("/404");
+const res = await getJson<AreaNode[]>(Astro.request, "/areas");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+const area = res.kind === "ok" ? findArea(res.data, Number(id)) : null;
+if (res.kind === "ok" && !area) return Astro.rewrite("/404");
+const editable = role === "OWNER";
+---
+<Admin title={area ? `Địa bàn ${area.name}` : "Địa bàn"}>
+  <h1 class="mb-4 text-2xl font-bold">Sửa địa bàn</h1>
+  {res.kind !== "ok" || !area ? (
+    <Unavailable what="địa bàn này" />
+  ) : (
+    <CatalogForm
+      title={area.name}
+      role={role}
+      fields={editFields(res.data, area)}
+      apiPath={`/areas/${area.id}`}
+      method="PATCH"
+      redirect="/quan-ly/dia-ban"
+      backHref="/quan-ly/dia-ban"
+      status={area.status === "INACTIVE" ? "INACTIVE" : "ACTIVE"}
+    >
+      <div class="grid gap-4 sm:grid-cols-2">
+        <DateField name="valid_from" label="Hiệu lực từ" value={area.valid_from} required disabled={!editable} />
+        <DateField name="valid_to" label="Hết hiệu lực" value={area.valid_to} hint="Để trống nếu còn hiệu lực" disabled={!editable} />
+      </div>
+    </CatalogForm>
+  )}
+</Admin>

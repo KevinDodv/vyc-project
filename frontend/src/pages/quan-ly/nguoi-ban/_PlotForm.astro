@@ -1,0 +1,98 @@
+---
+// Form một đồi quế (thêm hoặc sửa), đặt trong hộp thoại của _PlotsSection. Id ô nhập có tiền tố riêng
+// vì một trang có nhiều form đồi.
+import type { FieldOption } from "../../../lib/admin/catalog";
+import { COORDINATES_HINT, formatCoordinates } from "../../../lib/admin/catalog-suppliers/plots";
+import type { PlotOut } from "../../../lib/admin/catalog-suppliers/suppliers";
+
+interface Props {
+  supplierId: number;
+  prefix: string;
+  villages: FieldOption[];
+  /** Có thì là form sửa. */
+  plot?: PlotOut;
+  /** Thôn chọn sẵn khi thêm đồi mới (thôn của người bán). */
+  defaultAreaId?: number;
+  closeId: string;
+}
+const { supplierId, prefix, villages, plot, defaultAreaId, closeId } = Astro.props;
+
+const areaId = plot?.area_id ?? defaultAreaId;
+const inactive = plot?.status === "INACTIVE";
+// Đồi đang là mặc định thì không bỏ tích được (phải chọn đồi khác làm mặc định); đồi ngừng dùng không làm mặc định.
+const defaultLocked = inactive || plot?.is_default === true;
+const fid = (name: string) => `${prefix}-${name}`;
+const title = plot ? `Sửa đồi ${plot.code}` : "Thêm đồi quế";
+---
+<form
+  id={`${prefix}-form`}
+  class="flex flex-col gap-4"
+  novalidate
+  aria-labelledby={`${prefix}-title`}
+  data-plot-form
+  data-supplier-id={supplierId}
+  data-plot-id={plot?.id}
+>
+  <h3 id={`${prefix}-title`} class="text-lg font-bold">{title}</h3>
+  <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-1 sm:col-span-2">
+      <label class="label text-base-content" for={fid("area_id")}>Thôn <span class="text-error" aria-hidden="true">*</span><span class="sr-only">(bắt buộc)</span></label>
+      <select class="select w-full" id={fid("area_id")} name="area_id" aria-describedby={fid("area_id-error")} data-label="Thôn" aria-required="true">
+        <option value="">— Chọn —</option>
+        {villages.map((v) => (
+          <option value={String(v.value)} selected={v.value === areaId}>{v.label}</option>
+        ))}
+      </select>
+      <p class="text-sm text-error" id={fid("area_id-error")} role="alert" data-error-for="area_id" hidden></p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="label text-base-content" for={fid("area_ha")}>Diện tích (ha)</label>
+      <input class="input w-full" id={fid("area_ha")} name="area_ha" aria-describedby={fid("area_ha-error")} type="text" inputmode="decimal" data-label="Diện tích" placeholder="1,5" value={plot?.area_ha ?? ""} />
+      <p class="text-sm text-error" id={fid("area_ha-error")} role="alert" data-error-for="area_ha" hidden></p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="label text-base-content" for={fid("planted_year")}>Năm trồng</label>
+      <input class="input w-full" id={fid("planted_year")} name="planted_year" aria-describedby={fid("planted_year-error")} type="text" inputmode="numeric" maxlength="4" data-label="Năm trồng" placeholder="2015" value={plot?.planted_year ?? ""} />
+      <small class="text-sm opacity-70">Từ 1950 đến năm nay.</small>
+      <p class="text-sm text-error" id={fid("planted_year-error")} role="alert" data-error-for="planted_year" hidden></p>
+    </div>
+
+    <div class="flex flex-col gap-1 sm:col-span-2">
+      <label class="label text-base-content" for={fid("coordinates")}>Toạ độ (dán từ Google Maps)</label>
+      <input class="input w-full font-mono" id={fid("coordinates")} name="coordinates" aria-describedby={fid("coordinates-error")} type="text" data-label="Toạ độ" autocomplete="off" placeholder="21.028579, 105.854193" value={formatCoordinates(plot?.lat ?? null, plot?.lng ?? null)} />
+      <small class="text-sm opacity-70" data-coord-preview>{COORDINATES_HINT}</small>
+      <p class="text-sm text-error" id={fid("coordinates-error")} role="alert" data-error-for="coordinates" hidden></p>
+    </div>
+
+    <div class="flex flex-col gap-1 sm:col-span-2">
+      <label class="label text-base-content" for={fid("photo_urls")}>Ảnh đồi (mỗi dòng một địa chỉ)</label>
+      <textarea class="textarea w-full" id={fid("photo_urls")} name="photo_urls" aria-describedby={fid("photo_urls-error")} rows="3" data-label="Ảnh đồi" placeholder="/media/dat-que-1.jpg">{(plot?.photo_urls ?? []).join("\n")}</textarea>
+      <small class="text-sm opacity-70">Dạng /media/... hoặc https://..., tối đa 10 ảnh.</small>
+      <p class="text-sm text-error" id={fid("photo_urls-error")} role="alert" data-error-for="photo_urls" hidden></p>
+    </div>
+
+    <div class="flex flex-col gap-1 sm:col-span-2">
+      <label class="flex items-center gap-2">
+        <input type="checkbox" class="checkbox" id={fid("is_default")} name="is_default" aria-describedby={fid("is_default-error")} data-label="Đồi mặc định" checked={plot?.is_default === true} disabled={defaultLocked} />
+        <span>Đồi mặc định của người bán</span>
+      </label>
+      <small class="text-sm opacity-70">
+        {plot?.is_default
+          ? "Đồi này đang là mặc định. Muốn đổi, hãy đặt đồi khác làm mặc định."
+          : inactive
+            ? "Đồi đã ngừng dùng không làm đồi mặc định được."
+            : "Đồi đang dùng đầu tiên tự là mặc định; tích ô này để chuyển mặc định sang đồi này."}
+      </small>
+      <p class="text-sm text-error" id={fid("is_default-error")} role="alert" data-error-for="is_default" hidden></p>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end gap-2">
+    <button type="button" class="btn btn-ghost" data-close-dialog={closeId}>Đóng</button>
+    <button type="submit" class="btn btn-primary" data-action="save">Lưu đồi</button>
+  </div>
+</form>

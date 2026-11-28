@@ -1,0 +1,46 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import MaterialForm from "../../../lib/admin/catalog-ph1a/MaterialForm.astro";
+import {
+  draftsFromMaterial,
+  type GoodsTypeLite,
+  goodsTypeOptions,
+  type MaterialOut,
+} from "../../../lib/admin/catalog-ph1a/materials";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const { id } = Astro.params;
+if (!id || !/^\d{1,18}$/.test(id)) return Astro.rewrite("/404");
+const [material, goodsTypes] = await Promise.all([
+  getJson<MaterialOut>(Astro.request, `/materials/${id}`),
+  getJson<GoodsTypeLite[]>(Astro.request, "/goods-types"),
+]);
+if (material.kind === "unauthorized" || goodsTypes.kind === "unauthorized") {
+  return Astro.redirect(loginUrl(Astro.url), 302);
+}
+if (material.kind === "not_found") return Astro.rewrite("/404");
+const ok = material.kind === "ok" && goodsTypes.kind === "ok";
+if (!ok) Astro.response.status = 503;
+---
+<Admin title="Sửa nguyên liệu">
+  <h1 class="mb-4 text-2xl font-bold">Sửa nguyên liệu &amp; hạng</h1>
+  {material.kind !== "ok" || goodsTypes.kind !== "ok" ? (
+    <Unavailable what="nguyên liệu này" />
+  ) : (
+    <MaterialForm
+      title={material.data.name}
+      role={role}
+      material={material.data}
+      drafts={draftsFromMaterial(material.data.grades)}
+      goodsTypes={goodsTypeOptions(goodsTypes.data, material.data.goods_type_id)}
+      apiPath={`/materials/${material.data.id}`}
+      method="PATCH"
+      redirect="/quan-ly/nguyen-lieu"
+      backHref="/quan-ly/nguyen-lieu"
+    />
+  )}
+</Admin>

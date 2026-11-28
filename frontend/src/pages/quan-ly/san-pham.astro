@@ -1,11 +1,36 @@
 ---
 import Admin from "../../layouts/Admin.astro";
+import { adminApi, callApi } from "../../lib/admin/catalog-products/admin-api";
+import {
+  type ProductOwner,
+  parseProductListQuery,
+  productListApiQuery,
+} from "../../lib/admin/catalog-products/product";
+import ProductList from "./san-pham/_ProductList.astro";
 
 export const prerender = false;
+
+const query = parseProductListQuery(Astro.url.searchParams);
+const api = adminApi(Astro.request);
+const listed = await callApi(() =>
+  api.GET("/api/v1/products", { params: { query: productListApiQuery(query) } }),
+);
+if (listed.kind === "unavailable") Astro.response.status = 503;
+// Trang này chỉ OWNER vào được (middleware), nên mỗi dòng là ProductOwnerOut có giá bán lẻ.
+const rows = listed.kind === "ok" ? (listed.data.items as ProductOwner[]) : [];
+const total = listed.kind === "ok" ? listed.data.total : 0;
 ---
 <Admin title="Sản phẩm">
-  <h1 class="text-2xl font-bold">Tạo sản phẩm</h1>
-  <p class="mt-1 text-sm">Sản phẩm mới ở trạng thái nháp; bấm «Đăng» để hiện ở trang công khai.</p>
+  <h1 class="text-2xl font-bold">Sản phẩm</h1>
+  <p class="mt-1 mb-4 text-sm">Bấm một dòng để sửa đầy đủ (công thức, hạn dùng, nội dung website, SEO).</p>
+  {listed.kind === "ok" ? (
+    <ProductList rows={rows} total={total} query={query} />
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách sản phẩm. Bạn thử lại sau ít phút.</p>
+  )}
+
+  <h2 class="mt-10 text-xl font-bold">Tạo nhanh sản phẩm</h2>
+  <p class="mt-1 text-sm">Sản phẩm mới ở trạng thái nháp; bấm «Đăng» để hiện ở trang công khai. Cần nhập đủ trường thì dùng «+ Thêm sản phẩm».</p>
 
   <form id="product-form" class="mt-6 grid gap-4 sm:grid-cols-2" novalidate>
     <label class="flex flex-col gap-1">

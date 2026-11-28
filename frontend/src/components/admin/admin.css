@@ -2,9 +2,12 @@
 @source "../../pages/quan-ly";
 @source "../../layouts/Admin.astro";
 @source "./";
+@source "../../lib/admin";
 
 @plugin "daisyui" {
-  include: button, navbar, input, select, fieldset, label, alert, badge, card, link;
+  include:
+    button, navbar, input, select, textarea, checkbox, fieldset, label, alert, badge, card, link,
+    table, dropdown, menu, join;
   themes: false;
   logs: false;
 }

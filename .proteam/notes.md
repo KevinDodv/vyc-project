@@ -538,3 +538,212 @@
 - Lần chạy CI đầu trên GitHub là nghiệm thu thật của #78 và #77
 - Chưa chạy: check-budget trên dist, actionlint, docker build, CI thật. Mình tin kết quả compose config, caddy validate và shellcheck của Khoa.
 - Cần máy hoặc CI đủ công cụ để chạy job makefile (make check, git diff --exit-code, make image) trước khi đóng topic.
+- Máy không có Postgres, Docker, uv hay make. Đã chạy pytest bằng .venv với settings SQLite tạm ngoài repo (C:\Users\VTIT\AppData\Local\Temp\vycsqlite). Bộ cũ lỗi giống hệt trên HEAD sạch (58 lỗi do now() và date_trunc của Postgres); số test qua tăng từ 179 lên 231 nhờ 52 test mới. CHECK, UNIQUE có điều kiện và sqlmigrate chưa kiểm trên Postgres, CI sẽ chạy lần đầu.
+- makemigrations trên máy này treo vì dò kết nối localhost:5432; dùng settings SQLite tạm để sinh migration. Migration 0003 không có RunSQL, chỉ có thao tác Django chuẩn.
+- area: thêm UNIQUE (parent, name) có điều kiện và UNIQUE name cho tỉnh để thực thi 'không trùng tên trong cùng cha' (TK mục 5). plot: UNIQUE một đồi mặc định mỗi người bán.
+- Mọi bảng mới kế thừa TimeStampedModel (created_at, updated_at). Enum status dùng chung ActiveStatus ở catalog/models/common.py.
+- Task t1b (ingredient, recipe) cần tạo migration 0005 trở đi, phụ thuộc 0004_seed_ph1_danh_muc.
+- middleware.ts OWNER_ONLY_PREFIXES (ngoài vùng của mình) chưa có /quan-ly/tai-khoan, /cai-dat, /chung-nhan; hiện chỉ có /danh-muc, /bang-gia, /khach-hang, /san-pham... Brief #86 dùng route /quan-ly/<mục>, không có /danh-muc, nên trang chứng nhận/tài khoản/cài đặt WORKSHOP gõ URL vẫn vào được (API vẫn chặn). Lead cân nhắc thêm ba tiền tố này khi có task giữ middleware.ts.
+- Quy ước mới cho backend: lỗi nghiệp vụ theo trường nên có details.field (chuỗi) để form hiện ngay dưới trường; chưa có thì hiện ở hộp lỗi chung.
+- Test render component nằm ở components/admin/catalog/render.test.ts, tự dựng Vite server bằng getViteConfig + createViteServer (từ vitest/node); vitest.config.ts không cần sửa. Chậm khoảng 2 giây.
+- v1Api (frontend-seo.md 5.2) chưa có trong lib/api/server.ts; task màn danh mục cần nó để SSR gọi GET danh sách, hoặc dùng publicApi tạm.
+- Biome ci phát hiện lỗi noShadowRestrictedNames nếu đặt tên hàm valueOf; đã đổi thành textValue.
+- Máy bash không có node trong PATH; dùng /c/Program Files/nodejs
+- middleware.ts chưa chặn WORKSHOP vào /quan-ly/tai-khoan, /cai-dat, /chung-nhan (ngoài scope #86)
+- Chưa chạy vitest, biome ci, astro check: Bash không có pnpm/npx, PowerShell bị app chặn lệnh pnpm. Cần cổng kiểm tra của app hoặc người có quyền chạy: pnpm vitest run tests/admin/middleware.test.ts; pnpm biome ci src/middleware.ts tests/admin/middleware.test.ts; pnpm astro check.
+- So khớp theo đoạn đã có sẵn trong startsWithSegments nên không đổi.
+- Cần ai chạy được pnpm xác nhận: pnpm vitest run tests/admin/middleware.test.ts; pnpm biome ci src/middleware.ts tests/admin/middleware.test.ts; pnpm astro check.
+- Cảnh báo lấn vùng về test_models_ph1.py có thể do dev khác (cùng cây) sửa file đó, không phải #97.
+- pnpm không gọi được; chạy qua node trực tiếp với PATH có C:\Program Files\nodejs: node node_modules/vitest/vitest.mjs, node_modules/@biomejs/biome/bin/biome, node_modules/astro/bin/astro.mjs.
+- backend/catalog/tests/test_models_ph1.py và test_models_recipe.py là file untracked do người khác tạo (#85/#87), không phải #97; app đừng tính vào lấn vùng của Linh2.
+- Seed area (migration 0007) đụng 32 test trong catalog/tests/test_models_ph1.py (file của #85, ngoài vùng): fixture province và commune tạo lại LC và CQ. Patch đã thử, catalog 130 passed: dòng 44 return Area.objects.get(code="LC"); dòng 49 return Area.objects.get(code="CQ"); dòng 147-148 đổi xã LG Lâm Giang thành XX Xã khác và LG-T3 thành XX-T3. File đã hoàn lại nguyên trạng.
+- Service/API sau này: cha đúng cấp của area chỉ kiểm ở clean(), seed 0007 gán parent tường minh. Mã ingredient chỉ A-Z, 0-9 theo validator, service phải gọi full_clean().
+- Chưa kiểm trên Postgres: CHECK Upper/Length của ingredient, partial UNIQUE recipe_one_active_per_code. Chạy trên SQLite tạm; CI sẽ bắt.
+- pytest toàn bộ trên SQLite còn 59 đỏ: lỗi now()/date_trunc của Postgres, cộng core/tests/test_role_matrix.py do route areas, goods-types, materials, prices, settings của #88-#90 chưa khai vai trong ROUTE_ROLES (không phải do #87).
+- Công thức CHUNG-QM không seed, đúng mục 4.
+- Seed area 0007 (LC + 9 xã) có sẵn trong DB test: catalog/tests/test_areas_api.py của #88 đỏ 3 test (test_list_returns_tree, test_list_keeps_inactive_nodes_with_status, test_patch_inactive_means_discontinued) vì giả định DB chỉ có Tỉnh A, B; cần lọc theo dữ liệu mình tạo thay vì đếm toàn bảng.
+- ruff check . và ruff format --check đang đỏ ở file của #89 (catalog/api/schemas/suppliers.py, catalog/services/suppliers.py: E501); mypy đỏ 8 lỗi ở test_areas_api.py (#88). Ngoài vùng #87.
+- Chạy trên SQLite tạm: CHECK Upper/Length của ingredient và partial UNIQUE recipe_one_active_per_code chưa kiểm trên Postgres, CI sẽ bắt.
+- VIỆC CHO NGƯỜI GIỮ core/tests/test_role_matrix.py (nên là #92 gom): ROUTE_ROLES cần thêm route của #90 thì test_every_route_is_declared đỏ. Dòng cần thêm: GET /api/v1/certificates ANY_STAFF; POST /api/v1/certificates OWNER; GET /api/v1/certificates/{certificate_id} ANY_STAFF; PATCH /api/v1/certificates/{certificate_id} OWNER; GET /api/v1/settings ANY_STAFF; PATCH /api/v1/settings OWNER; GET /api/v1/users OWNER; POST /api/v1/users OWNER; GET /api/v1/users/{user_id} OWNER; PATCH /api/v1/users/{use
+- Migration mới: core/migrations/0002_seed_settings.py (get_or_create, không ghi đè). Nếu task khác cũng thêm core 0002 thì phải đánh lại số. Danh sách DEFAULTS bị lặp ở migration và catalog/services/settings.py; có test test_schemas_cover_the_same_keys_as_defaults và test_migration_seeds_defaults bắt lệch
+- Lỗi lỗi lỗi mypy 8 dòng và ruff E501 ở catalog/tests/test_areas_api.py (dòng 85-97, 298, 350) thuộc #88 (Phong), tôi không sửa
+- Lỗi nghiệp vụ theo trường dùng details.field (username, status, role, product_id, plot_id, expires_on, stars) cho các màn #94-#96; lỗi validation schema vẫn ở details.errors[].field như handler chung
+- Website sau này gọi catalog.services.certificates.active_public_for_product(product_id); chưa có hàm tương tự cho đồi (plot) vì brief chỉ yêu cầu sản phẩm. Chứng nhận của đồi cần mở rộng khi làm trang truy xuất nếu muốn hiện
+- Chạy test trên máy không có Postgres: tạo file settings tạm ngoài repo (from tests.settings import *; DATABASES = sqlite :memory:) rồi pytest --ds=<module> với PYTHONPATH trỏ tới thư mục chứa nó
+- Chưa kiểm trên Postgres thật; CHECK certificate_* đã có ở model từ #85, service kiểm trước nên lỗi trả 400 chứ không lọt xuống DB
+- GET /certificates và /settings cho WORKSHOP; trang /quan-ly/chung-nhan và /cai-dat đã bị middleware chặn WORKSHOP (#97), API vẫn mở GET theo mục 9
+- Pytest chỉ chạy trên SQLite (máy không có Postgres): dùng settings tạm ngoài repo (from tests.settings import *, DATABASES sqlite :memory:) với --ds. CHECK/partial UNIQUE chưa kiểm trên Postgres, CI sẽ bắt.
+- mypy toàn repo hiện sạch; lúc đầu có 1 lỗi ở catalog/tests/test_models_recipe.py:250 (ngoài vùng) nhưng lần chạy cuối đã hết.
+- services mới import UNSET/_Unset từ catalog/services/products.py; nên chuyển sang core ở task dọn dẹp riêng.
+- api/goods_types.py chứa schema ngay trong file vì vùng sửa không có schemas/goods_types.py; test goods-types nằm trong test_materials_api.py.
+- Chưa chặn ngừng dùng địa bàn cha khi còn con ACTIVE (brief không nêu).
+- Test địa bàn tìm nút theo mã vì seed 0007 (#87) đã có tỉnh LC và 9 xã trong DB test.
+- Cho #92/frontend: GET /prices trả {date, items:[{grade_id, grade_rank, grade_name, material_id, material_code, material_name, buy_price, sell_price, effective_date}]}; PUT /prices/{date} body {items:[{grade_id,buy_price,sell_price}]} trả cùng dạng; GET /prices/history?to= trả [{price_date, items:[{grade_id,buy_price,sell_price,updated_by_id}]}].
+- Máy không có Postgres nên chạy pytest bằng settings SQLite tạm (đã xoá). Chạy mặc định thì cả bộ catalog báo lỗi kết nối DB.
+- Cả bộ catalog trên SQLite: 267 passed, 56 failed. Cả 56 ở test_suppliers_api (46), test_customers_api (10), test_areas_api (1), là task API của Ngoc2 và Phong, ngoài vùng #87.
+- Với suppliers, nguyên nhân là core/codes.py:23 dùng SQL thô now() mà SQLite không có (no such function: now). Customers có cùng log 500; areas chưa xem kỹ nguyên nhân. Postgres thì không dính lỗi now().
+- Mã area đã seed ở 0007: LC (tỉnh Lào Cai); xã PDH, PDT, CQ, LG, DC, TH, MA, XA, MV, cha LC, former_name 'huyện Văn Yên, tỉnh Yên Bái'. Test mới của API khác dùng Area.objects.get(code=...) hoặc mã chưa có như XX, không create trùng.
+- Máy không có Postgres. Lượt đầu chạy pytest 2 file test của #87 trả về 104 error, kèm lệnh chạy hết 526 giây. Lượt sau thử DATABASE_URL SQLite thì quá 110 giây không có kết quả. Cả hai lượt đều không có test nào pass hay fail thật.
+- Mình để lại file tạm D:\tmp_ngoc87.sqlite3 (có thể kèm -journal) do lượt chạy SQLite bị ngắt. Lệnh rm bị chặn nên chưa xoá; sếp hoặc Lead xoá giúp.
+- Cổng chất lượng của app hoặc Hai2 nên chạy lại 2 file test trên SQLite hoặc Postgres để xác nhận trước khi Lead gom.
+- Thư mục tạm D:\tmp_ngoc_cfg (chỉ có sqlset.py) còn lại ở ngoài repo vì lệnh xoá bị chặn; sếp hoặc Lead xoá giúp được.
+- Cách chạy test trên SQLite khi máy không có Postgres: ENVIRONMENT=dev, DJANGO_SETTINGS_MODULE trỏ tới module `from config.settings import *` rồi đặt DATABASES sqlite :memory:, thêm thư mục đó vào PYTHONPATH. Chạy mất khoảng 6 giây, không cần sửa code repo.
+- Chạy SQLite: ENVIRONMENT=dev PYTHONPATH=D:/tmp_ngoc_cfg:. DJANGO_SETTINGS_MODULE=sqlset; file D:/tmp_ngoc_cfg/sqlset.py chưa xoá được vì lệnh rm bị app từ chối.
+- Chưa kiểm Postgres thật: select_for_update, tranh chấp khi tạo trùng cùng lúc.
+- core/tests/test_role_matrix.py (ngoài vùng) đang đỏ test_every_route_is_declared_and_no_stale_entry, vì ROUTE_ROLES chưa khai route PH1 của #88, #89 và #90. Phần của #89 cần thêm: ANY_STAFF cho GET /api/v1/suppliers, POST /api/v1/suppliers, GET /api/v1/suppliers/{supplier_id}, GET /api/v1/suppliers/{supplier_id}/plots, GET /api/v1/customers, GET /api/v1/customers/{customer_id}. OWNER cho PATCH /api/v1/suppliers/{supplier_id}, POST /api/v1/suppliers/{supplier_id}/approve, POST /api/v1/suppliers/{
+- Cả bộ pytest còn 2 test đỏ nữa, không do #89: core/tests/test_br20_code_counter.py::test_br20_code_patterns (đợi KH-0001 nhưng seed 0004 đã đẩy bộ đếm KH lên 0004) và core/tests/test_api_errors.py::test_pagination (tổng 10 thay vì 5, vì dữ liệu seed). Cần người giữ core/tests hoặc #85 sửa.
+- BR-21 cho người bán: services/suppliers.py có register_supplier_in_use_check(check), theo mẫu register_grade_in_use_check của materials. Đợt 2 (operations) đăng ký hàm trả True khi người bán còn lô IN_STOCK/RESERVED thì PATCH status=INACTIVE trả 409 SUPPLIER_IN_USE kèm details.rule='BR-21'. Hiện chưa có check nào nên chưa chặn.
+- Lỗi theo trường: model clean() (cấp địa bàn, năm trồng) trả 400 VALIDATION_ERROR có details.field và details.errors[]. Lỗi nghiệp vụ trả details.field. Khớp form.ts của #86.
+- Response người bán có area_name dạng 'Thôn 3, Châu Quế' và plots_count (số đồi đang dùng) để màn dùng cho lưới nút. Chỉ SupplierSavedOut (POST/PATCH) có notices.
+- Test dựng sẵn tỉnh/xã/thôn mã ZP, ZC, ZC-T1, ZC-T2, ZD, ZD-T1, không đụng seed LC/CQ/...
+- Máy này không có Postgres cài sẵn. Tôi bật bản tạm từ D:\pgtools bằng postgres.exe -D D:/pgtools/data -p 5433; chạy test cần POSTGRES_PORT=5433 ENVIRONMENT=dev. Tiến trình đó vẫn đang chạy ở nền. Hai lần chạy pytest đồng thời trên cùng test DB sẽ làm lẫn nhau (tôi từng gặp 67 lỗi setup do vậy).
+- Không sinh openapi, không sửa config/api.py. Schema trả Decimal (lat, lng, area_ha) ra JSON dạng số float.
+- Lệnh uv bị chặn trong PowerShell, và Bash không có uv hay python. Cần sếp cho chạy hộ pytest, ruff check, ruff format --check và mypy trên 2 file.
+- Medium: GET /customers?q= dùng icontains nên phân biệt dấu, trong khi /suppliers?q= đã bỏ dấu qua fold(). Nên thống nhất.
+- Medium: /suppliers?q= lọc bằng Python trên toàn bộ người bán trước khi phân trang. Quy mô nhỏ thì ổn, nhưng sẽ chậm nếu bảng lớn.
+- Ngoài vùng của #89, theo thẻ: test_role_matrix chưa khai route PH1 (thuộc #92). test_br20_code_patterns đợi KH-0001 nhưng seed 0004 đã đẩy bộ đếm lên 0004. test_pagination tổng 10 thay vì 5 do seed.
+- Máy này không có Postgres (localhost:5432 từ chối kết nối) nên pytest treo; hai test chưa được xác nhận xanh trên Postgres.
+- Trên Windows chạy mypy cần PYTHONUTF8=1 và ENVIRONMENT=dev, nếu không plugin Django lỗi encoding hoặc thiếu DJANGO_SECRET_KEY.
+- uv không nằm trong PATH của shell Bash trên máy này; dùng backend/.venv/Scripts/*.exe trực tiếp.
+- Chưa có kết quả pytest. Nếu Ngoc2 báo đỏ thì task về mình kèm log.
+- Chưa xác nhận hai test xanh trên Postgres: đang chờ kết quả của Ngoc2 trên thẻ #98.
+- Hook đợt 2 (operations đăng ký trong AppConfig.ready()): catalog.services.ingredients.register_ingredient_lot_check(fn(id)->bool: đã có lô) và register_ingredient_stock_check(fn(id)->bool: còn lô IN_STOCK); catalog.services.recipes.register_recipe_used_check(fn(recipe_id)->bool: đã có lệnh dùng) và register_recipe_open_order_check(fn(recipe_id)->bool: còn lệnh DRAFT/CURING).
+- @Hai2 (#92) bảng core/tests/test_role_matrix.py cần khai thêm: GET /ingredients, GET /ingredients/{ingredient_id} (cả hai vai); POST /ingredients, PATCH /ingredients/{ingredient_id} (OWNER); GET /recipes, GET /recipes/{recipe_id}, GET /recipes/{recipe_id}/scale (cả hai vai); POST /recipes, PATCH /recipes/{recipe_id}, PUT /recipes/{recipe_id}/items, POST /recipes/{recipe_id}/new-version, POST /recipes/{recipe_id}/activate, POST /recipes/{recipe_id}/retire (OWNER).
+- Response: Decimal (gram, pct, density) ra JSON dạng chuỗi ("89.72"). RecipeDetailOut có thêm editable (DRAFT và chưa có lệnh) để màn ẩn nút sửa. ProductOut/ProductOwnerOut có thêm warnings: [{code:'RECIPE_NOT_ACTIVE', message, field:'recipe_code'}]. #92 sinh openapi sau khi gom.
+- Chưa chạy trên Postgres (máy không có): các CHECK có F()/Upper, partial UNIQUE recipe_one_active_per_code và select_for_update khoá đồ thị công thức mới chỉ kiểm trên SQLite; CI sẽ bắt.
+- Chạy cả bộ trên SQLite tạm (settings và plugin tắt throttle đặt ở D:\tmp_h2, ngoài repo, chưa xoá vì lệnh rm bị chặn): luồng mẫu #77 và test website xanh; còn đỏ do throttle/now() của Postgres (login, br20, api_errors, suppliers, customers) và test_role_matrix (xem trên).
+- Hạn chế đã biết: hai lần lưu công thức ở hai code khác nhau cùng lúc chỉ được khoá nhờ select_for_update trên các công thức INTERMEDIATE (có tác dụng trên Postgres, không trên SQLite).
+- Postgres dev cục bộ trên máy này (cổng 5433) hiện đã tắt; bật lại bằng pg_ctl start rồi chạy pytest với POSTGRES_PORT=5433. Lệnh pg_ctl start giữ pipe nên đừng chạy ở foreground kèm pipe.
+- Cổng của app cần chạy lại 3 file test #91 trên Postgres: Hai2 mới chạy trên SQLite, còn máy mình không kết nối được DB.
+- Đưa vào tài liệu API (theo low của Ngoc #1034): POST new-version trả 409 RECIPE_DRAFT_EXISTS khi đã có bản nháp.
+- Máy không có Postgres: pytest cả bộ trên SQLite đỏ ở throttle, bộ đếm mã, login lock, test_customers_api, test_suppliers_api (SQL riêng của Postgres). Cần cổng app hoặc Ngoc2 chạy pytest đủ bộ trên Postgres 16.
+- uv và pnpm không có trong PATH shell; dùng .venv/Scripts/python.exe manage.py export_openapi_schema (ENVIRONMENT=dev) và node scripts/gen-api.mjs.
+- Schema mới (65 kiểu) có trong v1.d.ts: Page_UserOut_, UserOut, AreaNode, GoodsTypeOut, MaterialOut, GradeOut, PriceSheetOut, SupplierOut, SupplierIn, SupplierSavedOut, PlotOut, CustomerOut, CertificateOut, SettingsOut, IngredientOut, RecipeOut, RecipeDetailOut, ScaleOut, RecipeItemsPut, ProductWarning và các kiểu In/Patch tương ứng.
+- Finding medium của #92 (Van #1038): chưa có pytest cả bộ và make check trên Postgres. Đã nhờ Ngoc2 chạy rồi ghi kết quả lên thẻ #92. Đưa vào tổng kết nếu chưa có kết quả.
+- Ngoài vùng #96: CatalogForm.astro luôn hiện «Không có nút Xóa: dùng «Ngừng dùng»», kể cả form chứng nhận vốn không có nút Ngừng dùng; nên thêm prop để đổi hoặc ẩn dòng này.
+- Chưa có tải ảnh/file: form sản phẩm chỉ sửa alt hoặc gỡ ảnh đã có, chứng nhận nhập đường dẫn file.
+- Nên có task sau: sửa tests/e2e/sample-flow.spec.ts sang form đầy đủ rồi bỏ form tạo nhanh (đang bắt gõ goods_type_id bằng số).
+- playwright.config.ts gốc chỉ chạy tests/e2e; bài trong frontend/e2e chạy bằng -c e2e/playwright.config.ts.
+- Windows cho hai runserver cùng nghe một cổng: lượt này backend của mình từng trùng cổng 8000 với server của người khác trong chốc lát (đã tắt), ai đang bấm thử trên 8000 lúc đó mà gặp lỗi lạ thì chạy lại. Mỗi người nên dùng cổng và DB riêng; mình dùng 8196/4497/4496.
+- DB thử vyc_f4 còn trên Postgres 5433, mình chưa xoá.
+- Chưa chạy make check (máy không có make); backend không sửa trong lượt này nên không chạy pytest/ruff/mypy.
+- CatalogForm.astro:53 thiếu method="post" (ngoài scope #96): form có ô mật khẩu có thể submit GET khi JS chưa nạp. Cần task sửa ở bộ khung.
+- e2e/catalog-products.spec.ts chỉ nên chạy trên stack thử: nó để lại một tài khoản xưởng đang dùng, mật khẩu nằm trong repo.
+- Backend chưa có POST /api/v1/images (backend.md:496, :722) nên sản phẩm tạo từ giao diện chưa thêm được ảnh, và chứng nhận chưa tải được file. Lead cần mở task riêng; không bắt #96 làm.
+- #96 chưa chạy make check (Linh2 báo máy không có make).
+- Build cùng cây bị ghi đè frontend/dist khi hai người build một lúc. Muốn chạy server thử thì dùng `astro build --outDir ./node_modules/.<tên>-dist` rồi chạy entry.mjs trong đó.
+- Playwright chạy được trên máy này (đã có chromium) với `-c e2e/playwright.config.ts`, thay được ui.mjs vốn tắt trình duyệt giữa hai lệnh. Proxy /api cho bản build: docs/_tools/tmp/t95/proxy.mjs.
+- querySelector không đi vào nội dung <template>, và vitest của form (chỉ test hàm thuần) không bắt được lỗi loại này.
+- Trường hợp hiếm: trong một lần lưu vừa đổi «Phụ liệu làm ra» sang X vừa xoá dòng X thì bị báo vòng lặp, vì PATCH chạy trước PUT và backend kiểm với dòng cũ (backend/catalog/services/recipes.py:469-475). Cách tránh: lưu dòng trước rồi đổi đầu ra.
+- Còn lại từ lúc thử: DB tạm vyc_t95 trên Postgres cổng 5433, frontend/node_modules/.t95-dist, docs/_tools/tmp/t95. Đều không vào git; mình chưa xoá. Server thử của mình đã tắt, Postgres vẫn chạy.
+- Máy này có node ở C:\Program Files\nodejs (Git Bash: export PATH="/c/Program Files/nodejs:$PATH"), gọi thẳng node_modules/.bin/*; backend dùng backend/.venv/Scripts/*.exe. Không có pnpm, uv trong PATH; không thấy Postgres hay docker.
+- core/throttle.py dùng SQL riêng của Postgres nên stack SQLite đăng nhập bị 500. Khi bấm thử tôi vá no-op bằng một app tạm ngoài repo (%TEMP%\vyc-f1-93), proxy cổng 4393 sang Django 8193 và astro dev 4394. Luồng trên Postgres và throttle chưa được kiểm.
+- Windows cho hai server cùng nghe cổng 8000, request có thể rơi vào DB của người khác. Mỗi người nên dùng cổng riêng.
+- frontend/e2e/playwright.config.ts nằm ngoài scope #93, lượt này tôi không sửa và không khai trong files_changed. Cần chắc có task nhận file này để không bị sót khi commit.
+- WORKSHOP mở /quan-ly/bang-gia nhận 403 (middleware, khớp bảng quyền TK dòng 62), trong khi API mục 9 cho cả hai vai GET /prices. Màn giữ theo middleware.
+- Ngoài vùng #96: frontend/src/components/admin/catalog/CatalogForm.astro:127 hiện dòng «Không có nút Xóa: dùng «Ngừng dùng»» khi form có thể sửa, kể cả form chứng nhận không truyền status nên không có nút Ngừng dùng. Sửa ở #86, báo Lead.
+- Chưa xem: CatalogField.astro, CatalogForm.astro (ngoài vùng), và nội dung chi tiết các file .test.ts. Chưa xem ảnh f4-*.png (đã thấy đủ 11 file tên đúng).
+- Không chạy được vitest, astro check, biome ci, build, e2e: bash và PowerShell đều không thấy node/npx/pnpm. Phần xanh dựa vào báo cáo của @Linh2 (vitest 430/430, e2e 2/2 và 5/5). Chưa có make check.
+- Đã đối chiếu và khớp backend: giới hạn settings (1–10000, 1–100, 1–120, tem 10–200), SKU, slug, seo 70/170, alt ≥1 ký tự, lọc chứng nhận active, 409 CANNOT_DEACTIVATE_SELF, middleware OWNER_ONLY có đủ san-pham, chung-nhan, tai-khoan, cai-dat.
+- Màn Bảng giá chặn WORKSHOP bằng middleware (OWNER_ONLY_PREFIXES) dù brief #93 ghi «WORKSHOP chỉ xem»: khớp TK mục 2 (dòng 62) và menu, nên không tính là lỗi.
+- Ô «Ảnh nút bấm» của nguyên liệu mới chỉ nhập đường dẫn /media/..., chưa tải ảnh được; gộp vào task upload ảnh đã nêu ở #1075.
+- Chưa chạy lại Playwright, astro check, biome ci, build; Phong báo đã xanh 6/6. Chưa mở ảnh evidence.
+- Lọc «Ngừng dùng» trên địa bàn vẫn hiện tỉnh đang dùng khi nó có xã con ngừng dùng (flattenAreaTree giữ cấp trên). Có chủ ý, nhưng dễ hiểu nhầm; có thể ghi chú trên màn.
+- Test prices.test.ts chưa có ca "12,5", "250.5", "12.5.3"; thêm vào khi sửa.
+- Đã chạy: cd frontend && npx playwright test -c e2e/playwright.config.ts --list → rc 0, 14 test trong catalog-ph1a, catalog-products, catalog-recipes. Chưa chạy test thật (cần stack E2E_BASE_URL).
+- git check-ignore: frontend/e2e/playwright.config.ts không khớp luật nào, commit được. outputDir ../test-results trỏ tới frontend/test-results, đã ignore (.gitignore:43).
+- Không đối chiếu được nội dung với bản gốc vì file chưa vào git; chỉ đọc và so với mô tả nghiệm thu, không thấy chỗ bất thường.
+- Trong bash/Git Bash npx không có trong PATH mặc định; cần export PATH="/c/Program Files/nodejs:$PATH" trước khi chạy.
+- 28-11, cả cây: astro check 12 lỗi, đều ở catalog-products và pages/quan-ly/chung-nhan; vitest 436/441, đỏ 3 ở catalog-products/lookup.test.ts và 2 ở catalog-ph1a/prices.test.ts; biome ci 1 lỗi ở catalog-ph1a/prices.ts:68; astro build hỏng ở chung-nhan/moi.astro:3 (thiếu export loadSupplierChoices); ruff check 1 lỗi ở upload_image (images, tham số File(...)). ruff format, mypy, lint-imports xanh.
+- Bản sao dùng để kiểm build nằm ở frontend/node_modules/.t95-copy-1128 (không vào git, chưa xoá).
+- Chưa chạy lại e2e catalog-recipes.spec.ts trên stack hôm nay (stack không lên trên máy review). Kết quả 3/3 vẫn là của lượt trước của Tung.
+- Chưa chạy astro check và astro build lại; dựa vào báo cáo của Tung và Lead hôm nay.
+- Không sửa file nào, không đụng playwright.config.ts.
+- frontend/e2e/playwright.config.ts dùng chung outputDir ../test-results: một lần chạy của mình đỏ bài 6 vì ENOENT file trace, nghi do lượt Playwright khác chạy cùng lúc (chưa xác nhận). Chạy lại với --output riêng thì 6/6.
+- Máy không có make và Postgres: chạy từng lệnh thay cho `make check`; pytest lượt này không chạy (mình không sửa backend).
+- Script dựng stack tạm SQLite nằm ngoài repo: %TEMP%\vyc-f1-93\run-stack.sh.
+- CI chỉ chạy playwright.config.ts gốc nên spec trong frontend/e2e không chạy trên CI (Van đã nêu ở #1095).
+- Nên thêm plot_code và supplier_id vào CertificateOut (backend) để bỏ cách tra N+1 khi số người bán lớn.
+- components/admin/catalog/CatalogForm.astro luôn in «Không có nút Xóa: dùng «Ngừng dùng»» kể cả form không có nút đó (chứng nhận, tài khoản của chính mình, form tạo mới). File ngoài vùng #96, chưa sửa.
+- Lỗi dưới ô vẫn còn sau khi người dùng đã chọn lại, tới lần Lưu kế tiếp: hành vi chung của lib/admin/form.ts, chưa đổi.
+- frontend/dist dùng chung: ai đó build lại lúc 16:03:37 khi server thử của mình đang chạy làm sample-flow đỏ một lần (ENOENT chunk). Khởi động lại server thì xanh 4/4.
+- Giữ form «Tạo nhanh sản phẩm» cho sample-flow; chuyển e2e sang form đầy đủ rồi bỏ form nhanh là việc riêng. Tải ảnh sản phẩm chờ task upload.
+- Đã chạy: vitest src/lib/admin/catalog-ph1a (8 file, 72/72); biome ci trên 32 file scope (sạch); parsePrice và preparePrices trên bản sao scratch ngoài repo (21 ca biên, kết quả đúng).
+- Đã xem ảnh evidence f1-dia-ban-trung-ten.png và f1-bang-gia-loi.png, khớp mô tả. Còn 9 ảnh chưa mở.
+- Chưa chạy Playwright trên máy này (stack không chạy sẵn). Dựa vào kết quả của Phong (6/6 trên SQLite, sau sửa #1119). Chưa kiểm trên Postgres.
+- Chưa chạy astro check và build lại; Phong báo 0 lỗi astro check.
+- Lead cần xác nhận: bảng giá là màn chỉ chủ (middleware OWNER_ONLY_PREFIXES, TK mục 2/7.1) hay WORKSHOP phải xem được như brief #93 viết. Hiện nhánh chỉ xem trong PriceGrid không chạy với WORKSHOP; WORKSHOP bị 403 ở middleware.
+- Spec e2e nằm ngoài CI: ci.yml và playwright.config gốc chỉ nhìn tests/e2e. Đây là cùng vấn đề với #95 và #99, nên làm một task riêng.
+- frontend/src/components/admin/catalog/CatalogForm.astro:53 (của #86, ngoài scope #96): thẻ form không có method="post". Nếu JS chưa gắn mà form bị submit thì trình duyệt gửi GET, form tài khoản sẽ đưa mật khẩu lên query string.
+- #96 còn lại, ngoài vùng của task: CatalogForm.astro:127 hiện «dùng Ngừng dùng» cả ở form chứng nhận và cài đặt kiểu không có nút đó; bộ lọc chứng nhận mượn nhãn «Đang dùng/Ngừng dùng» cho còn/hết hiệu lực. Nên gộp một task nhỏ cho component dùng chung.
+- CertificateOut chưa có mã đồi và người bán nên frontend phải hỏi đồi của từng người bán (lookup.ts findPlots). Khi sửa backend nên thêm plot_code và supplier_id.
+- Việc chờ mở sau khi #94/#95 xong: (1) task xs-s sửa CatalogForm.astro: thêm method="post" (`:53`, Tien) và bỏ dòng «Không có nút Xóa: dùng «Ngừng dùng»» thừa ở form chứng nhận (`:127`, Linh2/Ngoc/Van); (2) task đưa spec frontend/e2e vào CI (`ci.yml:218`, Van #1095, Ngoc #1118).
+- recipe-form.ts: phần gửi PATCH/PUT tách thành sendDraftChanges (có test), ghi nhận dữ liệu đã lưu sau từng lệnh thành công. Phần DOM bindRecipeForm vẫn chưa có unit test.
+- Spec trong frontend/e2e vẫn không chạy trên CI (Van #1095, Ngọc #1118): cần task riêng.
+- Stack thử cho #95: bash docs/_tools/tmp/t95/stack.sh (cần build sẵn vào node_modules/.t95-dist, Postgres 5433, DB vyc_t95; script đặt lại mật khẩu 2 tài khoản thử trong DB đó rồi tắt server khi xong). docs/_tools/tmp/t95 không vào git.
+- Chữ «WORKSHOP chỉ xem» trên brief chỉ áp cho ba màn danh mục; nếu sau này brief được sửa, nên ghi rõ bảng giá là ngoại lệ để tránh tranh luận lại.
+- Chưa chạy lại e2e hay vitest trong lượt này; chỉ đọc spec và kết quả của Lead.
+- ui.mjs tính cổng theo git root nên mọi agent trong D:\VYC dùng chung một trình duyệt: đặt PROTEAM_UI_PORT riêng. Trên máy này Chrome do `ui.mjs open` bật tắt ngay khi lệnh thoát, phải tự chạy chrome --headless --remote-debugging-port ở nền.
+- Astro 7 chỉ cho một `astro dev` mỗi dự án. Muốn stack thứ hai: `astro build --outDir node_modules/.<tên>-dist`, chạy entry.mjs kèm proxy /api về Django. Thư mục node_modules/.f2-dist và D:\pgtools\proxy-f2.mjs là đồ tạm của #94.
+- CatalogList: cột mã (mono) bị xuống dòng khi bảng nhiều cột; #94 chặn cục bộ ở _SupplierList.astro, nên sửa ở khung dùng chung.
+- CI chưa chạy spec trong frontend/e2e/ (Van đã nêu ở #1095).
+- Huy hiệu «Chờ duyệt» ở trang chủ OWNER (TK mục 5 «Duyệt người bán mới», AC-04) không nằm trong #94; cần có task nhận phần này.
+- Chưa chạy lại e2e catalog-suppliers.spec.ts: cần stack Django+Postgres và E2E_OWNER_PASSWORD/E2E_WORKSHOP_PASSWORD. Lần đổi class cuối của Ngoc2 chưa được e2e kiểm lại.
+- Chưa chạy astro check, biome ci, build cho bản hiện tại.
+- CatalogForm.astro:127 còn dòng «Không có nút Xóa: dùng «Ngừng dùng»» trên form sửa; đã có trong danh sách việc nhỏ của Lead.
+- normalizeStream đưa luồng CONTROLLED về GENERAL im lặng khi đồi cuối bị ngừng (supplier-form.ts, buildSupplierBody). Đúng quy tắc, nhưng người dùng không được báo.
+- Việc để mở khi hạn mức hồi: CatalogForm (method=post, bỏ dòng Ngừng dùng, form người bán/đồi), e2e vào CI, medium _ProductForm.astro:109 và suppliers.ts:121, huy hiệu Chờ duyệt AC-04.
+- Task gom cần sinh lại openapi/v1.json và v1.d.ts: chưa có route /api/v1/images.
+- Không dùng ImageOps.exif_transpose cho ảnh tải lên: EXIF hỏng làm nó văng TypeError hoặc struct.error (500). core/images.py tự xoay theo thẻ Orientation.
+- SQLite chỉ kiểm được một phần: phải đăng ký hàm now() và giả core.throttle.check/hit trong settings, plugin tạm ngoài repo. Còn 11 test đỏ ở test_login, test_api_errors (throttle), featured throttle, br20 song song, đều cần Postgres.
+- Gap test (low, chưa phải lỗi): nhánh HEIC không có test nào; nếu máy có pillow-heif thì chưa được kiểm.
+- Gap test (low): không có test ghi đồng thời cùng một nội dung (hai request cùng lúc vào _save) trên Windows, nơi os.replace có thể lỗi khi file đích đang mở.
+- Gap test (low): không có test lỗi đĩa (hết chỗ khi ghi) để xác nhận file tạm được dọn và không sót file dở.
+- Chưa chạy lại: pytest, ruff, mypy, lint-imports. Số 234/857 là của Hai2; trong 857 có 11 test đỏ ở throttle/đăng nhập khoá/br20 do SQLite, Ngoc2 đã báo Postgres 809 passed ở #92.
+- plot.photo_urls hiện là list[str] (catalog/api/schemas/suppliers.py:129), không phải mảng ImageRef như backend.md:489 viết. Màn tải ảnh đồi chỉ lưu `url`.
+- core/schemas.py:67-77 còn ImageVariant và ImageRef kiểu cũ {alt,width,height,variants}, trùng tên với core.images.ImageRef mới; grep import trong core/catalog/website không thấy nơi dùng. Ngoài scope #100, nên dọn trong một task nhỏ.
+- openapi/*.json và lib/api/*.d.ts chưa có POST /api/v1/images (đúng brief, để task gom sinh lại).
+- Form sản phẩm: frontend/src/pages/quan-ly/san-pham/_ProductForm.astro và frontend/src/lib/admin/catalog-products/{product,product-edit}.ts; client API: frontend/src/scripts/admin/api.ts (hiện chỉ gửi JSON).
+- Dev chưa phục vụ /media/: vite proxy /media tới localhost:8000 (frontend/astro.config.mjs) nhưng backend/config/urls.py không có route, resolve('/media/...') ra Resolver404.
+- Đọc cấu hình, chưa chạy: trong deploy/compose.dev.yml, vite proxy ghi cứng localhost:8000 trong container frontend nên khó tới được service backend (cả /api lẫn /media). Ngoài #101.
+- Trên máy này export OpenAPI được bằng backend/.venv/Scripts/python.exe manage.py export_openapi_schema (ENVIRONMENT=dev, PYTHONUTF8=1); node phải thêm /c/Program Files/nodejs vào PATH.
+- Việc hoãn chờ mở sau #101: CatalogForm method=post + bỏ dòng «Ngừng dùng» thừa; e2e vào CI; ô giá number (_ProductForm.astro:109); thôn ngừng dùng (suppliers.ts:121); huy hiệu Chờ duyệt AC-04; chặn cỡ body upload ở Caddy (low Tien); sửa backend.md 6.5 + frontend-seo.md:310 (medium Van).
+- Máy không có Postgres nên e2e chạy trên stack SQLite tạm %TEMP%\vyc101\stack\run.sh: tắt throttle, bù hàm now(), astro dev thật, /api và /media đi qua vite proxy.
+- Trên stack đó catalog-products + catalog-product-images chạy 7/7. Sau lượt này chỉ đổi class ô chọn file, tên một ảnh chụp và định dạng; e2e ảnh, vitest, astro check, biome ci, build đã chạy lại.
+- node scripts/check-budget.mjs đỏ: font woff2 công khai 67320 B > 51200 B. Lượt này không đụng font hay trang công khai; budget không nằm trong make check.
+- admin.css không include component file-input của daisyUI (ngoài scope) nên ô chọn file dùng utility Tailwind file:*.
+- Chạy lại catalog-products.spec.ts với E2E_SHOTS=1 đã ghi đè vài ảnh .proteam/evidence/f4-* của #96 (san-pham-*, chung-nhan-loi-ngay, chung-nhan-danh-sach) bằng ảnh chụp lại cùng màn.
+- Ca e2e ảnh nằm trong frontend/e2e nên CI chưa chạy (việc đã hoãn).
+- Nếu app trả #101 về vì sửa ngoài vùng: set_scope ngay lúc đó với 8 mục đã chốt (gồm _ProductForm.astro, lib/admin/catalog-products, scripts/admin/api.ts, tests/admin/api.test.ts, backend/config/urls.py, backend/tests/test_media_dev.py, openapi/v1.json, lib/api/v1.d.ts).
+- set_scope không áp được khi task đang có lượt chạy (#1151, #1153, #1167): đổi scope lúc task đang blocked hoặc không có lượt chạy.
+- #101: frontend chỉ nhận JPEG/PNG/WebP, trong khi backend.md 6.5 và core/images.py:64 còn cho HEIF nếu Pillow có bộ đọc. Sau này cài bộ đọc HEIF thì phải nới ACCEPTED_IMAGE_TYPES và accept trong _ProductForm.astro.
+- Đã kiểm: thứ tự và khoá nút ↑/↓ theo renumber() (product-images.ts), kiểm tra loại/dung lượng trước khi tải, trùng key, giới hạn 20 ảnh khớp backend (ProductIn.images max_length=20), ngưỡng 10 MiB và 40 triệu điểm ảnh khớp core/images.py, message IMAGE_INVALID/IMAGE_TOO_LARGE khớp chuỗi e2e kỳ vọng, FormData không bị set Content-Type (api.ts + api.test.ts), /media/ chỉ đăng ký khi DEBUG (config/urls.py).
+- Chưa chạy: e2e catalog-product-images (cần stack và E2E_OWNER_PASSWORD; Postgres 5433 tắt). Phần DOM của bindProductImages (thêm/gỡ/đổi thứ tự, khoá nút khi upload) chỉ được kiểm qua e2e này, nên hiện chưa có test chạy được nào bao phủ nó.
+- Chưa chạy: astro check, pytest toàn bộ, make check. Ảnh .proteam/evidence/101-*.png đã có 5 file nhưng tôi chưa mở để xem nội dung.
+- Scope liệt kê backend/tests/test_media_dev.py nhưng file không tồn tại; chỉ có test_media_urls.py. Không ảnh hưởng chức năng, nên bỏ khỏi scope cho gọn.
+- Không có test đơn vị cho readImageRows (product-images.ts). Hàm này là đường đọc alt khi lưu, nên đáng có một ca vitest.
+- Ví dụ import cho F0: import { renderSVG } from "uqr"; const svg = renderSVG(url, { ecc: "M" });
+- happy-dom: dùng bằng chú thích // @vitest-environment happy-dom trong từng file test; môi trường mặc định của vitest không đổi.
+- pnpm check đỏ ở biome ci: lỗi định dạng CRLF ở toàn repo (kể cả biome.json, vitest.config.ts không đụng tới). Nguyên nhân là git config core.autocrlf=true trên máy Windows, trong khi HEAD lưu LF. astro check: 0 lỗi. biome ci . --line-ending=crlf: sạch. Cần Lead quyết cách xử lý (sửa autocrlf hoặc chuẩn hoá line ending), task này không sửa thêm.
+- Môi trường: node v24.22.0; pnpm chạy qua corepack. frontend/node_modules đã được tạo và đã bị git ignore.
+- Worktree topic Đợt 2 thiếu phần PH1 chưa commit ở D:\VYC (main): trong cây này backend/catalog/models chỉ có goods.py và product.py, không có model người bán hay lô vườn; thiếu backend/core/images.py, catalog/api/areas.py, ingredients.py; config/urls.py không có route ảnh; frontend không có src/lib/admin.
+- Tôi đã lỡ cd vào D:\VYC một lần, chỉ để chạy git status, git log và liệt kê thư mục; không đọc nội dung code và không ghi gì ở đó.
+- Trong cây topic, frontend/package.json và pnpm-lock.yaml đang sửa dở (khớp #102 của Phuc), không phải của tôi.
+- 7388cfb là đầu của main, origin/main và nhánh topic. backend/catalog ở đây chỉ có models goods.py, product.py và services/products.py.
+- D:/VYC (đang ở main) có 209 file chưa commit (24 sửa, 185 mới), gồm catalog/services/suppliers.py, materials.py, frontend/e2e. Chỉ kiểm bằng git status và ls.
+- Snapshot 1788f2d (28-11 20:43) cũng lệch đúng 209 file so với 7388cfb và có suppliers.py; các snapshot lúc 20:58 thì không có.
+- frontend/package.json và pnpm-lock.yaml không nằm trong thay đổi chưa commit ở D:/VYC, nên thay đổi của #102 trong cây topic không đụng hai file này.
+- Kiểm ngày 2026-11-28: `ls frontend/src/components/admin/catalog` và `frontend/src/pages/quan-ly/chung-nhan` đều báo không tồn tại. `git ls-files frontend/src` trong pages/quan-ly chỉ có dang-nhap, index, khong-co-quyen, san-pham.
+- Lịch sử các commit «proteam: chụp cây làm việc» (refs/proteam/*, ví dụ 1788f2d) có đụng tới CatalogForm.astro. Chưa mở nội dung, chưa biết bản nào đủ và mới nhất; tôi không lấy file từ đó ra.
+- git status của cây topic hiện chỉ có frontend/package.json và pnpm-lock.yaml sửa dở (khớp việc #102).
+- Kiểm ngày 2026-11-28: nhánh topic và main cùng ở 7388cfb; frontend/src/lib/admin và pages/quan-ly/san-pham không tồn tại trong cây topic. Hai sửa đổi chưa commit ở frontend/package.json, pnpm-lock.yaml có sẵn trước lượt này (khớp mô tả task #102), cần giữ lại khi merge PH1.
+- frontend/src/pages/quan-ly/index.astro trong cây topic vẫn là bản base (chỉ có link /quan-ly/san-pham); thư mục pages/quan-ly chưa có nguoi-ban/.
+- Sếp trả lời #1216 xong thì tạo task merge main vào nhánh topic (không scope, kèm .gitattributes eol=lf), rồi gỡ chặn #103–#105, #107, #110 một lượt.
+- HEAD của topic và main đều là 7388cfb. Cây này chỉ có 17 file trong backend/catalog (migration tới 0002), không có frontend/e2e, và frontend/src/pages/quan-ly chưa có màn danh mục.
+- Snapshot 1788f2d (refs/proteam/f1f872ea-c9c7-4cd2-86d8-05c53ef0facd-end, 28-11 20:43, cha 7388cfb) có 71 file backend/catalog (migration tới 0007) và đủ 5 spec cùng config trong frontend/e2e. Worktree này được tạo lúc 20:54 từ commit gốc nên không mang theo phần đó. Suy đoán: đợt 1 chưa được commit vào main. Mình không kiểm D:\VYC nên chưa biết bản ở đó còn hay đã đổi.
+- Đợt 1 không đổi frontend/package.json, pnpm-lock.yaml, .github, deploy, nên thay đổi của #102 trong cây này không đụng với nó.
+- Cách khôi phục từ snapshot (Git Bash, không pipe qua PowerShell 5.1 vì hỏng nội dung): git diff --binary HEAD 1788f2d -- backend frontend | git apply. Quay lui: cùng lệnh, thêm -R vào git apply, trước khi có ai sửa chồng lên các file đó. Phần khác biệt trong .proteam/ không nằm trong lệnh này.
+- Khi mở lại #106: ci.yml hiện giống hệt bản trong 1788f2d, chưa có bước chạy e2e/playwright.config.ts.
+- Mã BR/AC mới phải bắt đầu sau BR-31, AC-38 (TK đã dùng đến đó, không phải AC-07)
+- Công nợ theo đề xuất chỉ đọc receipt (supplier_id, receipt_date, total_amount, status): B2 phải giữ total_amount đúng khi sửa phiếu
+- Code Danh mục PH1 (supplier.py, màn nguoi-ban, menu.ts...) không có ở HEAD 7388cfb của nhánh topic; thấy trong ref chụp refs/proteam/f1f872ea-...-end (1788f2d)

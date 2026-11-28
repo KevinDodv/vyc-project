@@ -75,6 +75,542 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách tài khoản */
+        get: operations["accounts_api_list_users"];
+        put?: never;
+        /** Tạo tài khoản */
+        post: operations["accounts_api_create_user"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết tài khoản */
+        get: operations["accounts_api_get_user"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa tài khoản, đặt lại mật khẩu */
+        patch: operations["accounts_api_update_user"];
+        trace?: never;
+    };
+    "/api/v1/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cây địa bàn Tỉnh > Xã > Thôn */
+        get: operations["catalog_api_areas_list_areas"];
+        put?: never;
+        /** Tạo địa bàn */
+        post: operations["catalog_api_areas_create_area"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/areas/{area_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết địa bàn */
+        get: operations["catalog_api_areas_get_area"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa địa bàn */
+        patch: operations["catalog_api_areas_update_area"];
+        trace?: never;
+    };
+    "/api/v1/goods-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách loại hàng hóa */
+        get: operations["catalog_api_goods_types_list_goods_types"];
+        put?: never;
+        /** Tạo loại hàng hóa */
+        post: operations["catalog_api_goods_types_create_goods_type"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/goods-types/{goods_type_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết loại hàng */
+        get: operations["catalog_api_goods_types_get_goods_type"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa loại hàng hóa */
+        patch: operations["catalog_api_goods_types_update_goods_type"];
+        trace?: never;
+    };
+    "/api/v1/materials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách nguyên liệu kèm hạng */
+        get: operations["catalog_api_materials_list_materials"];
+        put?: never;
+        /** Tạo nguyên liệu (kèm hạng) */
+        post: operations["catalog_api_materials_create_material"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/materials/{material_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết nguyên liệu */
+        get: operations["catalog_api_materials_get_material"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa nguyên liệu và hạng */
+        patch: operations["catalog_api_materials_update_material"];
+        trace?: never;
+    };
+    "/api/v1/prices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lưới giá tại một ngày */
+        get: operations["catalog_api_prices_get_prices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prices/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lịch sử giá 30 ngày tính đến ngày chọn */
+        get: operations["catalog_api_prices_get_price_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/prices/{price_date}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Lưu giá một ngày */
+        put: operations["catalog_api_prices_put_prices"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/suppliers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Danh sách người bán
+         * @description `q` tìm không phân biệt dấu (tên, mã, SĐT, thôn). `recent=12`: lưới nút gần đây.
+         */
+        get: operations["catalog_api_suppliers_list_suppliers"];
+        put?: never;
+        /** Tạo người bán (WORKSHOP: thêm nhanh, chờ duyệt) */
+        post: operations["catalog_api_suppliers_create_supplier"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/suppliers/{supplier_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết người bán */
+        get: operations["catalog_api_suppliers_get_supplier"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa hoặc ngừng dùng người bán */
+        patch: operations["catalog_api_suppliers_update_supplier"];
+        trace?: never;
+    };
+    "/api/v1/suppliers/{supplier_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Duyệt người bán thêm nhanh */
+        post: operations["catalog_api_suppliers_approve_supplier"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/suppliers/{supplier_id}/plots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Đồi quế của người bán (đồi mặc định xếp đầu) */
+        get: operations["catalog_api_suppliers_list_plots"];
+        put?: never;
+        /** Thêm đồi quế (mã D-<xã>-<số NCC>-<stt> tự sinh) */
+        post: operations["catalog_api_suppliers_create_plot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/suppliers/{supplier_id}/plots/{plot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa hoặc ngừng dùng đồi */
+        patch: operations["catalog_api_suppliers_update_plot"];
+        trace?: never;
+    };
+    "/api/v1/customers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách khách hàng */
+        get: operations["catalog_api_customers_list_customers"];
+        put?: never;
+        /** Tạo khách hàng (mã KH-NNNN tự sinh) */
+        post: operations["catalog_api_customers_create_customer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/customers/{customer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết khách hàng */
+        get: operations["catalog_api_customers_get_customer"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa hoặc ngừng dùng khách hàng */
+        patch: operations["catalog_api_customers_update_customer"];
+        trace?: never;
+    };
+    "/api/v1/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Danh sách chứng nhận
+         * @description `active=true`: còn hiệu lực; `active=false`: đã hết hạn.
+         */
+        get: operations["catalog_api_certificates_list_certificates"];
+        put?: never;
+        /** Thêm chứng nhận */
+        post: operations["catalog_api_certificates_create_certificate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificates/{certificate_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết chứng nhận */
+        get: operations["catalog_api_certificates_get_certificate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa chứng nhận */
+        patch: operations["catalog_api_certificates_update_certificate"];
+        trace?: never;
+    };
+    "/api/v1/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cấu hình hệ thống */
+        get: operations["catalog_api_settings_get_settings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa cấu hình (một phần) */
+        patch: operations["catalog_api_settings_update_settings"];
+        trace?: never;
+    };
+    "/api/v1/ingredients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách phụ liệu */
+        get: operations["catalog_api_ingredients_list_ingredients"];
+        put?: never;
+        /** Tạo phụ liệu */
+        post: operations["catalog_api_ingredients_create_ingredient"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ingredients/{ingredient_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết phụ liệu */
+        get: operations["catalog_api_ingredients_get_ingredient"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa hoặc ngừng dùng phụ liệu */
+        patch: operations["catalog_api_ingredients_update_ingredient"];
+        trace?: never;
+    };
+    "/api/v1/recipes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Danh sách công thức */
+        get: operations["catalog_api_recipes_list_recipes"];
+        put?: never;
+        /** Tạo công thức (version 1, DRAFT) */
+        post: operations["catalog_api_recipes_create_recipe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Chi tiết công thức */
+        get: operations["catalog_api_recipes_get_recipe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sửa công thức (chỉ bản DRAFT) */
+        patch: operations["catalog_api_recipes_update_recipe"];
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}/scale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lượng cân gợi ý theo mẻ mong muốn */
+        get: operations["catalog_api_recipes_scale_recipe"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Thay toàn bộ dòng thành phần (chỉ bản DRAFT) */
+        put: operations["catalog_api_recipes_put_items"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}/new-version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Tạo phiên bản mới (sao chép, version + 1, DRAFT) */
+        post: operations["catalog_api_recipes_new_version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Kích hoạt bản DRAFT (bản ACTIVE cũ → RETIRED) */
+        post: operations["catalog_api_recipes_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recipes/{recipe_id}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ngừng dùng bản ACTIVE */
+        post: operations["catalog_api_recipes_retire"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/products": {
         parameters: {
             query?: never;
@@ -111,6 +647,23 @@ export interface paths {
         patch: operations["catalog_api_products_update_product"];
         trace?: never;
     };
+    "/api/v1/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Tải ảnh công khai lên */
+        post: operations["core_api_images_upload_image"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -132,6 +685,1090 @@ export interface components {
             username: string;
             /** Password */
             password: string;
+        };
+        /** Page[UserOut] */
+        Page_UserOut_: {
+            /** Items */
+            items: components["schemas"]["UserOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /**
+         * UserOut
+         * @description Không có hash mật khẩu và không có trường `password` nào.
+         */
+        UserOut: {
+            /** Id */
+            id: number;
+            /** Username */
+            username: string;
+            /** Full Name */
+            full_name: string;
+            /** Role */
+            role: string;
+            /** Status */
+            status: string;
+            /** Last Login At */
+            last_login_at?: string | null;
+        };
+        /** UserIn */
+        UserIn: {
+            /** Username */
+            username: string;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "OWNER" | "WORKSHOP";
+            /** Password */
+            password: string;
+        };
+        /**
+         * UserPatch
+         * @description Không có `username`: tên đăng nhập không đổi được. Gửi `null` cho trường nào cũng sai.
+         */
+        UserPatch: {
+            /** Full Name */
+            full_name?: string | null;
+            /** Role */
+            role?: ("OWNER" | "WORKSHOP") | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+            /** Password */
+            password?: string | null;
+        };
+        /** AreaNode */
+        AreaNode: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Level */
+            level: string;
+            /** Name */
+            name: string;
+            /** Parent Id */
+            parent_id: number | null;
+            /** Former Name */
+            former_name: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid To */
+            valid_to: string | null;
+            /** Status */
+            status: string;
+            /** Children */
+            children?: components["schemas"]["AreaNode"][];
+        };
+        /** AreaOut */
+        AreaOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Level */
+            level: string;
+            /** Name */
+            name: string;
+            /** Parent Id */
+            parent_id: number | null;
+            /** Former Name */
+            former_name: string | null;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
+            /** Valid To */
+            valid_to: string | null;
+            /** Status */
+            status: string;
+        };
+        /** AreaIn */
+        AreaIn: {
+            /** Code */
+            code: string;
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "PROVINCE" | "COMMUNE" | "VILLAGE";
+            /** Name */
+            name: string;
+            /** Parent Id */
+            parent_id?: number | null;
+            /** Former Name */
+            former_name?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+        };
+        /**
+         * AreaPatch
+         * @description Chỉ đổi trường có trong body. Cấp và mã không đổi được. `status: INACTIVE` là ngừng dùng.
+         */
+        AreaPatch: {
+            /** Name */
+            name?: string | null;
+            /** Parent Id */
+            parent_id?: number | null;
+            /** Former Name */
+            former_name?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** GoodsTypeOut */
+        GoodsTypeOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Grp */
+            grp: string;
+            /** Is Food */
+            is_food: boolean;
+            /** Status */
+            status: string;
+        };
+        /** GoodsTypeIn */
+        GoodsTypeIn: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /**
+             * Grp
+             * @enum {string}
+             */
+            grp: "MATERIAL" | "PRODUCT";
+            /**
+             * Is Food
+             * @default false
+             */
+            is_food: boolean;
+        };
+        /**
+         * GoodsTypePatch
+         * @description Chỉ đổi trường có trong body. Mã không đổi được. `status: INACTIVE` là ngừng dùng.
+         */
+        GoodsTypePatch: {
+            /** Name */
+            name?: string | null;
+            /** Grp */
+            grp?: ("MATERIAL" | "PRODUCT") | null;
+            /** Is Food */
+            is_food?: boolean | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** GradeOut */
+        GradeOut: {
+            /** Id */
+            id: number;
+            /** Material Id */
+            material_id: number;
+            /** Rank */
+            rank: number;
+            /** Name */
+            name: string;
+            /** Status */
+            status: string;
+        };
+        /** MaterialOut */
+        MaterialOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Goods Type Id */
+            goods_type_id: number;
+            /** Image Url */
+            image_url: string | null;
+            /** Sort Order */
+            sort_order: number;
+            /** Status */
+            status: string;
+            /** Grades */
+            grades: components["schemas"]["GradeOut"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** GradeIn */
+        GradeIn: {
+            /** Id */
+            id?: number | null;
+            /** Rank */
+            rank: number;
+            /** Name */
+            name: string;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** MaterialIn */
+        MaterialIn: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Goods Type Id */
+            goods_type_id: number;
+            /** Image Url */
+            image_url?: string | null;
+            /**
+             * Sort Order
+             * @default 0
+             */
+            sort_order: number;
+            /** Grades */
+            grades?: components["schemas"]["GradeIn"][];
+        };
+        /**
+         * MaterialPatch
+         * @description Chỉ đổi trường có trong body. Mã không đổi được. `status: INACTIVE` là ngừng dùng.
+         */
+        MaterialPatch: {
+            /** Name */
+            name?: string | null;
+            /** Goods Type Id */
+            goods_type_id?: number | null;
+            /** Image Url */
+            image_url?: string | null;
+            /** Sort Order */
+            sort_order?: number | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+            /** Grades */
+            grades?: components["schemas"]["GradeIn"][] | null;
+        };
+        /**
+         * PriceCellOut
+         * @description Một ô lưới giá. Giá None: hạng chưa từng có giá tới ngày hỏi.
+         */
+        PriceCellOut: {
+            /** Grade Id */
+            grade_id: number;
+            /** Grade Rank */
+            grade_rank: number;
+            /** Grade Name */
+            grade_name: string;
+            /** Material Id */
+            material_id: number;
+            /** Material Code */
+            material_code: string;
+            /** Material Name */
+            material_name: string;
+            /** Buy Price */
+            buy_price: number | null;
+            /** Sell Price */
+            sell_price: number | null;
+            /** Effective Date */
+            effective_date: string | null;
+        };
+        /** PriceSheetOut */
+        PriceSheetOut: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Items */
+            items: components["schemas"]["PriceCellOut"][];
+        };
+        /** PriceHistoryDayOut */
+        PriceHistoryDayOut: {
+            /**
+             * Price Date
+             * Format: date
+             */
+            price_date: string;
+            /** Items */
+            items: components["schemas"]["PriceHistoryItemOut"][];
+        };
+        /** PriceHistoryItemOut */
+        PriceHistoryItemOut: {
+            /** Grade Id */
+            grade_id: number;
+            /** Buy Price */
+            buy_price: number;
+            /** Sell Price */
+            sell_price: number;
+            /** Updated By Id */
+            updated_by_id: number;
+        };
+        /** PriceItemIn */
+        PriceItemIn: {
+            /** Grade Id */
+            grade_id: number;
+            /** Buy Price */
+            buy_price: number;
+            /** Sell Price */
+            sell_price: number;
+        };
+        /** PriceSheetIn */
+        PriceSheetIn: {
+            /** Items */
+            items: components["schemas"]["PriceItemIn"][];
+        };
+        /** Page[SupplierOut] */
+        Page_SupplierOut_: {
+            /** Items */
+            items: components["schemas"]["SupplierOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** SupplierOut */
+        SupplierOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Phone */
+            phone: string | null;
+            /** Area Id */
+            area_id: number;
+            /** Area Name */
+            area_name: string;
+            /** Stream */
+            stream: string;
+            /** Public Consent */
+            public_consent: boolean;
+            /** Approved */
+            approved: boolean;
+            /** Status */
+            status: string;
+            /** Plots Count */
+            plots_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * NoticeOut
+         * @description Cảnh báo không chặn, ví dụ `SUPPLIER_DUPLICATE` khi trùng tên + địa bàn.
+         */
+        NoticeOut: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /** Supplier Ids */
+            supplier_ids: number[];
+        };
+        /** SupplierSavedOut */
+        SupplierSavedOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Phone */
+            phone: string | null;
+            /** Area Id */
+            area_id: number;
+            /** Area Name */
+            area_name: string;
+            /** Stream */
+            stream: string;
+            /** Public Consent */
+            public_consent: boolean;
+            /** Approved */
+            approved: boolean;
+            /** Status */
+            status: string;
+            /** Plots Count */
+            plots_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Notices */
+            notices?: components["schemas"]["NoticeOut"][];
+        };
+        /**
+         * SupplierIn
+         * @description WORKSHOP cũng gọi được (thêm nhanh): khi đó `stream`, `public_consent` bị bỏ qua
+         *     (luôn GENERAL và false) và người bán nằm ở trạng thái chờ duyệt.
+         */
+        SupplierIn: {
+            /** Name */
+            name: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "FAMILY" | "FARMER" | "TRADER";
+            /** Area Id */
+            area_id: number;
+            /** Phone */
+            phone?: string | null;
+            /**
+             * Stream
+             * @default GENERAL
+             * @enum {string}
+             */
+            stream: "CONTROLLED" | "GENERAL";
+            /**
+             * Public Consent
+             * @default false
+             */
+            public_consent: boolean;
+        };
+        /** SupplierPatch */
+        SupplierPatch: {
+            /** Name */
+            name?: string | null;
+            /** Kind */
+            kind?: ("FAMILY" | "FARMER" | "TRADER") | null;
+            /** Phone */
+            phone?: string | null;
+            /** Area Id */
+            area_id?: number | null;
+            /** Stream */
+            stream?: ("CONTROLLED" | "GENERAL") | null;
+            /** Public Consent */
+            public_consent?: boolean | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** PlotOut */
+        PlotOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Supplier Id */
+            supplier_id: number;
+            /** Area Id */
+            area_id: number;
+            /** Area Name */
+            area_name: string;
+            /** Area Ha */
+            area_ha: number | null;
+            /** Planted Year */
+            planted_year: number | null;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /** Photo Urls */
+            photo_urls: string[];
+            /** Is Default */
+            is_default: boolean;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** PlotIn */
+        PlotIn: {
+            /** Area Id */
+            area_id: number;
+            /** Area Ha */
+            area_ha?: number | string | null;
+            /** Planted Year */
+            planted_year?: number | null;
+            /** Lat */
+            lat?: number | string | null;
+            /** Lng */
+            lng?: number | string | null;
+            /** Coordinates */
+            coordinates?: string | null;
+            /** Photo Urls */
+            photo_urls?: string[];
+            /**
+             * Is Default
+             * @default false
+             */
+            is_default: boolean;
+        };
+        /**
+         * PlotPatch
+         * @description Chỉ đổi trường có trong body. `lat` + `lng` (hoặc `coordinates`) gửi `null` là xoá toạ độ.
+         */
+        PlotPatch: {
+            /** Area Id */
+            area_id?: number | null;
+            /** Area Ha */
+            area_ha?: number | string | null;
+            /** Planted Year */
+            planted_year?: number | null;
+            /** Lat */
+            lat?: number | string | null;
+            /** Lng */
+            lng?: number | string | null;
+            /** Coordinates */
+            coordinates?: string | null;
+            /** Photo Urls */
+            photo_urls?: string[] | null;
+            /** Is Default */
+            is_default?: boolean | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** CustomerOut */
+        CustomerOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Phone */
+            phone: string | null;
+            /** Address */
+            address: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** Page[CustomerOut] */
+        Page_CustomerOut_: {
+            /** Items */
+            items: components["schemas"]["CustomerOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** CustomerIn */
+        CustomerIn: {
+            /** Name */
+            name: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "EXPORTER" | "AGENT" | "CORPORATE" | "RETAIL" | "MARKETPLACE";
+            /** Phone */
+            phone?: string | null;
+            /** Address */
+            address?: string | null;
+        };
+        /**
+         * CustomerPatch
+         * @description Chỉ đổi trường có trong body. `phone`/`address` gửi `null` là xoá giá trị.
+         */
+        CustomerPatch: {
+            /** Name */
+            name?: string | null;
+            /** Kind */
+            kind?: ("EXPORTER" | "AGENT" | "CORPORATE" | "RETAIL" | "MARKETPLACE") | null;
+            /** Phone */
+            phone?: string | null;
+            /** Address */
+            address?: string | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** CertificateOut */
+        CertificateOut: {
+            /** Id */
+            id: number;
+            /** Kind */
+            kind: string;
+            /** Number */
+            number: string;
+            /** Issuer */
+            issuer: string | null;
+            /** Issued On */
+            issued_on: string | null;
+            /** Expires On */
+            expires_on: string | null;
+            /** Stars */
+            stars: number | null;
+            /** File Url */
+            file_url: string | null;
+            /** Product Id */
+            product_id: number | null;
+            /** Plot Id */
+            plot_id: number | null;
+            /** Is Public */
+            is_public: boolean;
+            /** Is Expired */
+            is_expired: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** Page[CertificateOut] */
+        Page_CertificateOut_: {
+            /** Items */
+            items: components["schemas"]["CertificateOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** CertificateIn */
+        CertificateIn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "OCOP" | "ORGANIC" | "FOOD_SAFETY" | "DECLARATION";
+            /** Number */
+            number: string;
+            /** Issuer */
+            issuer?: string | null;
+            /** Issued On */
+            issued_on?: string | null;
+            /** Expires On */
+            expires_on?: string | null;
+            /** Stars */
+            stars?: number | null;
+            /** File Url */
+            file_url?: string | null;
+            /** Product Id */
+            product_id?: number | null;
+            /** Plot Id */
+            plot_id?: number | null;
+            /**
+             * Is Public
+             * @default true
+             */
+            is_public: boolean;
+        };
+        /**
+         * CertificatePatch
+         * @description Chỉ đổi trường có trong body. Cột NOT NULL (`_NOT_NULL`) mà gửi `null` thì 400.
+         */
+        CertificatePatch: {
+            /** Kind */
+            kind?: ("OCOP" | "ORGANIC" | "FOOD_SAFETY" | "DECLARATION") | null;
+            /** Number */
+            number?: string | null;
+            /** Issuer */
+            issuer?: string | null;
+            /** Issued On */
+            issued_on?: string | null;
+            /** Expires On */
+            expires_on?: string | null;
+            /** Stars */
+            stars?: number | null;
+            /** File Url */
+            file_url?: string | null;
+            /** Product Id */
+            product_id?: number | null;
+            /** Plot Id */
+            plot_id?: number | null;
+            /** Is Public */
+            is_public?: boolean | null;
+        };
+        /** LabelSize */
+        LabelSize: {
+            /** Width Mm */
+            width_mm: number;
+            /** Height Mm */
+            height_mm: number;
+        };
+        /** SettingsOut */
+        SettingsOut: {
+            /** Scan Warning Threshold */
+            scan_warning_threshold: number;
+            /** Price Deviation Pct */
+            price_deviation_pct: number;
+            label_size: components["schemas"]["LabelSize"];
+            /**
+             * Print Format
+             * @enum {string}
+             */
+            print_format: "A5" | "THERMAL_80";
+            /** Retain Default Months */
+            retain_default_months: number;
+        };
+        /**
+         * SettingsPatch
+         * @description Chỉ đổi khoá có trong body. Khoá lạ thì 400; `null` không hợp lệ cho khoá nào.
+         */
+        SettingsPatch: {
+            /** Scan Warning Threshold */
+            scan_warning_threshold?: number | null;
+            /** Price Deviation Pct */
+            price_deviation_pct?: number | null;
+            label_size?: components["schemas"]["LabelSize"] | null;
+            /** Print Format */
+            print_format?: ("A5" | "THERMAL_80") | null;
+            /** Retain Default Months */
+            retain_default_months?: number | null;
+        };
+        /** IngredientOut */
+        IngredientOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Density G Ml */
+            density_g_ml: string | null;
+            /** Track Stock */
+            track_stock: boolean;
+            /** Requires Coa */
+            requires_coa: boolean;
+            /** Shelf Life Months */
+            shelf_life_months: number | null;
+            /** Status */
+            status: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** IngredientIn */
+        IngredientIn: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "ESSENTIAL_OIL" | "SOLVENT" | "WAX" | "MINERAL" | "BOTANICAL" | "BLEND" | "OTHER";
+            /** Density G Ml */
+            density_g_ml?: number | string | null;
+            /**
+             * Track Stock
+             * @default true
+             */
+            track_stock: boolean;
+            /**
+             * Requires Coa
+             * @default false
+             */
+            requires_coa: boolean;
+            /** Shelf Life Months */
+            shelf_life_months?: number | null;
+        };
+        /**
+         * IngredientPatch
+         * @description Chỉ đổi trường có trong body. Đã có lô thì không đổi `code` hay bật `track_stock`.
+         */
+        IngredientPatch: {
+            /** Code */
+            code?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Kind */
+            kind?: ("ESSENTIAL_OIL" | "SOLVENT" | "WAX" | "MINERAL" | "BOTANICAL" | "BLEND" | "OTHER") | null;
+            /** Density G Ml */
+            density_g_ml?: number | string | null;
+            /** Track Stock */
+            track_stock?: boolean | null;
+            /** Requires Coa */
+            requires_coa?: boolean | null;
+            /** Shelf Life Months */
+            shelf_life_months?: number | null;
+            /** Status */
+            status?: ("ACTIVE" | "INACTIVE") | null;
+        };
+        /** RecipeOut */
+        RecipeOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Name */
+            name: string;
+            /** Output Kind */
+            output_kind: string;
+            /** Output Ingredient Id */
+            output_ingredient_id: number | null;
+            /** Output Ingredient Code */
+            output_ingredient_code: string | null;
+            /** Base Batch G */
+            base_batch_g: string;
+            /** Base Label */
+            base_label: string | null;
+            /** Cure Min Days */
+            cure_min_days: number;
+            /** Cure Max Days */
+            cure_max_days: number | null;
+            /** Retain Months */
+            retain_months: number | null;
+            /** Status */
+            status: string;
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** RecipeDetailOut */
+        RecipeDetailOut: {
+            /** Id */
+            id: number;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Name */
+            name: string;
+            /** Output Kind */
+            output_kind: string;
+            /** Output Ingredient Id */
+            output_ingredient_id: number | null;
+            /** Output Ingredient Code */
+            output_ingredient_code: string | null;
+            /** Base Batch G */
+            base_batch_g: string;
+            /** Base Label */
+            base_label: string | null;
+            /** Cure Min Days */
+            cure_min_days: number;
+            /** Cure Max Days */
+            cure_max_days: number | null;
+            /** Retain Months */
+            retain_months: number | null;
+            /** Status */
+            status: string;
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Items */
+            items: components["schemas"]["RecipeItemOut"][];
+            /** Editable */
+            editable: boolean;
+        };
+        /** RecipeItemOut */
+        RecipeItemOut: {
+            /** Id */
+            id: number;
+            /** Line No */
+            line_no: number;
+            /** Ingredient Id */
+            ingredient_id: number;
+            /** Ingredient Code */
+            ingredient_code: string;
+            /** Ingredient Name */
+            ingredient_name: string;
+            /** Qty G */
+            qty_g: string;
+            /** Pct */
+            pct: string;
+            /** Alt Group */
+            alt_group: number | null;
+            /** Is Optional */
+            is_optional: boolean;
+            /** Note */
+            note: string | null;
+        };
+        /** RecipeIn */
+        RecipeIn: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /**
+             * Output Kind
+             * @enum {string}
+             */
+            output_kind: "PRODUCT" | "INTERMEDIATE";
+            /** Output Ingredient Id */
+            output_ingredient_id?: number | null;
+            /** Base Batch G */
+            base_batch_g?: number | string | null;
+            /** Base Label */
+            base_label?: string | null;
+            /**
+             * Cure Min Days
+             * @default 0
+             */
+            cure_min_days: number;
+            /** Cure Max Days */
+            cure_max_days?: number | null;
+            /** Retain Months */
+            retain_months?: number | null;
+            /** Note */
+            note?: string | null;
+            /** Items */
+            items?: components["schemas"]["RecipeItemIn"][];
+        };
+        /** RecipeItemIn */
+        RecipeItemIn: {
+            /** Ingredient Id */
+            ingredient_id: number;
+            /** Qty G */
+            qty_g: number | string;
+            /** Alt Group */
+            alt_group?: number | null;
+            /**
+             * Is Optional
+             * @default false
+             */
+            is_optional: boolean;
+            /** Note */
+            note?: string | null;
+        };
+        /**
+         * RecipePatch
+         * @description Chỉ đổi trường có trong body. Mã và phiên bản không đổi được; dòng thành phần đi qua PUT.
+         */
+        RecipePatch: {
+            /** Name */
+            name?: string | null;
+            /** Output Kind */
+            output_kind?: ("PRODUCT" | "INTERMEDIATE") | null;
+            /** Output Ingredient Id */
+            output_ingredient_id?: number | null;
+            /** Base Label */
+            base_label?: string | null;
+            /** Cure Min Days */
+            cure_min_days?: number | null;
+            /** Cure Max Days */
+            cure_max_days?: number | null;
+            /** Retain Months */
+            retain_months?: number | null;
+            /** Note */
+            note?: string | null;
+        };
+        /** ScaleItemOut */
+        ScaleItemOut: {
+            /** Line No */
+            line_no: number;
+            /** Ingredient Id */
+            ingredient_id: number;
+            /** Ingredient Code */
+            ingredient_code: string;
+            /** Ingredient Name */
+            ingredient_name: string;
+            /** Qty G */
+            qty_g: string;
+            /** Suggested G */
+            suggested_g: string;
+            /** Alt Group */
+            alt_group: number | null;
+            /** Is Optional */
+            is_optional: boolean;
+        };
+        /** ScaleOut */
+        ScaleOut: {
+            /** Recipe Id */
+            recipe_id: number;
+            /** Code */
+            code: string;
+            /** Version */
+            version: number;
+            /** Base Batch G */
+            base_batch_g: string;
+            /** Batch G */
+            batch_g: string;
+            /** Items */
+            items: components["schemas"]["ScaleItemOut"][];
+        };
+        /**
+         * RecipeItemsPut
+         * @description Danh sách dòng mới thay toàn bộ dòng cũ; thứ tự trong mảng là `line_no` 1..n.
+         */
+        RecipeItemsPut: {
+            /** Items */
+            items: components["schemas"]["RecipeItemIn"][];
         };
         /** Page[ProductOut] */
         Page_ProductOut_: {
@@ -157,7 +1794,7 @@ export interface components {
         };
         /**
          * ProductOut
-         * @description Cho WORKSHOP: không có giá bán lẻ.
+         * @description Cho WORKSHOP: không có giá bán lẻ. `warnings` rỗng khi sản phẩm không có vấn đề.
          */
         ProductOut: {
             /** Id */
@@ -214,6 +1851,8 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /** Warnings */
+            warnings?: components["schemas"]["ProductWarning"][];
         };
         /** ProductOwnerOut */
         ProductOwnerOut: {
@@ -271,8 +1910,22 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            /** Warnings */
+            warnings?: components["schemas"]["ProductWarning"][];
             /** Retail Price */
             retail_price: number | null;
+        };
+        /**
+         * ProductWarning
+         * @description Cảnh báo không chặn, ví dụ công thức nối vào đã hết bản ACTIVE.
+         */
+        ProductWarning: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /** Field */
+            field?: string | null;
         };
         /** BuyLink */
         BuyLink: {
@@ -397,6 +2050,22 @@ export interface components {
             /** Status */
             status?: ("DRAFT" | "PUBLISHED" | "HIDDEN") | null;
         };
+        /**
+         * ImageOut
+         * @description Phần tử `product.images` còn thiếu `alt`: thêm `alt` rồi PATCH vào entity.
+         */
+        ImageOut: {
+            /** Url */
+            url: string;
+            /** Key */
+            key: string;
+            /** W */
+            w: number;
+            /** H */
+            h: number;
+            /** Widths */
+            widths: number[];
+        };
     };
     responses: never;
     parameters: never;
@@ -482,6 +2151,1206 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+        };
+    };
+    accounts_api_list_users: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+                role?: ("OWNER" | "WORKSHOP") | null;
+                status?: ("ACTIVE" | "INACTIVE") | null;
+                q?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_UserOut_"];
+                };
+            };
+        };
+    };
+    accounts_api_create_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+        };
+    };
+    accounts_api_get_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+        };
+    };
+    accounts_api_update_user: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+        };
+    };
+    catalog_api_areas_list_areas: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaNode"][];
+                };
+            };
+        };
+    };
+    catalog_api_areas_create_area: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AreaIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+        };
+    };
+    catalog_api_areas_get_area: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                area_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+        };
+    };
+    catalog_api_areas_update_area: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                area_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AreaPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+        };
+    };
+    catalog_api_goods_types_list_goods_types: {
+        parameters: {
+            query?: {
+                status?: ("ACTIVE" | "INACTIVE") | null;
+                grp?: ("MATERIAL" | "PRODUCT") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoodsTypeOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_goods_types_create_goods_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoodsTypeIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoodsTypeOut"];
+                };
+            };
+        };
+    };
+    catalog_api_goods_types_get_goods_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goods_type_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoodsTypeOut"];
+                };
+            };
+        };
+    };
+    catalog_api_goods_types_update_goods_type: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goods_type_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoodsTypePatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoodsTypeOut"];
+                };
+            };
+        };
+    };
+    catalog_api_materials_list_materials: {
+        parameters: {
+            query?: {
+                status?: ("ACTIVE" | "INACTIVE") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_materials_create_material: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialOut"];
+                };
+            };
+        };
+    };
+    catalog_api_materials_get_material: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                material_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialOut"];
+                };
+            };
+        };
+    };
+    catalog_api_materials_update_material: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                material_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialOut"];
+                };
+            };
+        };
+    };
+    catalog_api_prices_get_prices: {
+        parameters: {
+            query?: {
+                date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceSheetOut"];
+                };
+            };
+        };
+    };
+    catalog_api_prices_get_price_history: {
+        parameters: {
+            query?: {
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceHistoryDayOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_prices_put_prices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                price_date: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PriceSheetIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PriceSheetOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_list_suppliers: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+                q?: string | null;
+                recent?: number | null;
+                status?: string | null;
+                approved?: boolean | null;
+                kind?: string | null;
+                stream?: string | null;
+                area_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SupplierOut_"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_create_supplier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierSavedOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_get_supplier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supplier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_update_supplier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supplier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierSavedOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_approve_supplier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supplier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_list_plots: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path: {
+                supplier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlotOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_create_plot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supplier_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlotIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlotOut"];
+                };
+            };
+        };
+    };
+    catalog_api_suppliers_update_plot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                supplier_id: number;
+                plot_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlotPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlotOut"];
+                };
+            };
+        };
+    };
+    catalog_api_customers_list_customers: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+                q?: string | null;
+                kind?: string | null;
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_CustomerOut_"];
+                };
+            };
+        };
+    };
+    catalog_api_customers_create_customer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOut"];
+                };
+            };
+        };
+    };
+    catalog_api_customers_get_customer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOut"];
+                };
+            };
+        };
+    };
+    catalog_api_customers_update_customer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOut"];
+                };
+            };
+        };
+    };
+    catalog_api_certificates_list_certificates: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+                kind?: string | null;
+                product_id?: number | null;
+                plot_id?: number | null;
+                is_public?: boolean | null;
+                active?: boolean | null;
+                q?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_CertificateOut_"];
+                };
+            };
+        };
+    };
+    catalog_api_certificates_create_certificate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificateIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateOut"];
+                };
+            };
+        };
+    };
+    catalog_api_certificates_get_certificate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                certificate_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateOut"];
+                };
+            };
+        };
+    };
+    catalog_api_certificates_update_certificate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                certificate_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificatePatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateOut"];
+                };
+            };
+        };
+    };
+    catalog_api_settings_get_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsOut"];
+                };
+            };
+        };
+    };
+    catalog_api_settings_update_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettingsPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettingsOut"];
+                };
+            };
+        };
+    };
+    catalog_api_ingredients_list_ingredients: {
+        parameters: {
+            query?: {
+                status?: ("ACTIVE" | "INACTIVE") | null;
+                kind?: ("ESSENTIAL_OIL" | "SOLVENT" | "WAX" | "MINERAL" | "BOTANICAL" | "BLEND" | "OTHER") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_ingredients_create_ingredient: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngredientIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientOut"];
+                };
+            };
+        };
+    };
+    catalog_api_ingredients_get_ingredient: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ingredient_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientOut"];
+                };
+            };
+        };
+    };
+    catalog_api_ingredients_update_ingredient: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ingredient_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngredientPatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_list_recipes: {
+        parameters: {
+            query?: {
+                code?: string | null;
+                status?: ("DRAFT" | "ACTIVE" | "RETIRED") | null;
+                output_kind?: ("PRODUCT" | "INTERMEDIATE") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeOut"][];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_create_recipe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipeIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_get_recipe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_update_recipe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipePatch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_scale_recipe: {
+        parameters: {
+            query: {
+                batch_g: number | string;
+            };
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScaleOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_put_items: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecipeItemsPut"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_new_version: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_activate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
+                };
+            };
+        };
+    };
+    catalog_api_recipes_retire: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recipe_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetailOut"];
                 };
             };
         };
@@ -580,6 +3449,36 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductOwnerOut"];
+                };
+            };
+        };
+    };
+    core_api_images_upload_image: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * File
+                     * Format: binary
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImageOut"];
                 };
             };
         };

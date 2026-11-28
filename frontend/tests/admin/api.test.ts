@@ -45,6 +45,21 @@ describe("api client", () => {
     expect(init.body).toBe(JSON.stringify({ name: "x" }));
   });
 
+  it("POST FormData giữ CSRF, gửi nguyên body và để trình duyệt đặt Content-Type", async () => {
+    stubBrowser({ value: "csrftoken=abc123" });
+    const fetchMock = vi.fn(async () => res(201, { key: "ab/cd" }));
+    vi.stubGlobal("fetch", fetchMock);
+    const body = new FormData();
+    body.append("file", new Blob(["x"], { type: "image/png" }), "a.png");
+    await api.post("/images", body);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("/api/v1/images");
+    expect(init.body).toBe(body);
+    const headers = init.headers as Record<string, string>;
+    expect(headers["X-CSRFToken"]).toBe("abc123");
+    expect(headers["Content-Type"]).toBeUndefined();
+  });
+
   it("PATCH cũng gửi X-CSRFToken", async () => {
     stubBrowser({ value: "csrftoken=abc123" });
     const fetchMock = vi.fn(async () => res(200, { id: 7 }));

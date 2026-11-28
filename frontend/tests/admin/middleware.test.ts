@@ -161,6 +161,39 @@ describe("middleware /quan-ly: vai", () => {
     }
   });
 
+  const MENU_OWNER_ONLY = ["/quan-ly/tai-khoan", "/quan-ly/cai-dat", "/quan-ly/chung-nhan"];
+
+  it.each(MENU_OWNER_ONLY)("WORKSHOP gõ thẳng %s (kể cả trang con) thì 403", async (path) => {
+    mockMe(async () => json(200, WORKSHOP));
+    for (const p of [path, `${path}/3`]) {
+      const { response, next, rewrites } = await run(p);
+      expect(response.status, p).toBe(403);
+      expect(rewrites, p).toEqual(["/quan-ly/khong-co-quyen"]);
+      expect(next, p).not.toHaveBeenCalled();
+    }
+  });
+
+  it.each(MENU_OWNER_ONLY)("OWNER vào được %s", async (path) => {
+    mockMe(async () => json(200, OWNER));
+    const { response, next } = await run(path);
+    expect(response.status).toBe(200);
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it.each(MENU_OWNER_ONLY)("%s-xyz không bị khớp nhầm", (path) => {
+    const info = parseAdminPath(`${path}-xyz`);
+    expect(info.kind === "admin" && isOwnerOnly(info.segments)).toBe(false);
+  });
+
+  it("màn chỉ xem với WORKSHOP (nguoi-ban, nguyen-lieu, dia-ban) không bị chặn", async () => {
+    mockMe(async () => json(200, WORKSHOP));
+    for (const path of ["/quan-ly/nguoi-ban", "/quan-ly/nguyen-lieu", "/quan-ly/dia-ban"]) {
+      const { response, next } = await run(path);
+      expect(response.status, path).toBe(200);
+      expect(next, path).toHaveBeenCalledOnce();
+    }
+  });
+
   it("danh sách OWNER-only có vung-nguyen-lieu, không có thu-luu-huong", () => {
     expect(OWNER_ONLY_PREFIXES).toContain("/quan-ly/vung-nguyen-lieu");
     expect(OWNER_ONLY_PREFIXES).not.toContain("/quan-ly/thu-luu-huong");

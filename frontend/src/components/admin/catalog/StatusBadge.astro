@@ -1,0 +1,16 @@
+---
+import { isCatalogStatus, STATUS_LABEL } from "../../../lib/admin/catalog";
+
+interface Props {
+  /** ACTIVE hoặc INACTIVE; giá trị khác (DRAFT, PUBLISHED...) hiện nguyên chữ với màu trung tính. */
+  status: string;
+  /** Đổi chữ cho riêng màn này, ví dụ `{ ACTIVE: "Đang bán" }`. */
+  labels?: Partial<Record<string, string>>;
+}
+
+const { status, labels = {} } = Astro.props;
+const label = labels[status] ?? (isCatalogStatus(status) ? STATUS_LABEL[status] : status);
+const tone =
+  status === "ACTIVE" ? "badge-success" : status === "INACTIVE" ? "badge-ghost" : "badge-neutral";
+---
+<span class:list={["badge badge-soft whitespace-nowrap", tone]} data-status={status}>{label}</span>

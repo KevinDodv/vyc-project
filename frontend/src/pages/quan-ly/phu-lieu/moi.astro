@@ -1,0 +1,29 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import { createFields, UNIT_NOTE } from "../../../lib/admin/catalog-recipes/ingredients";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canEditCatalog(role)) return Astro.redirect("/quan-ly/phu-lieu", 302);
+---
+<Admin title="Thêm phụ liệu">
+  <h1 class="mb-4 text-2xl font-bold">Thêm phụ liệu</h1>
+  <CatalogForm
+    title="Phụ liệu mới"
+    role={role}
+    fields={createFields()}
+    apiPath="/ingredients"
+    method="POST"
+    redirect="/quan-ly/phu-lieu"
+    backHref="/quan-ly/phu-lieu"
+  >
+    <p slot="banner" class="alert alert-info" data-unit-note>{UNIT_NOTE}</p>
+  </CatalogForm>
+  <script>
+    import { bindUpperCaseCode } from "../../../lib/admin/catalog-recipes/ingredients";
+    bindUpperCaseCode();
+  </script>
+</Admin>

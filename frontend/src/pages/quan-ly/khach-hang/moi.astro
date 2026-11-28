@@ -1,0 +1,22 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { CUSTOMERS_PATH, customerFields } from "../../../lib/admin/catalog-suppliers/customers";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+---
+<Admin title="Thêm khách hàng">
+  <p class="mb-2 text-sm"><a class="link" href={CUSTOMERS_PATH}>← Danh sách khách hàng</a></p>
+  <CatalogForm
+    title="Thêm khách hàng"
+    fields={customerFields()}
+    role={role}
+    apiPath="/customers"
+    method="POST"
+    redirect={CUSTOMERS_PATH}
+    backHref={CUSTOMERS_PATH}
+    id="customer-form"
+  />
+</Admin>

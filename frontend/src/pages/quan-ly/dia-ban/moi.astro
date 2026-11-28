@@ -1,0 +1,43 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import { type AreaNode, createFields, parentLevelMap } from "../../../lib/admin/catalog-ph1a/areas";
+import DateField from "../../../lib/admin/catalog-ph1a/DateField.astro";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canEditCatalog(role)) return Astro.redirect("/quan-ly/dia-ban", 302);
+const res = await getJson<AreaNode[]>(Astro.request, "/areas");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Thêm địa bàn">
+  <h1 class="mb-4 text-2xl font-bold">Thêm địa bàn</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách địa bàn" />
+  ) : (
+    <CatalogForm
+      title="Địa bàn mới"
+      role={role}
+      fields={createFields(res.data)}
+      apiPath="/areas"
+      method="POST"
+      redirect="/quan-ly/dia-ban"
+      backHref="/quan-ly/dia-ban"
+    >
+      <div class="grid gap-4 sm:grid-cols-2">
+        <DateField name="valid_from" label="Hiệu lực từ" hint="Để trống: 01/07/2025" />
+        <DateField name="valid_to" label="Hết hiệu lực" hint="Để trống nếu còn hiệu lực" />
+      </div>
+      <script type="application/json" id="area-parent-levels" set:html={JSON.stringify(parentLevelMap(res.data))}></script>
+      <script>
+        import { bindAreaParent } from "../../../lib/admin/catalog-ph1a/area-parent";
+        bindAreaParent();
+      </script>
+    </CatalogForm>
+  )}
+</Admin>

@@ -1,0 +1,50 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { adminApi, callApi } from "../../../lib/admin/catalog-products/admin-api";
+import {
+  loadPlots,
+  loadProductChoices,
+  loadSupplierChoices,
+} from "../../../lib/admin/catalog-products/load";
+import CertificateForm from "./_CertificateForm.astro";
+
+export const prerender = false;
+
+const raw = Astro.params.id ?? "";
+const api = adminApi(Astro.request);
+const [loaded, choices, sellers] = await Promise.all([
+  /^\d{1,9}$/.test(raw)
+    ? callApi(() =>
+        api.GET("/api/v1/certificates/{certificate_id}", {
+          params: { path: { certificate_id: Number(raw) } },
+        }),
+      )
+    : Promise.resolve({ kind: "not_found" } as const),
+  loadProductChoices(Astro.request),
+  loadSupplierChoices(Astro.request),
+]);
+const failed =
+  loaded.kind === "unavailable" ||
+  (loaded.kind === "ok" && (choices.kind === "unavailable" || sellers.kind === "unavailable"));
+const plotId = loaded.kind === "ok" ? loaded.data.plot_id : null;
+const lookup =
+  sellers.kind === "ok" ? await loadPlots(Astro.request, sellers.suppliers, [plotId]) : undefined;
+const currentPlot = plotId === null ? undefined : lookup?.found.get(plotId);
+const currentPlots = currentPlot ? lookup?.bySupplier.get(currentPlot.supplier_id) : undefined;
+if (loaded.kind === "not_found") Astro.response.status = 404;
+else if (failed) Astro.response.status = 503;
+---
+<Admin title="Chứng nhận">
+  <p class="mb-2 text-sm"><a href="/quan-ly/chung-nhan" class="link">← Danh sách chứng nhận</a></p>
+  {loaded.kind === "not_found" && <p role="alert" class="alert alert-error">Không tìm thấy chứng nhận này.</p>}
+  {loaded.kind === "ok" && choices.kind === "ok" && sellers.kind === "ok" && (
+    <CertificateForm
+      certificate={loaded.data}
+      products={choices.products}
+      suppliers={sellers.suppliers}
+      currentPlot={currentPlot}
+      currentPlots={currentPlots}
+    />
+  )}
+  {failed && <p role="alert" class="alert alert-error">Chưa tải được dữ liệu. Bạn thử lại sau ít phút.</p>}
+</Admin>

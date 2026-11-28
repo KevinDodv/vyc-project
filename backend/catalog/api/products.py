@@ -17,6 +17,7 @@ from catalog.api.schemas.products import (
     ProductOut,
     ProductOwnerOut,
     ProductPatch,
+    ProductWarning,
 )
 from catalog.models import Product
 from catalog.services import products as service
@@ -31,8 +32,14 @@ def _actor(request: HttpRequest) -> User:
     return cast(User, request.user)  # RoleAuth đã chắc chắn là người dùng đăng nhập
 
 
+def _with_warnings[O: ProductOut](out: O, warnings: dict[int, list[dict[str, str]]]) -> O:
+    out.warnings = [ProductWarning(**w) for w in warnings.get(out.id, [])]
+    return out
+
+
 def _out(actor: User, product: Product) -> ProductOut:
-    return pick_out(actor, ProductOwnerOut, ProductOut, product)
+    out = pick_out(actor, ProductOwnerOut, ProductOut, product)
+    return _with_warnings(out, service.product_warnings([product]))
 
 
 @router.get(
@@ -58,10 +65,11 @@ def list_products(
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(sku__icontains=q))
     rows, total = paginate(qs, page, page_size)
+    warnings = service.product_warnings(rows)  # một truy vấn cho cả trang
     if actor.role == Role.OWNER:
-        owner_items = [ProductOwnerOut.model_validate(p) for p in rows]
+        owner_items = [_with_warnings(ProductOwnerOut.model_validate(p), warnings) for p in rows]
         return Page[ProductOwnerOut](items=owner_items, total=total, page=page, page_size=page_size)
-    items = [ProductOut.model_validate(p) for p in rows]
+    items = [_with_warnings(ProductOut.model_validate(p), warnings) for p in rows]
     return Page[ProductOut](items=items, total=total, page=page, page_size=page_size)
 
 
@@ -79,11 +87,12 @@ def get_product(request: HttpRequest, product_id: int) -> ProductOut:
 def create_product(request: HttpRequest, payload: ProductIn) -> Status:
     data = service.ProductCreate(**payload.model_dump())  # schema con đã thành dict
     product = service.create_product(data=data, actor=_actor(request))
-    return Status(201, ProductOwnerOut.model_validate(product))
+    return Status(201, _with_warnings(ProductOwnerOut.model_validate(product), {}))
 
 
 @router.patch("/{product_id}", response=ProductOwnerOut, summary="Sửa sản phẩm")
 def update_product(request: HttpRequest, product_id: int, payload: ProductPatch) -> ProductOwnerOut:
     data = service.ProductUpdate(**payload.patch_fields())
     product = service.update_product(product_id=product_id, data=data, actor=_actor(request))
-    return ProductOwnerOut.model_validate(product)
+    out = ProductOwnerOut.model_validate(product)
+    return _with_warnings(out, service.product_warnings([product]))

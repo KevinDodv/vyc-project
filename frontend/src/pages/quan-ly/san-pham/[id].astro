@@ -1,0 +1,40 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { loadFormOptions, loadProduct } from "../../../lib/admin/catalog-products/load";
+import ProductForm from "./_ProductForm.astro";
+
+export const prerender = false;
+
+const loaded = await loadProduct(Astro.request, Astro.params.id ?? "");
+const options =
+  loaded.kind === "ok"
+    ? await loadFormOptions(Astro.request, loaded.product.recipe_code)
+    : ({ kind: "unavailable" } as const);
+if (loaded.kind === "not_found") Astro.response.status = 404;
+else if (loaded.kind === "unavailable" || options.kind === "unavailable")
+  Astro.response.status = 503;
+const saved = Astro.url.searchParams.get("saved") === "1";
+const warnings = loaded.kind === "ok" ? (loaded.product.warnings ?? []) : [];
+---
+<Admin title={loaded.kind === "ok" ? `Sản phẩm ${loaded.product.sku}` : "Sản phẩm"}>
+  <p class="mb-2 text-sm"><a href="/quan-ly/san-pham" class="link">← Danh sách sản phẩm</a></p>
+  {loaded.kind === "not_found" && <p role="alert" class="alert alert-error">Không tìm thấy sản phẩm này.</p>}
+  {loaded.kind === "ok" && options.kind === "unavailable" && (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách loại hàng và công thức. Bạn thử lại sau ít phút.</p>
+  )}
+  {loaded.kind === "unavailable" && <p role="alert" class="alert alert-error">Chưa tải được sản phẩm. Bạn thử lại sau ít phút.</p>}
+  {loaded.kind === "ok" && options.kind === "ok" && (
+    <div class="flex flex-col gap-4">
+      {saved && <p role="status" class="alert alert-success" data-saved>Đã lưu sản phẩm.</p>}
+      {warnings.length > 0 && (
+        <div role="alert" class="alert alert-warning alert-soft flex-col items-start" data-warnings>
+          <strong>Cần xem lại</strong>
+          <ul class="list-disc pl-5">
+            {warnings.map((w) => <li>{w.message}</li>)}
+          </ul>
+        </div>
+      )}
+      <ProductForm product={loaded.product} goodsTypes={options.goodsTypes} recipes={options.recipes} />
+    </div>
+  )}
+</Admin>

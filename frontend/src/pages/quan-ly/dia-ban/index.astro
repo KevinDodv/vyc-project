@@ -1,0 +1,53 @@
+---
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { parseListQuery } from "../../../lib/admin/catalog";
+import {
+  type AreaNode,
+  flattenAreaTree,
+  formatValidFrom,
+  treeLabel,
+} from "../../../lib/admin/catalog-ph1a/areas";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const query = parseListQuery(Astro.url.searchParams);
+const res = await getJson<AreaNode[]>(Astro.request, "/areas");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+const rows = res.kind === "ok" ? flattenAreaTree(res.data, query) : [];
+---
+<Admin title="Địa bàn">
+  <h1 class="mb-4 text-2xl font-bold">Địa bàn (tỉnh, xã, thôn)</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách địa bàn" />
+  ) : (
+    <CatalogList
+      basePath="/quan-ly/dia-ban"
+      role={role}
+      query={query}
+      rows={rows}
+      total={rows.length}
+      page={1}
+      pageSize={Math.max(rows.length, 1)}
+      caption="Cây địa bàn Tỉnh › Xã › Thôn"
+      searchPlaceholder="Gõ tên hoặc mã tỉnh, xã, thôn để tìm"
+      emptyText="Không có địa bàn nào khớp."
+      columns={[
+        { key: "name", label: "Tên (Tỉnh › Xã › Thôn)", format: (_v, row) => treeLabel(row as never) },
+        { key: "code", label: "Mã", mono: true },
+        { key: "levelLabel", label: "Cấp" },
+        { key: "former_name", label: "Địa danh cũ" },
+        { key: "valid_from", label: "Hiệu lực từ", format: (v) => formatValidFrom(v) },
+        { key: "status", label: "Tình trạng" },
+      ]}
+    >
+      <p slot="note" class="text-sm opacity-70">
+        Cây Tỉnh › Xã › Thôn. Địa bàn đã được người bán, đồi hoặc đơn dùng thì chỉ «Ngừng dùng», không xóa.
+      </p>
+    </CatalogList>
+  )}
+</Admin>

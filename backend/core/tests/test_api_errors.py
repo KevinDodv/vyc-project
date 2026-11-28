@@ -166,6 +166,7 @@ def test_throttle_purge_removes_old_rows() -> None:
 
 
 def test_pagination(client: Client) -> None:
+    Setting.objects.all().delete()  # bỏ setting seed (core/migrations/0002) để đếm đúng 5
     for i in range(5):
         Setting.objects.create(key=f"k{i}" + "x" * i, value={})
     r = client.get(f"{BASE}/page", {"page": 2, "page_size": 2})

@@ -1,0 +1,171 @@
+---
+import { type AdminRole, canEditCatalog } from "../catalog";
+import type { MaterialOut } from "./materials";
+import {
+  buildGrid,
+  buildHistory,
+  cellNote,
+  formatPrice,
+  historyColumns,
+  type PriceCell,
+  type PriceHistoryDay,
+} from "./prices";
+import { formatIsoDate } from "./text";
+
+interface Props {
+  items: PriceCell[];
+  history: PriceHistoryDay[];
+  /** Để ghi tên cột lịch sử của hạng đã ngừng dùng. */
+  materials?: MaterialOut[];
+  /** Ngày đang xem, YYYY-MM-DD. */
+  date: string;
+  today: string;
+  saved?: boolean;
+  /** true khi không tải được lịch sử: báo thay vì hiện «chưa có giá nào». */
+  historyFailed?: boolean;
+  role?: AdminRole;
+}
+
+const {
+  items,
+  history,
+  materials = [],
+  date,
+  today,
+  saved = false,
+  historyFailed = false,
+  role,
+} = Astro.props;
+const editable = canEditCatalog(role);
+const grid = buildGrid(items);
+const columns = historyColumns(items, history, materials);
+const historyRows = buildHistory(history, columns);
+---
+<div class="flex flex-col gap-6">
+  <form method="get" action="/quan-ly/bang-gia" class="flex flex-wrap items-end gap-2" aria-label="Chọn ngày">
+    <label class="flex flex-col gap-1">
+      <span class="label text-base-content">Ngày áp dụng</span>
+      <input type="date" name="date" value={date} class="input" required data-autosubmit />
+    </label>
+    <button type="submit" class="btn">Xem</button>
+    {date !== today && <a href="/quan-ly/bang-gia" class="btn btn-ghost">Hôm nay</a>}
+  </form>
+
+  {saved && <p role="status" class="alert alert-success" data-saved>Đã lưu bảng giá ngày {formatIsoDate(date)}.</p>}
+
+  <section class="card border border-base-300 bg-base-100">
+    <form
+      class="card-body gap-4"
+      novalidate
+      aria-labelledby="price-title"
+      data-price-form
+      data-date={date}
+    >
+      <h2 id="price-title" class="card-title">Giá ngày {formatIsoDate(date)} (đồng/kg)</h2>
+      <p class="text-sm opacity-70">
+        Đã điền sẵn giá gần nhất tới ngày này. Chỉ cần sửa ô thay đổi rồi Lưu; ô không sửa giữ nguyên giá cũ.
+      </p>
+      <p data-form-error role="alert" tabindex="-1" class="alert alert-error" hidden></p>
+
+      {grid.rows.length === 0 ? (
+        <p class="alert">Chưa có hạng nào đang dùng. Thêm hạng ở màn «Nguyên liệu &amp; hạng».</p>
+      ) : (
+        <div class="overflow-x-auto rounded-box border border-base-300">
+          <table class="table" data-price-table>
+            <caption class="sr-only">Bảng giá mua và giá bán theo hạng</caption>
+            <thead>
+              <tr>
+                <th scope="col">Nguyên liệu</th>
+                {grid.columns.map((c) => <th scope="col">{c.label}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {grid.rows.map((row) => (
+                <tr data-material={row.material_code}>
+                  <th scope="row" class="whitespace-nowrap">{row.material_name}</th>
+                  {row.cells.map((cell, index) => (
+                    <td>
+                      {cell === null ? (
+                        <span class="opacity-50">—</span>
+                      ) : (
+                        <div class="flex flex-col gap-2" data-cell={cell.grade_id}>
+                          {grid.columns[index]?.mixed && <span class="text-sm font-semibold">{cell.grade_name}</span>}
+                          <label class="flex items-center gap-2">
+                            <span class="w-10 text-sm">Mua</span>
+                            <input
+                              class="input input-sm w-32 text-end" inputmode="numeric" autocomplete="off"
+                              data-price="buy" data-grade-id={cell.grade_id}
+                              data-initial={cell.buy_price ?? ""} value={formatPrice(cell.buy_price)}
+                              disabled={!editable}
+                              aria-label={`${row.material_name} ${cell.grade_name}: giá mua`}
+                            />
+                          </label>
+                          <p class="text-sm text-error" role="alert" data-price-error={`${cell.grade_id}-buy`} hidden></p>
+                          <label class="flex items-center gap-2">
+                            <span class="w-10 text-sm">Bán</span>
+                            <input
+                              class="input input-sm w-32 text-end" inputmode="numeric" autocomplete="off"
+                              data-price="sell" data-grade-id={cell.grade_id}
+                              data-initial={cell.sell_price ?? ""} value={formatPrice(cell.sell_price)}
+                              disabled={!editable}
+                              aria-label={`${row.material_name} ${cell.grade_name}: giá bán`}
+                            />
+                          </label>
+                          <p class="text-sm text-error" role="alert" data-price-error={`${cell.grade_id}-sell`} hidden></p>
+                          {cellNote(cell, date) && <small class="text-sm opacity-70" data-cell-note>{cellNote(cell, date)}</small>}
+                        </div>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <p class="text-sm opacity-70">
+        {editable ? "Giá là số nguyên, từ 0 trở lên. Gõ 250000 hoặc 250.000 đều được." : "Chỉ chủ doanh nghiệp sửa được bảng giá; bạn chỉ xem."}
+      </p>
+      <div class="card-actions justify-end">
+        {editable && grid.rows.length > 0 && <button type="submit" class="btn btn-primary" data-action="save">Lưu giá</button>}
+      </div>
+    </form>
+    <script>
+      import { bindAllPriceForms } from "./price-form";
+      bindAllPriceForms();
+    </script>
+  </section>
+
+  <section class="card border border-base-300 bg-base-100" aria-labelledby="history-title">
+    <div class="card-body gap-3">
+      <h2 id="history-title" class="card-title">Lịch sử 30 ngày tính đến {formatIsoDate(date)}</h2>
+      {historyFailed ? (
+        <p class="alert alert-error" role="alert">Chưa tải được lịch sử giá, bạn tải lại trang sau ít phút.</p>
+      ) : historyRows.length === 0 ? (
+        <p class="opacity-70" data-history-empty>Chưa có ngày nào nhập giá trong 30 ngày này.</p>
+      ) : (
+        <div class="overflow-x-auto rounded-box border border-base-300">
+          <table class="table table-zebra" data-price-history>
+            <caption class="sr-only">Giá mua / giá bán theo ngày</caption>
+            <thead>
+              <tr>
+                <th scope="col">Ngày</th>
+                {columns.map((c) => <th scope="col">{c.label}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {historyRows.map((row) => (
+                <tr data-date={row.date}>
+                  <th scope="row" class="whitespace-nowrap">{formatIsoDate(row.date)}</th>
+                  {row.values.map((v) => <td class="whitespace-nowrap">{v.text}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <small class="text-sm opacity-70">Mỗi ô: giá mua / giá bán (đồng/kg). Ô trống: ngày đó không đổi giá hạng này.</small>
+    </div>
+  </section>
+</div>

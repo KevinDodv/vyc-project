@@ -1,0 +1,39 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { CUSTOMERS_PATH, customerFields } from "../../../lib/admin/catalog-suppliers/customers";
+import { loadCustomer } from "../../../lib/admin/catalog-suppliers/loaders";
+import { parseId } from "../../../lib/admin/catalog-suppliers/server";
+import { LOGIN_PATH } from "../../../scripts/admin/next";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const id = parseId(Astro.params.id);
+const data = id === null ? ({ kind: "not_found" } as const) : await loadCustomer(Astro.request, id);
+if (data.kind === "unauthorized") {
+  return Astro.redirect(`${LOGIN_PATH}?next=${encodeURIComponent(Astro.url.pathname)}`);
+}
+if (data.kind === "not_found") Astro.response.status = 404;
+if (data.kind === "unavailable") Astro.response.status = 503;
+---
+<Admin title="Khách hàng">
+  <p class="mb-2 text-sm"><a class="link" href={CUSTOMERS_PATH}>← Danh sách khách hàng</a></p>
+  {data.kind === "ok" ? (
+    <CatalogForm
+      title={`Khách hàng ${data.customer.code}`}
+      fields={customerFields(data.customer)}
+      role={role}
+      apiPath={`/customers/${data.customer.id}`}
+      method="PATCH"
+      redirect={CUSTOMERS_PATH}
+      backHref={CUSTOMERS_PATH}
+      status={data.customer.status === "INACTIVE" ? "INACTIVE" : "ACTIVE"}
+      id="customer-form"
+    />
+  ) : data.kind === "not_found" ? (
+    <p role="alert" class="alert alert-warning">Không tìm thấy khách hàng này.</p>
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được khách hàng, bạn tải lại trang sau ít phút.</p>
+  )}
+</Admin>

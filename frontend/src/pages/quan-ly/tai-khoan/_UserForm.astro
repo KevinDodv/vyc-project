@@ -1,0 +1,82 @@
+---
+// Form tài khoản (TK mục 5, dòng Tài khoản): tạo, sửa họ tên và vai, đặt lại mật khẩu, ngừng/dùng lại.
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import type { CatalogStatus, FieldDef } from "../../../lib/admin/catalog";
+import {
+  canToggleStatus,
+  isSelf,
+  PASSWORD_MIN_LENGTH,
+  ROLE_OPTIONS,
+} from "../../../lib/admin/catalog-products/user";
+import type { components } from "../../../lib/api/v1";
+
+interface Props {
+  user?: components["schemas"]["UserOut"];
+}
+
+const { user } = Astro.props;
+const edit = user !== undefined;
+const me = Astro.locals.user;
+const self = user !== undefined && isSelf(me?.id, user.id);
+const toggle = user !== undefined && canToggleStatus(me?.id, user);
+
+const fields: FieldDef[] = [
+  {
+    name: "username",
+    label: "Tên đăng nhập",
+    required: !edit,
+    readonly: edit,
+    mono: true,
+    maxlength: 50,
+    value: user?.username ?? "",
+    hint: edit
+      ? "Tên đăng nhập không đổi được."
+      : "Từ 3 ký tự: chữ, số, dấu chấm, gạch nối, gạch dưới.",
+  },
+  {
+    name: "full_name",
+    label: "Họ tên",
+    required: true,
+    maxlength: 100,
+    value: user?.full_name ?? "",
+  },
+  {
+    name: "role",
+    label: "Vai trò",
+    type: "select",
+    required: true,
+    value: user?.role ?? "WORKSHOP",
+    options: [...ROLE_OPTIONS],
+    hint: "Chủ DN làm được mọi việc. Xưởng lập phiếu, quét lô, nhập cân; chỉ xem danh mục.",
+  },
+  {
+    name: "password",
+    label: edit ? "Đặt lại mật khẩu" : "Mật khẩu",
+    type: "password",
+    required: !edit,
+    maxlength: 256,
+    hint: edit
+      ? `Từ ${PASSWORD_MIN_LENGTH} ký tự. Để trống nếu không đổi mật khẩu.`
+      : `Từ ${PASSWORD_MIN_LENGTH} ký tự.`,
+  },
+];
+const status: CatalogStatus | undefined =
+  user && toggle ? (user.status === "ACTIVE" ? "ACTIVE" : "INACTIVE") : undefined;
+---
+<CatalogForm
+  title={edit ? `Sửa tài khoản ${user?.username}` : "Thêm tài khoản"}
+  fields={fields}
+  role={me?.role}
+  apiPath={edit ? `/users/${user?.id}` : "/users"}
+  method={edit ? "PATCH" : "POST"}
+  redirect="/quan-ly/tai-khoan"
+  backHref="/quan-ly/tai-khoan"
+  status={status}
+  deactivatePath={edit ? `/users/${user?.id}` : undefined}
+>
+  {self && (
+    <p slot="banner" class="alert alert-info alert-soft" data-self-note>
+      Đây là tài khoản của bạn nên không ngừng dùng được. Muốn ngừng, nhờ một chủ doanh nghiệp khác thao tác.
+    </p>
+  )}
+</CatalogForm>

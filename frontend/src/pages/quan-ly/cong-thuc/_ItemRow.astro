@@ -1,0 +1,62 @@
+---
+import { displayGram, parseGram } from "../../../lib/admin/catalog-recipes/math";
+import { altGroupOptions, type RecipeItemOut } from "../../../lib/admin/catalog-recipes/model";
+
+export type IngredientChoice = { id: number; label: string };
+
+interface Props {
+  /** Dòng đã lưu; không có thì là dòng trống của mẫu «Thêm dòng». */
+  item?: RecipeItemOut;
+  choices: IngredientChoice[];
+  /** false: dòng chỉ đọc (bản đã khoá hoặc WORKSHOP). */
+  editable: boolean;
+  lineNo: number;
+}
+
+const { item, choices, editable, lineNo } = Astro.props;
+const disabled = !editable;
+const qty = item ? parseGram(item.qty_g) : null;
+const pctText = item ? `${item.pct.replace(".", ",")} %` : "–";
+---
+<tr data-item-row>
+  <td class="text-center font-mono" data-line-no>{lineNo}</td>
+  <td class="min-w-72">
+    <select class="select select-sm w-full" data-field="ingredient" aria-label="Phụ liệu" disabled={disabled}>
+      <option value="">— Chọn phụ liệu —</option>
+      {choices.map((c) => (
+        <option value={String(c.id)} selected={item?.ingredient_id === c.id}>{c.label}</option>
+      ))}
+    </select>
+  </td>
+  <td class="w-32">
+    <input
+      class="input input-sm w-full text-end font-mono"
+      data-field="qty"
+      inputmode="decimal"
+      aria-label="Gram"
+      placeholder="0"
+      value={qty === null ? "" : displayGram(qty)}
+      disabled={disabled}
+    />
+  </td>
+  <td class="w-28">
+    <select class="select select-sm w-full" data-field="alt" aria-label="Nhóm lựa chọn" disabled={disabled}>
+      <option value="">—</option>
+      {altGroupOptions(item?.alt_group ?? null).map((o) => (
+        <option value={String(o.value)} selected={item?.alt_group === o.value}>{o.label}</option>
+      ))}
+    </select>
+  </td>
+  <td class="text-center">
+    <input type="checkbox" class="checkbox checkbox-sm" data-field="optional" aria-label="Tuỳ chọn" checked={item?.is_optional === true} disabled={disabled} />
+  </td>
+  <td class="min-w-40">
+    <input class="input input-sm w-full" data-field="note" aria-label="Ghi chú" maxlength="500" value={item?.note ?? ""} disabled={disabled} />
+  </td>
+  <td class="w-28 text-end font-mono"><output data-pct>{pctText}</output></td>
+  <td class="w-10">
+    {editable && (
+      <button type="button" class="btn btn-ghost btn-sm" data-action="remove-item" aria-label="Xoá dòng">✕</button>
+    )}
+  </td>
+</tr>

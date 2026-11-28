@@ -1,0 +1,94 @@
+---
+import CatalogList, { type Row } from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { parseListQuery } from "../../../lib/admin/catalog";
+import { adminApi, callApi } from "../../../lib/admin/catalog-products/admin-api";
+import {
+  CERTIFICATE_KIND_LABEL,
+  CERTIFICATE_STATE_LABEL,
+  certificateApiQuery,
+  certificateState,
+  certificateTarget,
+  formatDate,
+  todayInVietnam,
+} from "../../../lib/admin/catalog-products/certificate";
+import {
+  loadPlots,
+  loadProductChoices,
+  loadSupplierChoices,
+} from "../../../lib/admin/catalog-products/load";
+
+export const prerender = false;
+
+const query = parseListQuery(Astro.url.searchParams);
+const api = adminApi(Astro.request);
+const [listed, choices] = await Promise.all([
+  callApi(() => api.GET("/api/v1/certificates", { params: { query: certificateApiQuery(query) } })),
+  loadProductChoices(Astro.request),
+]);
+if (listed.kind === "unavailable") Astro.response.status = 503;
+
+const skuById = new Map(
+  choices.kind === "ok" ? choices.products.map((p) => [p.id, p.sku] as const) : [],
+);
+// Cột «Áp dụng cho» hiện mã đồi: chỉ tra khi trang này có chứng nhận của đồi.
+const plotIds = listed.kind === "ok" ? listed.data.items.map((c) => c.plot_id) : [];
+const plotCodeById = new Map<number, string>();
+if (plotIds.some((id) => id !== null)) {
+  const sellers = await loadSupplierChoices(Astro.request);
+  if (sellers.kind === "ok") {
+    const { found } = await loadPlots(Astro.request, sellers.suppliers, plotIds);
+    for (const [id, plot] of found) plotCodeById.set(id, plot.code);
+  }
+}
+const today = todayInVietnam();
+const rows: Row[] =
+  listed.kind === "ok"
+    ? listed.data.items.map((c) => ({
+        id: c.id,
+        kind: CERTIFICATE_KIND_LABEL[c.kind] ?? c.kind,
+        number: c.number,
+        issuer: c.issuer ?? "",
+        issued_on: formatDate(c.issued_on),
+        expires_on: formatDate(c.expires_on),
+        stars: c.stars === null ? "" : String(c.stars),
+        target: certificateTarget(c, skuById, plotCodeById),
+        is_public: c.is_public,
+        state: CERTIFICATE_STATE_LABEL[certificateState(c, today)],
+      }))
+    : [];
+---
+<Admin title="Chứng nhận">
+  <h1 class="mb-4 text-2xl font-bold">Chứng nhận</h1>
+  {listed.kind === "ok" ? (
+    <CatalogList
+      caption="Danh sách chứng nhận"
+      columns={[
+        { key: "number", label: "Số", mono: true },
+        { key: "kind", label: "Loại" },
+        { key: "issuer", label: "Cơ quan cấp" },
+        { key: "issued_on", label: "Ngày cấp" },
+        { key: "expires_on", label: "Hết hạn" },
+        { key: "stars", label: "Số sao", numeric: true },
+        { key: "target", label: "Áp dụng cho" },
+        { key: "is_public", label: "Công khai", format: (v) => (v ? "✔ Có" : "") },
+        { key: "state", label: "Hiệu lực" },
+      ]}
+      rows={rows}
+      total={listed.data.total}
+      page={query.page}
+      pageSize={query.pageSize}
+      basePath="/quan-ly/chung-nhan"
+      query={query}
+      role={Astro.locals.user?.role}
+      searchPlaceholder="Gõ số hoặc cơ quan cấp để tìm"
+      emptyText="Chưa có chứng nhận nào khớp."
+    >
+      <p slot="note" class="text-sm">
+        Trang công khai (quét QR, website) chỉ hiện chứng nhận còn hiệu lực và đã bật «Công khai». Bộ lọc «Đang dùng» là còn hiệu lực, «Ngừng dùng» là đã hết hạn. Còn dưới 30 ngày là «Sắp hết hạn».
+      </p>
+    </CatalogList>
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách chứng nhận. Bạn thử lại sau ít phút.</p>
+  )}
+</Admin>

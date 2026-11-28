@@ -1,0 +1,32 @@
+---
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+
+interface Props {
+  name: string;
+  label: string;
+  /** YYYY-MM-DD hoặc rỗng. */
+  value?: string | null;
+  hint?: string;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+const { name, label, value = "", hint, required = false, disabled = false } = Astro.props;
+const fid = `f-${name}`;
+const describedBy = [hint ? `${fid}-hint` : null, `${fid}-error`].filter(Boolean).join(" ");
+---
+<CatalogField name={name} label={label} required={required} hint={hint}>
+  <input
+    id={fid}
+    name={name}
+    type="date"
+    class="input w-full"
+    value={value ?? ""}
+    disabled={disabled}
+    data-kind="text"
+    data-label={label}
+    data-required={required ? "" : undefined}
+    aria-required={required ? "true" : undefined}
+    aria-describedby={describedBy}
+  />
+</CatalogField>

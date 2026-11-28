@@ -1,0 +1,60 @@
+---
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { parseListQuery } from "../../../lib/admin/catalog";
+import {
+  filterMaterials,
+  type GoodsTypeLite,
+  type MaterialOut,
+} from "../../../lib/admin/catalog-ph1a/materials";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const query = parseListQuery(Astro.url.searchParams);
+const [materials, goodsTypes] = await Promise.all([
+  getJson<MaterialOut[]>(Astro.request, "/materials"),
+  getJson<GoodsTypeLite[]>(Astro.request, "/goods-types"),
+]);
+if (materials.kind === "unauthorized" || goodsTypes.kind === "unauthorized") {
+  return Astro.redirect(loginUrl(Astro.url), 302);
+}
+const ok = materials.kind === "ok" && goodsTypes.kind === "ok";
+if (!ok) Astro.response.status = 503;
+const rows =
+  materials.kind === "ok" && goodsTypes.kind === "ok"
+    ? filterMaterials(materials.data, goodsTypes.data, query)
+    : [];
+---
+<Admin title="Nguyên liệu và hạng">
+  <h1 class="mb-4 text-2xl font-bold">Nguyên liệu &amp; hạng</h1>
+  {!ok ? (
+    <Unavailable what="danh sách nguyên liệu" />
+  ) : (
+    <CatalogList
+      basePath="/quan-ly/nguyen-lieu"
+      role={role}
+      query={query}
+      rows={rows}
+      total={rows.length}
+      page={1}
+      pageSize={Math.max(rows.length, 1)}
+      caption="Nguyên liệu và các hạng"
+      searchPlaceholder="Gõ mã hoặc tên nguyên liệu để tìm"
+      columns={[
+        { key: "code", label: "Mã", mono: true },
+        { key: "name", label: "Tên" },
+        { key: "goods_type", label: "Loại hàng" },
+        { key: "grades", label: "Hạng" },
+        { key: "sort_order", label: "Thứ tự", numeric: true },
+        { key: "status", label: "Tình trạng" },
+      ]}
+    >
+      <p slot="note" class="text-sm opacity-70">
+        Nguyên liệu quế thu mua theo cân (kg), chia theo hạng. Không ngừng dùng được hạng đang có lô trong kho.
+      </p>
+    </CatalogList>
+  )}
+</Admin>

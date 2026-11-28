@@ -1,0 +1,94 @@
+---
+// Danh sách sản phẩm: giống CatalogList nhưng lọc theo trạng thái đăng (Nháp / Đã đăng / Đang ẩn).
+import { pageInfo, pageNumbers } from "../../../lib/admin/catalog";
+import {
+  formatVnd,
+  PRODUCT_LIST_PATH,
+  PRODUCT_STATUS_FILTER,
+  PRODUCT_STATUS_LABEL,
+  PRODUCT_STATUS_TONE,
+  type ProductListQuery,
+  type ProductOwner,
+  productListUrl,
+} from "../../../lib/admin/catalog-products/product";
+
+interface Props {
+  rows: ProductOwner[];
+  total: number;
+  query: ProductListQuery;
+}
+
+const { rows, total, query } = Astro.props;
+const info = pageInfo(query.page, query.pageSize, total);
+const link = (page: number) => productListUrl({ ...query, page });
+---
+<div class="flex flex-col gap-4">
+  <form method="get" action={PRODUCT_LIST_PATH} role="search" class="flex flex-wrap items-center gap-2">
+    <input type="search" name="q" value={query.q} class="input min-w-0 flex-1" placeholder="Gõ mã SKU hoặc tên để tìm" aria-label="Tìm kiếm" />
+    <select name="status" class="select w-48" aria-label="Lọc theo trạng thái" data-autosubmit>
+      {PRODUCT_STATUS_FILTER.map((o) => (<option value={o.value} selected={o.value === query.status}>{o.label}</option>))}
+    </select>
+    <button type="submit" class="btn">Tìm</button>
+    <a href={`${PRODUCT_LIST_PATH}/moi`} class="btn btn-primary">+ Thêm sản phẩm</a>
+  </form>
+
+  <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+    <table class="table table-zebra" data-catalog-list>
+      <caption class="sr-only">Danh sách sản phẩm</caption>
+      <thead>
+        <tr>
+          <th scope="col">SKU</th>
+          <th scope="col">Tên sản phẩm</th>
+          <th scope="col">Quy cách</th>
+          <th scope="col">Mã công thức</th>
+          <th scope="col" class="text-end">Giá bán lẻ</th>
+          <th scope="col">Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.length === 0 ? (
+          <tr><td colspan="6" class="text-center opacity-70">Không có sản phẩm nào khớp.</td></tr>
+        ) : (
+          rows.map((p) => {
+            const href = `${PRODUCT_LIST_PATH}/${p.id}`;
+            const status = p.status as keyof typeof PRODUCT_STATUS_LABEL;
+            return (
+              <tr class="cursor-pointer hover:bg-base-200" data-href={href} data-id={String(p.id)}>
+                <td class="font-mono"><a href={href} class="link link-hover">{p.sku}</a></td>
+                <td>{p.name}</td>
+                <td>{p.size_label}</td>
+                <td class="font-mono">
+                  {p.recipe_code ?? ""}
+                  {(p.warnings ?? []).length > 0 && (
+                    <span class="badge badge-warning badge-soft ml-1 whitespace-nowrap font-sans" title={p.warnings?.[0]?.message}>Công thức không ACTIVE</span>
+                  )}
+                </td>
+                <td class="text-end">{formatVnd(p.retail_price)}</td>
+                <td><span class:list={["badge badge-soft whitespace-nowrap", PRODUCT_STATUS_TONE[status] ?? "badge-neutral"]} data-status={p.status}>{PRODUCT_STATUS_LABEL[status] ?? p.status}</span></td>
+              </tr>
+            );
+          })
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="flex flex-wrap items-center justify-between gap-2" aria-label="Phân trang">
+    <p class="text-sm" data-page-summary>{total === 0 ? "Không có dòng nào" : `Dòng ${info.from}–${info.to} trên ${total}`}</p>
+    {info.totalPages > 1 && (
+      <div class="join">
+        {info.hasPrev ? (<a class="btn join-item btn-sm" href={link(info.page - 1)} rel="prev">‹ Trước</a>) : (<span class="btn join-item btn-sm btn-disabled" aria-disabled="true">‹ Trước</span>)}
+        {pageNumbers(info.page, info.totalPages).map((p) =>
+          p === "gap" ? (<span class="btn join-item btn-sm btn-disabled" aria-hidden="true">…</span>)
+          : p === info.page ? (<span class="btn join-item btn-sm btn-active" aria-current="page">{p}</span>)
+          : (<a class="btn join-item btn-sm" href={link(p)}>{p}</a>),
+        )}
+        {info.hasNext ? (<a class="btn join-item btn-sm" href={link(info.page + 1)} rel="next">Sau ›</a>) : (<span class="btn join-item btn-sm btn-disabled" aria-disabled="true">Sau ›</span>)}
+      </div>
+    )}
+  </nav>
+  <script>
+    import { bindCatalogList } from "../../../lib/admin/catalog-list";
+    bindCatalogList();
+  </script>
+</div>

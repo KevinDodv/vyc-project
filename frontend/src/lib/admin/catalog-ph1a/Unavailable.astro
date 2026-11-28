@@ -1,0 +1,9 @@
+---
+interface Props {
+  what?: string;
+}
+const { what = "dữ liệu" } = Astro.props;
+---
+<p role="alert" class="alert alert-error" data-unavailable>
+  Chưa tải được {what}. Bạn thử tải lại trang sau ít phút.
+</p>

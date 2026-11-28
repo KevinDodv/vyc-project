@@ -1,0 +1,149 @@
+---
+import {
+  type AdminRole,
+  type CatalogStatus,
+  canEditCatalog,
+  type FieldDef,
+  fieldKind,
+} from "../../../lib/admin/catalog";
+import CatalogField from "./CatalogField.astro";
+
+interface Props {
+  title: string;
+  fields: FieldDef[];
+  /** Vai của người đang xem (`Astro.locals.user.role`). Không phải OWNER thì ô nhập bị khoá, ẩn Lưu và Ngừng dùng. */
+  role?: AdminRole;
+  /** Đường dẫn API tính từ /api/v1, ví dụ "/goods-types" (tạo) hoặc "/goods-types/3" (sửa). */
+  apiPath: string;
+  /** POST khi tạo, PATCH khi sửa. */
+  method?: "POST" | "PATCH";
+  /** Trang chuyển tới sau khi lưu hoặc đổi trạng thái; phải nằm dưới /quan-ly. */
+  redirect?: string;
+  /** Liên kết nút «Đóng» (thường là trang danh sách). */
+  backHref?: string;
+  /** Trạng thái hiện tại của bản ghi khi sửa; có thì hiện «Ngừng dùng» (hoặc «Dùng lại» khi INACTIVE). */
+  status?: CatalogStatus;
+  /** Đường dẫn PATCH {status}; mặc định là `apiPath`. */
+  deactivatePath?: string;
+  id?: string;
+}
+
+const {
+  title,
+  fields,
+  role,
+  apiPath,
+  method = "POST",
+  redirect,
+  backHref,
+  status,
+  deactivatePath,
+  id = "catalog-form",
+} = Astro.props;
+
+const editable = canEditCatalog(role);
+const canDeactivate = editable && method === "PATCH" && status !== undefined;
+const reactivate = status === "INACTIVE";
+const textValue = (field: FieldDef): string =>
+  field.value === null || field.value === undefined || typeof field.value === "boolean"
+    ? ""
+    : String(field.value);
+---
+<section class="card border border-base-300 bg-base-100">
+  <form
+    id={id}
+    class="card-body gap-4"
+    novalidate
+    aria-labelledby={`${id}-title`}
+    data-catalog-form
+    data-api-path={apiPath}
+    data-method={method}
+    data-redirect={redirect}
+    data-deactivate-path={canDeactivate ? (deactivatePath ?? apiPath) : undefined}
+  >
+    <h2 id={`${id}-title`} class="card-title">{title}</h2>
+    <slot name="banner" />
+    <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {fields.map((field) => {
+        const type = field.type ?? "text";
+        const fid = `f-${field.name}`;
+        const locked = !editable || field.readonly === true;
+        const describedBy = [field.hint ? `${fid}-hint` : null, `${fid}-error`]
+          .filter(Boolean)
+          .join(" ");
+        const common = {
+          id: fid,
+          name: field.name,
+          disabled: locked,
+          "data-kind": fieldKind(type),
+          "data-label": field.label,
+          "data-required": field.required ? "" : undefined,
+          "aria-required": field.required ? ("true" as const) : undefined,
+          "aria-describedby": describedBy,
+        };
+        return (
+          <CatalogField
+            name={field.name}
+            label={field.label}
+            required={field.required}
+            hint={field.hint}
+            wide={field.wide || type === "textarea"}
+          >
+            {type === "textarea" ? (
+              <textarea class="textarea w-full" rows="3" maxlength={field.maxlength} placeholder={field.placeholder} {...common}>{textValue(field)}</textarea>
+            ) : type === "select" ? (
+              <select class="select w-full" {...common}>
+                <option value="">— Chọn —</option>
+                {(field.options ?? []).map((option) => (
+                  <option value={String(option.value)} selected={String(option.value) === textValue(field)}>{option.label}</option>
+                ))}
+              </select>
+            ) : type === "checkbox" ? (
+              <input type="checkbox" class="checkbox" checked={field.value === true} {...common} />
+            ) : (
+              <input
+                class:list={["input w-full", field.mono && "font-mono"]}
+                type={type === "int" ? "number" : type === "password" ? "password" : "text"}
+                inputmode={type === "decimal" ? "decimal" : undefined}
+                step={type === "int" ? 1 : undefined}
+                min={type === "int" ? field.min : undefined}
+                maxlength={field.maxlength}
+                placeholder={field.placeholder}
+                autocomplete={type === "password" ? "new-password" : undefined}
+                value={type === "password" ? undefined : textValue(field)}
+                {...common}
+              />
+            )}
+          </CatalogField>
+        );
+      })}
+    </div>
+
+    <slot />
+
+    <p class="text-sm opacity-70">
+      {editable ? "Không có nút Xóa: dùng «Ngừng dùng»." : "Chỉ chủ doanh nghiệp sửa được danh mục; bạn chỉ xem."}
+    </p>
+
+    <div class="card-actions items-center justify-end gap-2">
+      {canDeactivate && (
+        <button
+          type="button"
+          class:list={["btn mr-auto", reactivate ? "btn-outline" : "btn-error btn-outline"]}
+          data-action="deactivate"
+          data-next-status={reactivate ? "ACTIVE" : "INACTIVE"}
+        >
+          {reactivate ? "Dùng lại" : "Ngừng dùng"}
+        </button>
+      )}
+      {backHref && <a href={backHref} class="btn btn-ghost">Đóng</a>}
+      {editable && <button type="submit" class="btn btn-primary" data-action="save">Lưu</button>}
+    </div>
+  </form>
+  <script>
+    import { bindAllCatalogForms } from "../../../lib/admin/form";
+    bindAllCatalogForms();
+  </script>
+</section>

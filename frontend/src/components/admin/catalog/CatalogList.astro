@@ -1,0 +1,163 @@
+---
+import {
+  type AdminRole,
+  type CatalogStatus,
+  canEditCatalog,
+  listPageUrl,
+  pageInfo,
+  pageNumbers,
+  STATUS_FILTER_OPTIONS,
+  type StatusFilter,
+} from "../../../lib/admin/catalog";
+import StatusBadge from "./StatusBadge.astro";
+
+export type Row = { id: number | string; status?: CatalogStatus } & Record<string, unknown>;
+
+export type Column = {
+  /** Tên trường trong dòng dữ liệu. Cột tên `status` tự hiện huy hiệu trạng thái. */
+  key: string;
+  label: string;
+  /** Căn phải (số). */
+  numeric?: boolean;
+  /** Chữ đơn cách (mã). */
+  mono?: boolean;
+  /** Đổi giá trị thô thành chữ hiện ra, ví dụ `(v) => (v ? "✔ Có" : "")`. */
+  format?: (value: unknown, row: Row) => string;
+};
+
+interface Props {
+  columns: Column[];
+  rows: Row[];
+  /** Tổng số dòng theo bộ lọc (từ `Page.total` của API). */
+  total: number;
+  page: number;
+  pageSize: number;
+  /** Đường dẫn trang danh sách, ví dụ "/quan-ly/loai-hang". */
+  basePath: string;
+  /** Giá trị đang lọc, đọc từ `parseListQuery`. */
+  query?: { q?: string; status?: StatusFilter };
+  role?: AdminRole;
+  /** Liên kết mở form sửa của một dòng; mặc định `${basePath}/${row.id}`. */
+  rowHref?: (row: Row) => string;
+  /** Liên kết nút «+ Thêm»; mặc định `${basePath}/moi`. */
+  newHref?: string;
+  searchPlaceholder?: string;
+  emptyText?: string;
+  /** Tên bảng cho trình đọc màn hình. */
+  caption?: string;
+}
+
+const {
+  columns,
+  rows,
+  total,
+  page,
+  pageSize,
+  basePath,
+  query = {},
+  role,
+  rowHref = (row: Row) => `${basePath}/${row.id}`,
+  newHref = `${basePath}/moi`,
+  searchPlaceholder = "Gõ mã hoặc tên để tìm",
+  emptyText = "Không có dòng nào khớp.",
+  caption = "Danh sách",
+} = Astro.props;
+
+const q = query.q ?? "";
+const status: StatusFilter = query.status ?? "";
+const info = pageInfo(page, pageSize, total);
+const link = (p: number) => listPageUrl(basePath, { q, status, page: p, pageSize });
+const cellText = (column: Column, row: Row): string => {
+  const value = row[column.key];
+  if (column.format) return column.format(value, row);
+  return value === null || value === undefined ? "" : String(value);
+};
+---
+<div class="flex flex-col gap-4">
+  <form method="get" action={basePath} role="search" class="flex flex-wrap items-center gap-2">
+    <input
+      type="search"
+      name="q"
+      value={q}
+      class="input min-w-0 flex-1"
+      placeholder={searchPlaceholder}
+      aria-label="Tìm kiếm"
+    />
+    <select name="status" class="select w-48" aria-label="Lọc theo tình trạng" data-autosubmit>
+      {STATUS_FILTER_OPTIONS.map((option) => (
+        <option value={option.value} selected={option.value === status}>{option.label}</option>
+      ))}
+    </select>
+    <button type="submit" class="btn">Tìm</button>
+    {canEditCatalog(role) && <a href={newHref} class="btn btn-primary">+ Thêm</a>}
+  </form>
+
+  <slot name="note" />
+
+  <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+    <table class="table table-zebra" data-catalog-list>
+      <caption class="sr-only">{caption}</caption>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th scope="col" class:list={[column.numeric && "text-end"]}>{column.label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.length === 0 ? (
+          <tr><td colspan={columns.length} class="text-center opacity-70">{emptyText}</td></tr>
+        ) : (
+          rows.map((row) => (
+            <tr class="cursor-pointer hover:bg-base-200" data-href={rowHref(row)} data-id={String(row.id)}>
+              {columns.map((column, index) => (
+                <td class:list={[column.numeric && "text-end", column.mono && "font-mono"]}>
+                  {column.key === "status" && typeof row.status === "string" ? (
+                    <StatusBadge status={row.status} />
+                  ) : index === 0 ? (
+                    <a href={rowHref(row)} class="link link-hover">{cellText(column, row)}</a>
+                  ) : (
+                    cellText(column, row)
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="flex flex-wrap items-center justify-between gap-2" aria-label="Phân trang">
+    <p class="text-sm" data-page-summary>
+      {total === 0 ? "Không có dòng nào" : `Dòng ${info.from}–${info.to} trên ${total}`}
+    </p>
+    {info.totalPages > 1 && (
+      <div class="join">
+        {info.hasPrev ? (
+          <a class="btn join-item btn-sm" href={link(info.page - 1)} rel="prev">‹ Trước</a>
+        ) : (
+          <span class="btn join-item btn-sm btn-disabled" aria-disabled="true">‹ Trước</span>
+        )}
+        {pageNumbers(info.page, info.totalPages).map((p) =>
+          p === "gap" ? (
+            <span class="btn join-item btn-sm btn-disabled" aria-hidden="true">…</span>
+          ) : p === info.page ? (
+            <span class="btn join-item btn-sm btn-active" aria-current="page">{p}</span>
+          ) : (
+            <a class="btn join-item btn-sm" href={link(p)}>{p}</a>
+          ),
+        )}
+        {info.hasNext ? (
+          <a class="btn join-item btn-sm" href={link(info.page + 1)} rel="next">Sau ›</a>
+        ) : (
+          <span class="btn join-item btn-sm btn-disabled" aria-disabled="true">Sau ›</span>
+        )}
+      </div>
+    )}
+  </nav>
+  <script>
+    import { bindCatalogList } from "../../../lib/admin/catalog-list";
+    bindCatalogList();
+  </script>
+</div>

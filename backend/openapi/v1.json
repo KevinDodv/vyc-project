@@ -101,6 +101,2512 @@
         ]
       }
     },
+    "/api/v1/users": {
+      "get": {
+        "operationId": "accounts_api_list_users",
+        "summary": "Danh sách tài khoản",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "role",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "OWNER",
+                    "WORKSHOP"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ACTIVE",
+                    "INACTIVE"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_UserOut_"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tài khoản"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "accounts_api_create_user",
+        "summary": "Tạo tài khoản",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tài khoản"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/{user_id}": {
+      "get": {
+        "operationId": "accounts_api_get_user",
+        "summary": "Chi tiết tài khoản",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tài khoản"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "accounts_api_update_user",
+        "summary": "Sửa tài khoản, đặt lại mật khẩu",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tài khoản"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/areas": {
+      "get": {
+        "operationId": "catalog_api_areas_list_areas",
+        "summary": "Cây địa bàn Tỉnh > Xã > Thôn",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AreaNode"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Địa bàn"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_areas_create_area",
+        "summary": "Tạo địa bàn",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Địa bàn"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/areas/{area_id}": {
+      "get": {
+        "operationId": "catalog_api_areas_get_area",
+        "summary": "Chi tiết địa bàn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "area_id",
+            "schema": {
+              "title": "Area Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Địa bàn"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_areas_update_area",
+        "summary": "Sửa địa bàn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "area_id",
+            "schema": {
+              "title": "Area Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Địa bàn"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AreaPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/goods-types": {
+      "get": {
+        "operationId": "catalog_api_goods_types_list_goods_types",
+        "summary": "Danh sách loại hàng hóa",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ACTIVE",
+                    "INACTIVE"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "grp",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "MATERIAL",
+                    "PRODUCT"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Grp"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GoodsTypeOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Loại hàng hóa"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_goods_types_create_goods_type",
+        "summary": "Tạo loại hàng hóa",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoodsTypeOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Loại hàng hóa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoodsTypeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/goods-types/{goods_type_id}": {
+      "get": {
+        "operationId": "catalog_api_goods_types_get_goods_type",
+        "summary": "Chi tiết loại hàng",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goods_type_id",
+            "schema": {
+              "title": "Goods Type Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoodsTypeOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Loại hàng hóa"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_goods_types_update_goods_type",
+        "summary": "Sửa loại hàng hóa",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goods_type_id",
+            "schema": {
+              "title": "Goods Type Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoodsTypeOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Loại hàng hóa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoodsTypePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/materials": {
+      "get": {
+        "operationId": "catalog_api_materials_list_materials",
+        "summary": "Danh sách nguyên liệu kèm hạng",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ACTIVE",
+                    "INACTIVE"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MaterialOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Nguyên vật liệu"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_materials_create_material",
+        "summary": "Tạo nguyên liệu (kèm hạng)",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Nguyên vật liệu"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaterialIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/materials/{material_id}": {
+      "get": {
+        "operationId": "catalog_api_materials_get_material",
+        "summary": "Chi tiết nguyên liệu",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_id",
+            "schema": {
+              "title": "Material Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Nguyên vật liệu"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_materials_update_material",
+        "summary": "Sửa nguyên liệu và hạng",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_id",
+            "schema": {
+              "title": "Material Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Nguyên vật liệu"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaterialPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/prices": {
+      "get": {
+        "operationId": "catalog_api_prices_get_prices",
+        "summary": "Lưới giá tại một ngày",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceSheetOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bảng giá"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/prices/history": {
+      "get": {
+        "operationId": "catalog_api_prices_get_price_history",
+        "summary": "Lịch sử giá 30 ngày tính đến ngày chọn",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PriceHistoryDayOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bảng giá"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/prices/{price_date}": {
+      "put": {
+        "operationId": "catalog_api_prices_put_prices",
+        "summary": "Lưu giá một ngày",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "price_date",
+            "schema": {
+              "format": "date",
+              "title": "Price Date",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceSheetOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Bảng giá"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceSheetIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/suppliers": {
+      "get": {
+        "operationId": "catalog_api_suppliers_list_suppliers",
+        "summary": "Danh sách người bán",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "recent",
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 50,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Recent"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "approved",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Approved"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "stream",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Stream"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "area_id",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Area Id"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_SupplierOut_"
+                }
+              }
+            }
+          }
+        },
+        "description": "`q` tìm không phân biệt dấu (tên, mã, SĐT, thôn). `recent=12`: lưới nút gần đây.",
+        "tags": [
+          "Người bán"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_suppliers_create_supplier",
+        "summary": "Tạo người bán (WORKSHOP: thêm nhanh, chờ duyệt)",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierSavedOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/suppliers/{supplier_id}": {
+      "get": {
+        "operationId": "catalog_api_suppliers_get_supplier",
+        "summary": "Chi tiết người bán",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_suppliers_update_supplier",
+        "summary": "Sửa hoặc ngừng dùng người bán",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierSavedOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/suppliers/{supplier_id}/approve": {
+      "post": {
+        "operationId": "catalog_api_suppliers_approve_supplier",
+        "summary": "Duyệt người bán thêm nhanh",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/suppliers/{supplier_id}/plots": {
+      "get": {
+        "operationId": "catalog_api_suppliers_list_plots",
+        "summary": "Đồi quế của người bán (đồi mặc định xếp đầu)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlotOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_suppliers_create_plot",
+        "summary": "Thêm đồi quế (mã D-<xã>-<số NCC>-<stt> tự sinh)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlotOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlotIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/suppliers/{supplier_id}/plots/{plot_id}": {
+      "patch": {
+        "operationId": "catalog_api_suppliers_update_plot",
+        "summary": "Sửa hoặc ngừng dùng đồi",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "supplier_id",
+            "schema": {
+              "title": "Supplier Id",
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "plot_id",
+            "schema": {
+              "title": "Plot Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlotOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Người bán"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlotPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/customers": {
+      "get": {
+        "operationId": "catalog_api_customers_list_customers",
+        "summary": "Danh sách khách hàng",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_CustomerOut_"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Danh mục"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_customers_create_customer",
+        "summary": "Tạo khách hàng (mã KH-NNNN tự sinh)",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Danh mục"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/customers/{customer_id}": {
+      "get": {
+        "operationId": "catalog_api_customers_get_customer",
+        "summary": "Chi tiết khách hàng",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Danh mục"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_customers_update_customer",
+        "summary": "Sửa hoặc ngừng dùng khách hàng",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "schema": {
+              "title": "Customer Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Danh mục"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/certificates": {
+      "get": {
+        "operationId": "catalog_api_certificates_list_certificates",
+        "summary": "Danh sách chứng nhận",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "title": "Page",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "product_id",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Id"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "plot_id",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Plot Id"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "is_public",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Public"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "active",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Active"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_CertificateOut_"
+                }
+              }
+            }
+          }
+        },
+        "description": "`active=true`: còn hiệu lực; `active=false`: đã hết hạn.",
+        "tags": [
+          "Chứng nhận"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_certificates_create_certificate",
+        "summary": "Thêm chứng nhận",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chứng nhận"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/certificates/{certificate_id}": {
+      "get": {
+        "operationId": "catalog_api_certificates_get_certificate",
+        "summary": "Chi tiết chứng nhận",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "certificate_id",
+            "schema": {
+              "title": "Certificate Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chứng nhận"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_certificates_update_certificate",
+        "summary": "Sửa chứng nhận",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "certificate_id",
+            "schema": {
+              "title": "Certificate Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Chứng nhận"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificatePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/settings": {
+      "get": {
+        "operationId": "catalog_api_settings_get_settings",
+        "summary": "Cấu hình hệ thống",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cấu hình"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_settings_update_settings",
+        "summary": "Sửa cấu hình (một phần)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cấu hình"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ingredients": {
+      "get": {
+        "operationId": "catalog_api_ingredients_list_ingredients",
+        "summary": "Danh sách phụ liệu",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ACTIVE",
+                    "INACTIVE"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ESSENTIAL_OIL",
+                    "SOLVENT",
+                    "WAX",
+                    "MINERAL",
+                    "BOTANICAL",
+                    "BLEND",
+                    "OTHER"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IngredientOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Phụ liệu"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_ingredients_create_ingredient",
+        "summary": "Tạo phụ liệu",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredientOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Phụ liệu"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngredientIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ingredients/{ingredient_id}": {
+      "get": {
+        "operationId": "catalog_api_ingredients_get_ingredient",
+        "summary": "Chi tiết phụ liệu",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ingredient_id",
+            "schema": {
+              "title": "Ingredient Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredientOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Phụ liệu"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_ingredients_update_ingredient",
+        "summary": "Sửa hoặc ngừng dùng phụ liệu",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ingredient_id",
+            "schema": {
+              "title": "Ingredient Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredientOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Phụ liệu"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngredientPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes": {
+      "get": {
+        "operationId": "catalog_api_recipes_list_recipes",
+        "summary": "Danh sách công thức",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "DRAFT",
+                    "ACTIVE",
+                    "RETIRED"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "output_kind",
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "PRODUCT",
+                    "INTERMEDIATE"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Output Kind"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "catalog_api_recipes_create_recipe",
+        "summary": "Tạo công thức (version 1, DRAFT)",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}": {
+      "get": {
+        "operationId": "catalog_api_recipes_get_recipe",
+        "summary": "Chi tiết công thức",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "catalog_api_recipes_update_recipe",
+        "summary": "Sửa công thức (chỉ bản DRAFT)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}/scale": {
+      "get": {
+        "operationId": "catalog_api_recipes_scale_recipe",
+        "summary": "Lượng cân gợi ý theo mẻ mong muốn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "batch_g",
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "title": "Batch G"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaleOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}/items": {
+      "put": {
+        "operationId": "catalog_api_recipes_put_items",
+        "summary": "Thay toàn bộ dòng thành phần (chỉ bản DRAFT)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeItemsPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}/new-version": {
+      "post": {
+        "operationId": "catalog_api_recipes_new_version",
+        "summary": "Tạo phiên bản mới (sao chép, version + 1, DRAFT)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}/activate": {
+      "post": {
+        "operationId": "catalog_api_recipes_activate",
+        "summary": "Kích hoạt bản DRAFT (bản ACTIVE cũ → RETIRED)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/recipes/{recipe_id}/retire": {
+      "post": {
+        "operationId": "catalog_api_recipes_retire",
+        "summary": "Ngừng dùng bản ACTIVE",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "schema": {
+              "title": "Recipe Id",
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeDetailOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Công thức"
+        ],
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
+    },
     "/api/v1/products": {
       "get": {
         "operationId": "catalog_api_products_list_products",
@@ -332,6 +2838,54 @@
           }
         ]
       }
+    },
+    "/api/v1/images": {
+      "post": {
+        "operationId": "core_api_images_upload_image",
+        "summary": "Tải ảnh công khai lên",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageOut"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Ảnh"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "title": "File",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "title": "FileParams",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "RoleAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -384,6 +2938,3632 @@
           "password"
         ],
         "title": "LoginIn",
+        "type": "object"
+      },
+      "Page_UserOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[UserOut]",
+        "type": "object"
+      },
+      "UserOut": {
+        "description": "Không có hash mật khẩu và không có trường `password` nào.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "full_name",
+          "role",
+          "status"
+        ],
+        "title": "UserOut",
+        "type": "object"
+      },
+      "UserIn": {
+        "properties": {
+          "username": {
+            "pattern": "^[A-Za-z0-9._-]{3,50}$",
+            "title": "Username",
+            "type": "string"
+          },
+          "full_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "OWNER",
+              "WORKSHOP"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 256,
+            "minLength": 8,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "full_name",
+          "role",
+          "password"
+        ],
+        "title": "UserIn",
+        "type": "object"
+      },
+      "UserPatch": {
+        "description": "Không có `username`: tên đăng nhập không đổi được. Gửi `null` cho trường nào cũng sai.",
+        "properties": {
+          "full_name": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "enum": [
+                  "OWNER",
+                  "WORKSHOP"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "minLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          }
+        },
+        "title": "UserPatch",
+        "type": "object"
+      },
+      "AreaNode": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "former_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Former Name"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/AreaNode"
+            },
+            "title": "Children",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "level",
+          "name",
+          "parent_id",
+          "former_name",
+          "valid_from",
+          "valid_to",
+          "status"
+        ],
+        "title": "AreaNode",
+        "type": "object"
+      },
+      "AreaOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "former_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Former Name"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "level",
+          "name",
+          "parent_id",
+          "former_name",
+          "valid_from",
+          "valid_to",
+          "status"
+        ],
+        "title": "AreaOut",
+        "type": "object"
+      },
+      "AreaIn": {
+        "properties": {
+          "code": {
+            "maxLength": 40,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "title": "Code",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "PROVINCE",
+              "COMMUNE",
+              "VILLAGE"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "former_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Former Name"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          }
+        },
+        "required": [
+          "code",
+          "level",
+          "name"
+        ],
+        "title": "AreaIn",
+        "type": "object"
+      },
+      "AreaPatch": {
+        "description": "Chỉ đổi trường có trong body. Cấp và mã không đổi được. `status: INACTIVE` là ngừng dùng.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "former_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Former Name"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "AreaPatch",
+        "type": "object"
+      },
+      "GoodsTypeOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "grp": {
+            "title": "Grp",
+            "type": "string"
+          },
+          "is_food": {
+            "title": "Is Food",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "grp",
+          "is_food",
+          "status"
+        ],
+        "title": "GoodsTypeOut",
+        "type": "object"
+      },
+      "GoodsTypeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 40,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "grp": {
+            "enum": [
+              "MATERIAL",
+              "PRODUCT"
+            ],
+            "title": "Grp",
+            "type": "string"
+          },
+          "is_food": {
+            "default": false,
+            "title": "Is Food",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "grp"
+        ],
+        "title": "GoodsTypeIn",
+        "type": "object"
+      },
+      "GoodsTypePatch": {
+        "description": "Chỉ đổi trường có trong body. Mã không đổi được. `status: INACTIVE` là ngừng dùng.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "grp": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MATERIAL",
+                  "PRODUCT"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grp"
+          },
+          "is_food": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Food"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "GoodsTypePatch",
+        "type": "object"
+      },
+      "GradeOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "material_id": {
+            "title": "Material Id",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "material_id",
+          "rank",
+          "name",
+          "status"
+        ],
+        "title": "GradeOut",
+        "type": "object"
+      },
+      "MaterialOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "goods_type_id": {
+            "title": "Goods Type Id",
+            "type": "integer"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "sort_order": {
+            "title": "Sort Order",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "grades": {
+            "items": {
+              "$ref": "#/components/schemas/GradeOut"
+            },
+            "title": "Grades",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "goods_type_id",
+          "image_url",
+          "sort_order",
+          "status",
+          "grades",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MaterialOut",
+        "type": "object"
+      },
+      "GradeIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "rank",
+          "name"
+        ],
+        "title": "GradeIn",
+        "type": "object"
+      },
+      "MaterialIn": {
+        "properties": {
+          "code": {
+            "maxLength": 40,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "goods_type_id": {
+            "title": "Goods Type Id",
+            "type": "integer"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "sort_order": {
+            "default": 0,
+            "maximum": 9999,
+            "minimum": 0,
+            "title": "Sort Order",
+            "type": "integer"
+          },
+          "grades": {
+            "items": {
+              "$ref": "#/components/schemas/GradeIn"
+            },
+            "maxItems": 9,
+            "title": "Grades",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "goods_type_id"
+        ],
+        "title": "MaterialIn",
+        "type": "object"
+      },
+      "MaterialPatch": {
+        "description": "Chỉ đổi trường có trong body. Mã không đổi được. `status: INACTIVE` là ngừng dùng.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "goods_type_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goods Type Id"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "sort_order": {
+            "anyOf": [
+              {
+                "maximum": 9999,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort Order"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "grades": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/GradeIn"
+                },
+                "maxItems": 9,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grades"
+          }
+        },
+        "title": "MaterialPatch",
+        "type": "object"
+      },
+      "PriceCellOut": {
+        "description": "Một ô lưới giá. Giá None: hạng chưa từng có giá tới ngày hỏi.",
+        "properties": {
+          "grade_id": {
+            "title": "Grade Id",
+            "type": "integer"
+          },
+          "grade_rank": {
+            "title": "Grade Rank",
+            "type": "integer"
+          },
+          "grade_name": {
+            "title": "Grade Name",
+            "type": "string"
+          },
+          "material_id": {
+            "title": "Material Id",
+            "type": "integer"
+          },
+          "material_code": {
+            "title": "Material Code",
+            "type": "string"
+          },
+          "material_name": {
+            "title": "Material Name",
+            "type": "string"
+          },
+          "buy_price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buy Price"
+          },
+          "sell_price": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sell Price"
+          },
+          "effective_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective Date"
+          }
+        },
+        "required": [
+          "grade_id",
+          "grade_rank",
+          "grade_name",
+          "material_id",
+          "material_code",
+          "material_name",
+          "buy_price",
+          "sell_price",
+          "effective_date"
+        ],
+        "title": "PriceCellOut",
+        "type": "object"
+      },
+      "PriceSheetOut": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PriceCellOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "date",
+          "items"
+        ],
+        "title": "PriceSheetOut",
+        "type": "object"
+      },
+      "PriceHistoryDayOut": {
+        "properties": {
+          "price_date": {
+            "format": "date",
+            "title": "Price Date",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PriceHistoryItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "price_date",
+          "items"
+        ],
+        "title": "PriceHistoryDayOut",
+        "type": "object"
+      },
+      "PriceHistoryItemOut": {
+        "properties": {
+          "grade_id": {
+            "title": "Grade Id",
+            "type": "integer"
+          },
+          "buy_price": {
+            "title": "Buy Price",
+            "type": "integer"
+          },
+          "sell_price": {
+            "title": "Sell Price",
+            "type": "integer"
+          },
+          "updated_by_id": {
+            "title": "Updated By Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "grade_id",
+          "buy_price",
+          "sell_price",
+          "updated_by_id"
+        ],
+        "title": "PriceHistoryItemOut",
+        "type": "object"
+      },
+      "PriceItemIn": {
+        "properties": {
+          "grade_id": {
+            "title": "Grade Id",
+            "type": "integer"
+          },
+          "buy_price": {
+            "title": "Buy Price",
+            "type": "integer"
+          },
+          "sell_price": {
+            "title": "Sell Price",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "grade_id",
+          "buy_price",
+          "sell_price"
+        ],
+        "title": "PriceItemIn",
+        "type": "object"
+      },
+      "PriceSheetIn": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PriceItemIn"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PriceSheetIn",
+        "type": "object"
+      },
+      "Page_SupplierOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SupplierOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[SupplierOut]",
+        "type": "object"
+      },
+      "SupplierOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "area_id": {
+            "title": "Area Id",
+            "type": "integer"
+          },
+          "area_name": {
+            "title": "Area Name",
+            "type": "string"
+          },
+          "stream": {
+            "title": "Stream",
+            "type": "string"
+          },
+          "public_consent": {
+            "title": "Public Consent",
+            "type": "boolean"
+          },
+          "approved": {
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "plots_count": {
+            "title": "Plots Count",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "phone",
+          "area_id",
+          "area_name",
+          "stream",
+          "public_consent",
+          "approved",
+          "status",
+          "plots_count",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SupplierOut",
+        "type": "object"
+      },
+      "NoticeOut": {
+        "description": "Cảnh báo không chặn, ví dụ `SUPPLIER_DUPLICATE` khi trùng tên + địa bàn.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "supplier_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Supplier Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "supplier_ids"
+        ],
+        "title": "NoticeOut",
+        "type": "object"
+      },
+      "SupplierSavedOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "area_id": {
+            "title": "Area Id",
+            "type": "integer"
+          },
+          "area_name": {
+            "title": "Area Name",
+            "type": "string"
+          },
+          "stream": {
+            "title": "Stream",
+            "type": "string"
+          },
+          "public_consent": {
+            "title": "Public Consent",
+            "type": "boolean"
+          },
+          "approved": {
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "plots_count": {
+            "title": "Plots Count",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/NoticeOut"
+            },
+            "title": "Notices",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "phone",
+          "area_id",
+          "area_name",
+          "stream",
+          "public_consent",
+          "approved",
+          "status",
+          "plots_count",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SupplierSavedOut",
+        "type": "object"
+      },
+      "SupplierIn": {
+        "description": "WORKSHOP cũng gọi được (thêm nhanh): khi đó `stream`, `public_consent` bị bỏ qua\n(luôn GENERAL và false) và người bán nằm ở trạng thái chờ duyệt.",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "FAMILY",
+              "FARMER",
+              "TRADER"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "area_id": {
+            "title": "Area Id",
+            "type": "integer"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "stream": {
+            "default": "GENERAL",
+            "enum": [
+              "CONTROLLED",
+              "GENERAL"
+            ],
+            "title": "Stream",
+            "type": "string"
+          },
+          "public_consent": {
+            "default": false,
+            "title": "Public Consent",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "area_id"
+        ],
+        "title": "SupplierIn",
+        "type": "object"
+      },
+      "SupplierPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "FAMILY",
+                  "FARMER",
+                  "TRADER"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "area_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Id"
+          },
+          "stream": {
+            "anyOf": [
+              {
+                "enum": [
+                  "CONTROLLED",
+                  "GENERAL"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream"
+          },
+          "public_consent": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Consent"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "SupplierPatch",
+        "type": "object"
+      },
+      "PlotOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "supplier_id": {
+            "title": "Supplier Id",
+            "type": "integer"
+          },
+          "area_id": {
+            "title": "Area Id",
+            "type": "integer"
+          },
+          "area_name": {
+            "title": "Area Name",
+            "type": "string"
+          },
+          "area_ha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Ha"
+          },
+          "planted_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planted Year"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "photo_urls": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Photo Urls",
+            "type": "array"
+          },
+          "is_default": {
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "supplier_id",
+          "area_id",
+          "area_name",
+          "area_ha",
+          "planted_year",
+          "lat",
+          "lng",
+          "photo_urls",
+          "is_default",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PlotOut",
+        "type": "object"
+      },
+      "PlotIn": {
+        "properties": {
+          "area_id": {
+            "title": "Area Id",
+            "type": "integer"
+          },
+          "area_ha": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Ha"
+          },
+          "planted_year": {
+            "anyOf": [
+              {
+                "maximum": 2100,
+                "minimum": 1950,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planted Year"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "coordinates": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coordinates"
+          },
+          "photo_urls": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Photo Urls",
+            "type": "array"
+          },
+          "is_default": {
+            "default": false,
+            "title": "Is Default",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "area_id"
+        ],
+        "title": "PlotIn",
+        "type": "object"
+      },
+      "PlotPatch": {
+        "description": "Chỉ đổi trường có trong body. `lat` + `lng` (hoặc `coordinates`) gửi `null` là xoá toạ độ.",
+        "properties": {
+          "area_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Id"
+          },
+          "area_ha": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Ha"
+          },
+          "planted_year": {
+            "anyOf": [
+              {
+                "maximum": 2100,
+                "minimum": 1950,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planted Year"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "coordinates": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coordinates"
+          },
+          "photo_urls": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 10,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Urls"
+          },
+          "is_default": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Default"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "PlotPatch",
+        "type": "object"
+      },
+      "CustomerOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "phone",
+          "address",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CustomerOut",
+        "type": "object"
+      },
+      "Page_CustomerOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[CustomerOut]",
+        "type": "object"
+      },
+      "CustomerIn": {
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "EXPORTER",
+              "AGENT",
+              "CORPORATE",
+              "RETAIL",
+              "MARKETPLACE"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          }
+        },
+        "required": [
+          "name",
+          "kind"
+        ],
+        "title": "CustomerIn",
+        "type": "object"
+      },
+      "CustomerPatch": {
+        "description": "Chỉ đổi trường có trong body. `phone`/`address` gửi `null` là xoá giá trị.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "EXPORTER",
+                  "AGENT",
+                  "CORPORATE",
+                  "RETAIL",
+                  "MARKETPLACE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "CustomerPatch",
+        "type": "object"
+      },
+      "CertificateOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "title": "Number",
+            "type": "string"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer"
+          },
+          "issued_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued On"
+          },
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          },
+          "stars": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stars"
+          },
+          "file_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Url"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "plot_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Id"
+          },
+          "is_public": {
+            "title": "Is Public",
+            "type": "boolean"
+          },
+          "is_expired": {
+            "title": "Is Expired",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "number",
+          "issuer",
+          "issued_on",
+          "expires_on",
+          "stars",
+          "file_url",
+          "product_id",
+          "plot_id",
+          "is_public",
+          "is_expired",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CertificateOut",
+        "type": "object"
+      },
+      "Page_CertificateOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CertificateOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "page_size": {
+            "title": "Page Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[CertificateOut]",
+        "type": "object"
+      },
+      "CertificateIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "OCOP",
+              "ORGANIC",
+              "FOOD_SAFETY",
+              "DECLARATION"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "number": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Number",
+            "type": "string"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer"
+          },
+          "issued_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued On"
+          },
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          },
+          "stars": {
+            "anyOf": [
+              {
+                "maximum": 5,
+                "minimum": 3,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stars"
+          },
+          "file_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Url"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "plot_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Id"
+          },
+          "is_public": {
+            "default": true,
+            "title": "Is Public",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "number"
+        ],
+        "title": "CertificateIn",
+        "type": "object"
+      },
+      "CertificatePatch": {
+        "description": "Chỉ đổi trường có trong body. Cột NOT NULL (`_NOT_NULL`) mà gửi `null` thì 400.",
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "OCOP",
+                  "ORGANIC",
+                  "FOOD_SAFETY",
+                  "DECLARATION"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "issuer": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer"
+          },
+          "issued_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issued On"
+          },
+          "expires_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires On"
+          },
+          "stars": {
+            "anyOf": [
+              {
+                "maximum": 5,
+                "minimum": 3,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stars"
+          },
+          "file_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Url"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "plot_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Id"
+          },
+          "is_public": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Public"
+          }
+        },
+        "title": "CertificatePatch",
+        "type": "object"
+      },
+      "LabelSize": {
+        "properties": {
+          "width_mm": {
+            "maximum": 200,
+            "minimum": 10,
+            "title": "Width Mm",
+            "type": "integer"
+          },
+          "height_mm": {
+            "maximum": 200,
+            "minimum": 10,
+            "title": "Height Mm",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "width_mm",
+          "height_mm"
+        ],
+        "title": "LabelSize",
+        "type": "object"
+      },
+      "SettingsOut": {
+        "properties": {
+          "scan_warning_threshold": {
+            "title": "Scan Warning Threshold",
+            "type": "integer"
+          },
+          "price_deviation_pct": {
+            "title": "Price Deviation Pct",
+            "type": "integer"
+          },
+          "label_size": {
+            "$ref": "#/components/schemas/LabelSize"
+          },
+          "print_format": {
+            "enum": [
+              "A5",
+              "THERMAL_80"
+            ],
+            "title": "Print Format",
+            "type": "string"
+          },
+          "retain_default_months": {
+            "title": "Retain Default Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "scan_warning_threshold",
+          "price_deviation_pct",
+          "label_size",
+          "print_format",
+          "retain_default_months"
+        ],
+        "title": "SettingsOut",
+        "type": "object"
+      },
+      "SettingsPatch": {
+        "additionalProperties": false,
+        "description": "Chỉ đổi khoá có trong body. Khoá lạ thì 400; `null` không hợp lệ cho khoá nào.",
+        "properties": {
+          "scan_warning_threshold": {
+            "anyOf": [
+              {
+                "maximum": 10000,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scan Warning Threshold"
+          },
+          "price_deviation_pct": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Deviation Pct"
+          },
+          "label_size": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LabelSize"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "print_format": {
+            "anyOf": [
+              {
+                "enum": [
+                  "A5",
+                  "THERMAL_80"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Print Format"
+          },
+          "retain_default_months": {
+            "anyOf": [
+              {
+                "maximum": 120,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retain Default Months"
+          }
+        },
+        "title": "SettingsPatch",
+        "type": "object"
+      },
+      "IngredientOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "density_g_ml": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Density G Ml"
+          },
+          "track_stock": {
+            "title": "Track Stock",
+            "type": "boolean"
+          },
+          "requires_coa": {
+            "title": "Requires Coa",
+            "type": "boolean"
+          },
+          "shelf_life_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shelf Life Months"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "density_g_ml",
+          "track_stock",
+          "requires_coa",
+          "shelf_life_months",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "IngredientOut",
+        "type": "object"
+      },
+      "IngredientIn": {
+        "properties": {
+          "code": {
+            "pattern": "^[A-Z0-9]{1,6}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "ESSENTIAL_OIL",
+              "SOLVENT",
+              "WAX",
+              "MINERAL",
+              "BOTANICAL",
+              "BLEND",
+              "OTHER"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "density_g_ml": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 100.0,
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Density G Ml"
+          },
+          "track_stock": {
+            "default": true,
+            "title": "Track Stock",
+            "type": "boolean"
+          },
+          "requires_coa": {
+            "default": false,
+            "title": "Requires Coa",
+            "type": "boolean"
+          },
+          "shelf_life_months": {
+            "anyOf": [
+              {
+                "maximum": 240,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shelf Life Months"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "kind"
+        ],
+        "title": "IngredientIn",
+        "type": "object"
+      },
+      "IngredientPatch": {
+        "description": "Chỉ đổi trường có trong body. Đã có lô thì không đổi `code` hay bật `track_stock`.",
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z0-9]{1,6}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ESSENTIAL_OIL",
+                  "SOLVENT",
+                  "WAX",
+                  "MINERAL",
+                  "BOTANICAL",
+                  "BLEND",
+                  "OTHER"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "density_g_ml": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 100.0,
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Density G Ml"
+          },
+          "track_stock": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track Stock"
+          },
+          "requires_coa": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requires Coa"
+          },
+          "shelf_life_months": {
+            "anyOf": [
+              {
+                "maximum": 240,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shelf Life Months"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "IngredientPatch",
+        "type": "object"
+      },
+      "RecipeOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "output_kind": {
+            "title": "Output Kind",
+            "type": "string"
+          },
+          "output_ingredient_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Id"
+          },
+          "output_ingredient_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Code"
+          },
+          "base_batch_g": {
+            "title": "Base Batch G",
+            "type": "string"
+          },
+          "base_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Label"
+          },
+          "cure_min_days": {
+            "title": "Cure Min Days",
+            "type": "integer"
+          },
+          "cure_max_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cure Max Days"
+          },
+          "retain_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retain Months"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "version",
+          "name",
+          "output_kind",
+          "output_ingredient_id",
+          "output_ingredient_code",
+          "base_batch_g",
+          "base_label",
+          "cure_min_days",
+          "cure_max_days",
+          "retain_months",
+          "status",
+          "note",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RecipeOut",
+        "type": "object"
+      },
+      "RecipeDetailOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "output_kind": {
+            "title": "Output Kind",
+            "type": "string"
+          },
+          "output_ingredient_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Id"
+          },
+          "output_ingredient_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Code"
+          },
+          "base_batch_g": {
+            "title": "Base Batch G",
+            "type": "string"
+          },
+          "base_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Label"
+          },
+          "cure_min_days": {
+            "title": "Cure Min Days",
+            "type": "integer"
+          },
+          "cure_max_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cure Max Days"
+          },
+          "retain_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retain Months"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "editable": {
+            "title": "Editable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "version",
+          "name",
+          "output_kind",
+          "output_ingredient_id",
+          "output_ingredient_code",
+          "base_batch_g",
+          "base_label",
+          "cure_min_days",
+          "cure_max_days",
+          "retain_months",
+          "status",
+          "note",
+          "created_at",
+          "updated_at",
+          "items",
+          "editable"
+        ],
+        "title": "RecipeDetailOut",
+        "type": "object"
+      },
+      "RecipeItemOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "line_no": {
+            "title": "Line No",
+            "type": "integer"
+          },
+          "ingredient_id": {
+            "title": "Ingredient Id",
+            "type": "integer"
+          },
+          "ingredient_code": {
+            "title": "Ingredient Code",
+            "type": "string"
+          },
+          "ingredient_name": {
+            "title": "Ingredient Name",
+            "type": "string"
+          },
+          "qty_g": {
+            "title": "Qty G",
+            "type": "string"
+          },
+          "pct": {
+            "title": "Pct",
+            "type": "string"
+          },
+          "alt_group": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Group"
+          },
+          "is_optional": {
+            "title": "Is Optional",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "id",
+          "line_no",
+          "ingredient_id",
+          "ingredient_code",
+          "ingredient_name",
+          "qty_g",
+          "pct",
+          "alt_group",
+          "is_optional",
+          "note"
+        ],
+        "title": "RecipeItemOut",
+        "type": "object"
+      },
+      "RecipeIn": {
+        "properties": {
+          "code": {
+            "pattern": "^[A-Z0-9][A-Z0-9-]{0,39}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "output_kind": {
+            "enum": [
+              "PRODUCT",
+              "INTERMEDIATE"
+            ],
+            "title": "Output Kind",
+            "type": "string"
+          },
+          "output_ingredient_id": {
+            "anyOf": [
+              {
+                "maximum": 2147483647,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Id"
+          },
+          "base_batch_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Batch G"
+          },
+          "base_label": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Label"
+          },
+          "cure_min_days": {
+            "default": 0,
+            "maximum": 365,
+            "minimum": 0,
+            "title": "Cure Min Days",
+            "type": "integer"
+          },
+          "cure_max_days": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cure Max Days"
+          },
+          "retain_months": {
+            "anyOf": [
+              {
+                "maximum": 120,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retain Months"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeItemIn"
+            },
+            "maxItems": 50,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "output_kind"
+        ],
+        "title": "RecipeIn",
+        "type": "object"
+      },
+      "RecipeItemIn": {
+        "properties": {
+          "ingredient_id": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "title": "Ingredient Id",
+            "type": "integer"
+          },
+          "qty_g": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Qty G"
+          },
+          "alt_group": {
+            "anyOf": [
+              {
+                "maximum": 99,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Group"
+          },
+          "is_optional": {
+            "default": false,
+            "title": "Is Optional",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "ingredient_id",
+          "qty_g"
+        ],
+        "title": "RecipeItemIn",
+        "type": "object"
+      },
+      "RecipePatch": {
+        "description": "Chỉ đổi trường có trong body. Mã và phiên bản không đổi được; dòng thành phần đi qua PUT.",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "output_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "PRODUCT",
+                  "INTERMEDIATE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Kind"
+          },
+          "output_ingredient_id": {
+            "anyOf": [
+              {
+                "maximum": 2147483647,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Ingredient Id"
+          },
+          "base_label": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Label"
+          },
+          "cure_min_days": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cure Min Days"
+          },
+          "cure_max_days": {
+            "anyOf": [
+              {
+                "maximum": 365,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cure Max Days"
+          },
+          "retain_months": {
+            "anyOf": [
+              {
+                "maximum": 120,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retain Months"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "RecipePatch",
+        "type": "object"
+      },
+      "ScaleItemOut": {
+        "properties": {
+          "line_no": {
+            "title": "Line No",
+            "type": "integer"
+          },
+          "ingredient_id": {
+            "title": "Ingredient Id",
+            "type": "integer"
+          },
+          "ingredient_code": {
+            "title": "Ingredient Code",
+            "type": "string"
+          },
+          "ingredient_name": {
+            "title": "Ingredient Name",
+            "type": "string"
+          },
+          "qty_g": {
+            "title": "Qty G",
+            "type": "string"
+          },
+          "suggested_g": {
+            "title": "Suggested G",
+            "type": "string"
+          },
+          "alt_group": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt Group"
+          },
+          "is_optional": {
+            "title": "Is Optional",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "line_no",
+          "ingredient_id",
+          "ingredient_code",
+          "ingredient_name",
+          "qty_g",
+          "suggested_g",
+          "alt_group",
+          "is_optional"
+        ],
+        "title": "ScaleItemOut",
+        "type": "object"
+      },
+      "ScaleOut": {
+        "properties": {
+          "recipe_id": {
+            "title": "Recipe Id",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "base_batch_g": {
+            "title": "Base Batch G",
+            "type": "string"
+          },
+          "batch_g": {
+            "title": "Batch G",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ScaleItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "recipe_id",
+          "code",
+          "version",
+          "base_batch_g",
+          "batch_g",
+          "items"
+        ],
+        "title": "ScaleOut",
+        "type": "object"
+      },
+      "RecipeItemsPut": {
+        "description": "Danh sách dòng mới thay toàn bộ dòng cũ; thứ tự trong mảng là `line_no` 1..n.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeItemIn"
+            },
+            "maxItems": 50,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RecipeItemsPut",
         "type": "object"
       },
       "Page_ProductOut_": {
@@ -449,7 +6629,7 @@
         "type": "object"
       },
       "ProductOut": {
-        "description": "Cho WORKSHOP: không có giá bán lẻ.",
+        "description": "Cho WORKSHOP: không có giá bán lẻ. `warnings` rỗng khi sản phẩm không có vấn đề.",
         "properties": {
           "id": {
             "title": "Id",
@@ -604,6 +6784,13 @@
             "format": "date-time",
             "title": "Updated At",
             "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ProductWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
           }
         },
         "required": [
@@ -789,6 +6976,13 @@
             "title": "Updated At",
             "type": "string"
           },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ProductWarning"
+            },
+            "title": "Warnings",
+            "type": "array"
+          },
           "retail_price": {
             "anyOf": [
               {
@@ -827,6 +7021,36 @@
           "retail_price"
         ],
         "title": "ProductOwnerOut",
+        "type": "object"
+      },
+      "ProductWarning": {
+        "description": "Cảnh báo không chặn, ví dụ công thức nối vào đã hết bản ACTIVE.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ProductWarning",
         "type": "object"
       },
       "BuyLink": {
@@ -1347,6 +7571,43 @@
           }
         },
         "title": "ProductPatch",
+        "type": "object"
+      },
+      "ImageOut": {
+        "description": "Phần tử `product.images` còn thiếu `alt`: thêm `alt` rồi PATCH vào entity.",
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "widths": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Widths",
+            "type": "array"
+          }
+        },
+        "required": [
+          "url",
+          "key",
+          "w",
+          "h",
+          "widths"
+        ],
+        "title": "ImageOut",
         "type": "object"
       }
     },

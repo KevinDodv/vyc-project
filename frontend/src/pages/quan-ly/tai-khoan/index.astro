@@ -1,0 +1,65 @@
+---
+import CatalogList, { type Row } from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { listApiQuery, parseListQuery } from "../../../lib/admin/catalog";
+import { adminApi, callApi } from "../../../lib/admin/catalog-products/admin-api";
+import { formatLastLogin, roleLabel } from "../../../lib/admin/catalog-products/user";
+
+export const prerender = false;
+
+const query = parseListQuery(Astro.url.searchParams);
+const api = adminApi(Astro.request);
+const listed = await callApi(() =>
+  api.GET("/api/v1/users", {
+    params: {
+      query: listApiQuery(query) as {
+        page: number;
+        page_size: number;
+        q?: string;
+        status?: "ACTIVE" | "INACTIVE";
+      },
+    },
+  }),
+);
+if (listed.kind === "unavailable") Astro.response.status = 503;
+const me = Astro.locals.user;
+const rows: Row[] =
+  listed.kind === "ok"
+    ? listed.data.items.map((u) => ({
+        id: u.id,
+        username: u.id === me?.id ? `${u.username} (bạn)` : u.username,
+        full_name: u.full_name,
+        role: roleLabel(u.role),
+        last_login_at: formatLastLogin(u.last_login_at),
+        status: u.status === "ACTIVE" ? "ACTIVE" : "INACTIVE",
+      }))
+    : [];
+---
+<Admin title="Tài khoản">
+  <h1 class="mb-4 text-2xl font-bold">Tài khoản</h1>
+  {listed.kind === "ok" ? (
+    <CatalogList
+      caption="Danh sách tài khoản"
+      columns={[
+        { key: "username", label: "Tên đăng nhập", mono: true },
+        { key: "full_name", label: "Họ tên" },
+        { key: "role", label: "Vai trò" },
+        { key: "last_login_at", label: "Đăng nhập gần nhất" },
+        { key: "status", label: "Tình trạng" },
+      ]}
+      rows={rows}
+      total={listed.data.total}
+      page={query.page}
+      pageSize={query.pageSize}
+      basePath="/quan-ly/tai-khoan"
+      query={query}
+      role={me?.role}
+      searchPlaceholder="Gõ tên đăng nhập hoặc họ tên để tìm"
+      emptyText="Chưa có tài khoản nào khớp."
+    >
+      <p slot="note" class="text-sm">Mỗi người một tài khoản riêng. Không có nút Xóa: dùng «Ngừng dùng». Bạn không tự ngừng dùng chính mình được.</p>
+    </CatalogList>
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách tài khoản. Bạn thử lại sau ít phút.</p>
+  )}
+</Admin>

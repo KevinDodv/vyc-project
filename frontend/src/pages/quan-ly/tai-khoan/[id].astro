@@ -1,0 +1,23 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { adminApi, callApi } from "../../../lib/admin/catalog-products/admin-api";
+import UserForm from "./_UserForm.astro";
+
+export const prerender = false;
+
+const raw = Astro.params.id ?? "";
+const api = adminApi(Astro.request);
+const loaded = /^\d{1,9}$/.test(raw)
+  ? await callApi(() =>
+      api.GET("/api/v1/users/{user_id}", { params: { path: { user_id: Number(raw) } } }),
+    )
+  : ({ kind: "not_found" } as const);
+if (loaded.kind === "not_found") Astro.response.status = 404;
+else if (loaded.kind === "unavailable") Astro.response.status = 503;
+---
+<Admin title="Tài khoản">
+  <p class="mb-2 text-sm"><a href="/quan-ly/tai-khoan" class="link">← Danh sách tài khoản</a></p>
+  {loaded.kind === "not_found" && <p role="alert" class="alert alert-error">Không tìm thấy tài khoản này.</p>}
+  {loaded.kind === "unavailable" && <p role="alert" class="alert alert-error">Chưa tải được tài khoản. Bạn thử lại sau ít phút.</p>}
+  {loaded.kind === "ok" && <UserForm user={loaded.data} />}
+</Admin>

@@ -1,0 +1,12 @@
+---
+import { isRecipeStatus, recipeStatusLabel } from "../../../lib/admin/catalog-recipes/model";
+
+interface Props {
+  status: string;
+}
+
+const { status } = Astro.props;
+const tone =
+  status === "ACTIVE" ? "badge-success" : status === "DRAFT" ? "badge-warning" : "badge-ghost";
+---
+<span class:list={["badge badge-soft whitespace-nowrap", tone]} data-status={status}>{isRecipeStatus(status) ? recipeStatusLabel(status) : status}</span>

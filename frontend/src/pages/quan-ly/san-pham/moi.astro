@@ -1,0 +1,18 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { loadFormOptions } from "../../../lib/admin/catalog-products/load";
+import ProductForm from "./_ProductForm.astro";
+
+export const prerender = false;
+
+const options = await loadFormOptions(Astro.request, null);
+if (options.kind === "unavailable") Astro.response.status = 503;
+---
+<Admin title="Thêm sản phẩm">
+  <h1 class="mb-4 text-2xl font-bold">Thêm sản phẩm</h1>
+  {options.kind === "ok" ? (
+    <ProductForm goodsTypes={options.goodsTypes} recipes={options.recipes} />
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách loại hàng và công thức. Bạn thử lại sau ít phút.</p>
+  )}
+</Admin>

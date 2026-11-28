@@ -1,0 +1,80 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { loadSupplierDetail } from "../../../lib/admin/catalog-suppliers/loaders";
+import { countActivePlots } from "../../../lib/admin/catalog-suppliers/plots";
+import { parseId } from "../../../lib/admin/catalog-suppliers/server";
+import {
+  canApprove,
+  duplicateMessage,
+  SUPPLIERS_PATH,
+  villageOptions,
+} from "../../../lib/admin/catalog-suppliers/suppliers";
+import { LOGIN_PATH } from "../../../scripts/admin/next";
+import PlotsSection from "./_PlotsSection.astro";
+import SupplierForm from "./_SupplierForm.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const id = parseId(Astro.params.id);
+const data =
+  id === null ? ({ kind: "not_found" } as const) : await loadSupplierDetail(Astro.request, id);
+if (data.kind === "unauthorized") {
+  return Astro.redirect(`${LOGIN_PATH}?next=${encodeURIComponent(Astro.url.pathname)}`);
+}
+if (data.kind === "not_found") Astro.response.status = 404;
+if (data.kind === "unavailable") Astro.response.status = 503;
+
+const params = Astro.url.searchParams;
+const flash = params.has("moi")
+  ? role === "OWNER"
+    ? "Đã tạo người bán. Thêm đồi quế ở bảng bên dưới; có đồi rồi mới chọn được luồng kiểm soát."
+    : "Đã thêm người bán, chờ chủ duyệt."
+  : params.has("da-duyet")
+    ? "Đã duyệt người bán."
+    : params.has("da-luu")
+      ? "Đã lưu."
+      : null;
+---
+<Admin title="Người bán">
+  <p class="mb-2 text-sm"><a class="link" href={SUPPLIERS_PATH}>← Danh sách người bán</a></p>
+  {data.kind === "not_found" ? (
+    <p role="alert" class="alert alert-warning">Không tìm thấy người bán này.</p>
+  ) : data.kind !== "ok" ? (
+    <p role="alert" class="alert alert-error">Chưa tải được người bán, bạn tải lại trang sau ít phút.</p>
+  ) : (
+    <>
+      <h1 class="mb-4 text-2xl font-bold">{data.supplier.name}</h1>
+      <SupplierForm
+        mode="edit"
+        role={role}
+        areas={data.areas}
+        supplier={data.supplier}
+        activePlots={countActivePlots(data.plots)}
+      >
+        <div slot="banner" class="flex flex-col gap-2">
+          {flash && <p role="status" class="alert alert-success" data-flash>{flash}</p>}
+          {!data.supplier.approved && (
+            <p role="status" class="alert alert-warning" data-pending-banner>
+              Chờ duyệt: người bán do xưởng thêm nhanh.
+              {canApprove(role, data.supplier)
+                ? " Bổ sung đồi quế, đổi luồng nếu cần, rồi bấm «Duyệt người bán»."
+                : " Chủ doanh nghiệp sẽ bổ sung và duyệt."}
+            </p>
+          )}
+          {data.twins && data.twins.length > 0 && (
+            <p role="alert" class="alert alert-warning" data-duplicate-warning>
+              {duplicateMessage(data.supplier.area_name, data.twins)}
+              {" "}Chỉ là cảnh báo, vẫn lưu được; kiểm tra xem có phải cùng một người.
+            </p>
+          )}
+        </div>
+      </SupplierForm>
+      <PlotsSection supplier={data.supplier} plots={data.plots} villages={villageOptions(data.areas)} role={role} />
+    </>
+  )}
+  <script>
+    import { bindSupplierPage } from "../../../lib/admin/catalog-suppliers/supplier-form";
+    bindSupplierPage();
+  </script>
+</Admin>

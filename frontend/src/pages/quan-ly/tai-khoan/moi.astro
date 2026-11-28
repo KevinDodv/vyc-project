@@ -1,0 +1,10 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import UserForm from "./_UserForm.astro";
+
+export const prerender = false;
+---
+<Admin title="Thêm tài khoản">
+  <h1 class="mb-4 text-2xl font-bold">Thêm tài khoản</h1>
+  <UserForm />
+</Admin>

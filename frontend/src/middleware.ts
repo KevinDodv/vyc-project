@@ -31,6 +31,9 @@ export const OWNER_ONLY_PREFIXES = [
   "/quan-ly/khach-hang",
   "/quan-ly/bao-cao",
   "/quan-ly/vung-nguyen-lieu",
+  "/quan-ly/tai-khoan",
+  "/quan-ly/cai-dat",
+  "/quan-ly/chung-nhan",
   // Màn tối thiểu của khung code (luồng mẫu tạo sản phẩm, publish): ghi sản phẩm chỉ OWNER (backend.md 4.3).
   "/quan-ly/san-pham",
 ] as const;

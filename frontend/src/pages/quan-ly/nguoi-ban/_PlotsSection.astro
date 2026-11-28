@@ -1,0 +1,103 @@
+---
+// Bảng con «Đồi quế» của một người bán. Thêm, sửa đồi mở hộp thoại <dialog> chứa _PlotForm.
+import type { FieldOption } from "../../../lib/admin/catalog";
+import { formatCoordinates, plotStatusLabel } from "../../../lib/admin/catalog-suppliers/plots";
+import {
+  canManageSuppliers,
+  type PlotOut,
+  type SupplierOut,
+} from "../../../lib/admin/catalog-suppliers/suppliers";
+import PlotForm from "./_PlotForm.astro";
+
+interface Props {
+  supplier: SupplierOut;
+  plots: PlotOut[];
+  villages: FieldOption[];
+  role?: "OWNER" | "WORKSHOP";
+}
+const { supplier, plots, villages, role } = Astro.props;
+const owner = canManageSuppliers(role);
+const dialogClass =
+  "m-auto w-full max-w-2xl rounded-box border border-base-300 bg-base-100 p-6 text-base-content backdrop:bg-black/40";
+const active = plots.filter((p) => p.status === "ACTIVE").length;
+---
+<section class="card mt-6 border border-base-300 bg-base-100" aria-labelledby="plots-title" data-plots>
+  <div class="card-body gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 id="plots-title" class="card-title">Đồi quế <span class="badge badge-ghost" data-active-plots-count>{active} đang dùng</span></h2>
+      {owner && (
+        <button type="button" class="btn btn-primary btn-sm" data-open-dialog="plot-new" data-action-add-plot>+ Thêm đồi</button>
+      )}
+    </div>
+    <p data-plots-error role="alert" class="alert alert-error" hidden></p>
+
+    <div class="overflow-x-auto rounded-box border border-base-300">
+      <table class="table table-zebra">
+        <caption class="sr-only">Đồi quế của người bán</caption>
+        <thead>
+          <tr>
+            <th scope="col">Mã</th>
+            <th scope="col">Thôn</th>
+            <th scope="col" class="text-end">Diện tích (ha)</th>
+            <th scope="col" class="text-end">Năm trồng</th>
+            <th scope="col">Toạ độ</th>
+            <th scope="col">Tình trạng</th>
+            {owner && <th scope="col"><span class="sr-only">Thao tác</span></th>}
+          </tr>
+        </thead>
+        <tbody>
+          {plots.length === 0 ? (
+            <tr><td colspan={owner ? 7 : 6} class="text-center opacity-70">Người bán chưa có đồi quế nào.</td></tr>
+          ) : (
+            plots.map((plot) => (
+              <tr data-plot-id={plot.id} data-plot-status={plot.status}>
+                <td class="whitespace-nowrap font-mono">{plot.code}</td>
+                <td>{plot.area_name}</td>
+                <td class="text-end">{plot.area_ha ?? ""}</td>
+                <td class="text-end">{plot.planted_year ?? ""}</td>
+                <td class="font-mono text-sm">{formatCoordinates(plot.lat, plot.lng)}</td>
+                <td>
+                  <span
+                    class:list={[
+                      "badge badge-soft whitespace-nowrap",
+                      plot.status === "INACTIVE" ? "badge-ghost" : plot.is_default ? "badge-success" : "badge-neutral",
+                    ]}
+                  >{plotStatusLabel(plot)}</span>
+                </td>
+                {owner && (
+                  <td>
+                    <div class="flex flex-wrap justify-end gap-1">
+                      <button type="button" class="btn btn-ghost btn-xs" data-open-dialog={`plot-${plot.id}`}>Sửa</button>
+                      {plot.status === "ACTIVE" && !plot.is_default && (
+                        <button type="button" class="btn btn-ghost btn-xs" data-plot-action="default" data-supplier-id={supplier.id} data-plot-id={plot.id}>Đặt mặc định</button>
+                      )}
+                      {plot.status === "ACTIVE" ? (
+                        <button type="button" class="btn btn-ghost btn-xs text-error" data-plot-action="deactivate" data-supplier-id={supplier.id} data-plot-id={plot.id}>Ngừng dùng</button>
+                      ) : (
+                        <button type="button" class="btn btn-ghost btn-xs" data-plot-action="reactivate" data-supplier-id={supplier.id} data-plot-id={plot.id}>Dùng lại</button>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+    {!owner && <p class="text-sm opacity-70">Chỉ chủ doanh nghiệp thêm và sửa đồi quế.</p>}
+  </div>
+
+  {owner && (
+    <>
+      <dialog id="plot-new" class={dialogClass} aria-label="Thêm đồi quế">
+        <PlotForm supplierId={supplier.id} prefix="pn" villages={villages} defaultAreaId={supplier.area_id} closeId="plot-new" />
+      </dialog>
+      {plots.map((plot) => (
+        <dialog id={`plot-${plot.id}`} class={dialogClass} aria-label={`Sửa đồi ${plot.code}`}>
+          <PlotForm supplierId={supplier.id} prefix={`p${plot.id}`} villages={villages} plot={plot} closeId={`plot-${plot.id}`} />
+        </dialog>
+      ))}
+    </>
+  )}
+</section>

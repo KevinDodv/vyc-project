@@ -1,0 +1,29 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { loadAreas } from "../../../lib/admin/catalog-suppliers/loaders";
+import { canQuickAddSupplier } from "../../../lib/admin/catalog-suppliers/suppliers";
+import { LOGIN_PATH } from "../../../scripts/admin/next";
+import SupplierForm from "./_SupplierForm.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canQuickAddSupplier(role)) return Astro.redirect("/quan-ly/khong-co-quyen");
+const result = await loadAreas(Astro.request);
+if (result.kind === "unauthorized") {
+  return Astro.redirect(`${LOGIN_PATH}?next=${encodeURIComponent(Astro.url.pathname)}`);
+}
+if (result.kind === "unavailable") Astro.response.status = 503;
+---
+<Admin title="Thêm người bán">
+  <h1 class="mb-4 text-2xl font-bold">Thêm người bán</h1>
+  {result.kind === "ok" ? (
+    <SupplierForm mode="create" role={role} areas={result.areas} activePlots={0} />
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được danh sách địa bàn, bạn tải lại trang sau ít phút.</p>
+  )}
+  <script>
+    import { bindSupplierPage } from "../../../lib/admin/catalog-suppliers/supplier-form";
+    bindSupplierPage();
+  </script>
+</Admin>

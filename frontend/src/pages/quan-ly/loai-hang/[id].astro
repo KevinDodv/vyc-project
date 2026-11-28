@@ -1,0 +1,34 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { editFields, type GoodsTypeOut } from "../../../lib/admin/catalog-ph1a/goods-types";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const { id } = Astro.params;
+if (!id || !/^\d{1,18}$/.test(id)) return Astro.rewrite("/404");
+const res = await getJson<GoodsTypeOut>(Astro.request, `/goods-types/${id}`);
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind === "not_found") return Astro.rewrite("/404");
+if (res.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Sửa loại hàng">
+  <h1 class="mb-4 text-2xl font-bold">Sửa loại hàng hóa</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="loại hàng này" />
+  ) : (
+    <CatalogForm
+      title={res.data.name}
+      role={role}
+      fields={editFields(res.data)}
+      apiPath={`/goods-types/${res.data.id}`}
+      method="PATCH"
+      redirect="/quan-ly/loai-hang"
+      backHref="/quan-ly/loai-hang"
+      status={res.data.status === "INACTIVE" ? "INACTIVE" : "ACTIVE"}
+    />
+  )}
+</Admin>

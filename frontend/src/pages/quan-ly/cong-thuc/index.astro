@@ -1,0 +1,94 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import { displayGram, parseGram } from "../../../lib/admin/catalog-recipes/math";
+import {
+  filterRecipes,
+  isRecipeStatus,
+  outputKindLabel,
+  RECIPE_STATUS_OPTIONS,
+  type RecipeOut,
+  type RecipeStatusFilter,
+} from "../../../lib/admin/catalog-recipes/model";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-recipes/server";
+import Unavailable from "../../../lib/admin/catalog-recipes/Unavailable.astro";
+import RecipeStatusBadge from "./_RecipeStatusBadge.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const q = (Astro.url.searchParams.get("q") ?? "").trim();
+const rawStatus = Astro.url.searchParams.get("status");
+const status: RecipeStatusFilter = isRecipeStatus(rawStatus) ? rawStatus : "";
+const res = await getJson<RecipeOut[]>(Astro.request, "/recipes");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+const rows = res.kind === "ok" ? filterRecipes(res.data, { q, status }) : [];
+const grams = (text: string) => {
+  const centi = parseGram(text);
+  return centi === null ? text : displayGram(centi);
+};
+---
+<Admin title="Công thức">
+  <h1 class="mb-4 text-2xl font-bold">Công thức</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách công thức" />
+  ) : (
+    <div class="flex flex-col gap-4">
+      <form method="get" action="/quan-ly/cong-thuc" role="search" class="flex flex-wrap items-center gap-2">
+        <input type="search" name="q" value={q} class="input min-w-0 flex-1" placeholder="Gõ mã hoặc tên công thức để tìm" aria-label="Tìm kiếm" />
+        <select name="status" class="select w-48" aria-label="Lọc theo trạng thái" data-autosubmit>
+          {RECIPE_STATUS_OPTIONS.map((o) => (
+            <option value={o.value} selected={o.value === status}>{o.label}</option>
+          ))}
+        </select>
+        <button type="submit" class="btn">Tìm</button>
+        {canEditCatalog(role) && <a href="/quan-ly/cong-thuc/moi" class="btn btn-primary">+ Thêm</a>}
+      </form>
+
+      <p class="text-sm opacity-70">
+        Mỗi mã công thức có nhiều phiên bản; chỉ một phiên bản «Đang dùng» tại một thời điểm. Bản đã kích hoạt không sửa trực tiếp, muốn đổi thì «Tạo phiên bản mới».
+      </p>
+
+      <div class="overflow-x-auto rounded-box border border-base-300 bg-base-100">
+        <table class="table table-zebra" data-catalog-list>
+          <caption class="sr-only">Công thức theo mã và phiên bản</caption>
+          <thead>
+            <tr>
+              <th scope="col">Mã</th>
+              <th scope="col" class="text-end">Phiên bản</th>
+              <th scope="col">Tên</th>
+              <th scope="col">Loại đầu ra</th>
+              <th scope="col" class="text-end">Mẻ chuẩn (g)</th>
+              <th scope="col">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr><td colspan="6" class="text-center opacity-70">Không có công thức nào khớp.</td></tr>
+            ) : (
+              rows.map((r) => (
+                <tr class="cursor-pointer hover:bg-base-200" data-href={`/quan-ly/cong-thuc/${r.id}`} data-id={String(r.id)} data-code={r.code}>
+                  <td class="font-mono"><a class="link link-hover" href={`/quan-ly/cong-thuc/${r.id}`}>{r.code}</a></td>
+                  <td class="text-end">v{r.version}</td>
+                  <td>{r.name}</td>
+                  <td>
+                    {outputKindLabel(r.output_kind)}
+                    {r.output_ingredient_code && <span class="font-mono"> → {r.output_ingredient_code}</span>}
+                  </td>
+                  <td class="text-end font-mono">{grams(r.base_batch_g)}</td>
+                  <td><RecipeStatusBadge status={r.status} /></td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-sm" data-page-summary>{rows.length === 0 ? "Không có dòng nào" : `${rows.length} phiên bản`}</p>
+    </div>
+  )}
+  <script>
+    import { bindCatalogList } from "../../../lib/admin/catalog-list";
+    bindCatalogList();
+  </script>
+</Admin>

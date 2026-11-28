@@ -1,0 +1,42 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import type { MaterialOut } from "../../../lib/admin/catalog-ph1a/materials";
+import PriceGrid from "../../../lib/admin/catalog-ph1a/PriceGrid.astro";
+import type { PriceCell, PriceHistoryDay } from "../../../lib/admin/catalog-ph1a/prices";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import { parseIsoDate, todayVn } from "../../../lib/admin/catalog-ph1a/text";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const today = todayVn();
+const date = parseIsoDate(Astro.url.searchParams.get("date")) ?? today;
+const saved = Astro.url.searchParams.get("saved") === "1";
+const [sheet, history, materials] = await Promise.all([
+  getJson<{ date: string; items: PriceCell[] }>(Astro.request, "/prices", { date }),
+  getJson<PriceHistoryDay[]>(Astro.request, "/prices/history", { to: date }),
+  getJson<MaterialOut[]>(Astro.request, "/materials"),
+]);
+if (sheet.kind === "unauthorized" || history.kind === "unauthorized") {
+  return Astro.redirect(loginUrl(Astro.url), 302);
+}
+if (sheet.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Bảng giá">
+  <h1 class="mb-4 text-2xl font-bold">Bảng giá</h1>
+  {sheet.kind !== "ok" ? (
+    <Unavailable what="bảng giá" />
+  ) : (
+    <PriceGrid
+      items={sheet.data.items}
+      history={history.kind === "ok" ? history.data : []}
+      materials={materials.kind === "ok" ? materials.data : []}
+      historyFailed={history.kind !== "ok"}
+      date={date}
+      today={today}
+      saved={saved}
+      role={role}
+    />
+  )}
+</Admin>

@@ -1,0 +1,24 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import type { IngredientOut } from "../../../lib/admin/catalog-recipes/model";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-recipes/server";
+import Unavailable from "../../../lib/admin/catalog-recipes/Unavailable.astro";
+import RecipeForm from "./_RecipeForm.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canEditCatalog(role)) return Astro.redirect("/quan-ly/cong-thuc", 302);
+const res = await getJson<IngredientOut[]>(Astro.request, "/ingredients");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Thêm công thức">
+  <h1 class="mb-4 text-2xl font-bold">Thêm công thức</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách phụ liệu" />
+  ) : (
+    <RecipeForm recipe={null} ingredients={res.data} role={role} />
+  )}
+</Admin>

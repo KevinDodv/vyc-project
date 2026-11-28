@@ -1,0 +1,31 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import type { IngredientOut, RecipeDetailOut } from "../../../lib/admin/catalog-recipes/model";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-recipes/server";
+import Unavailable from "../../../lib/admin/catalog-recipes/Unavailable.astro";
+import RecipeForm from "./_RecipeForm.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const { id } = Astro.params;
+if (!id || !/^\d{1,18}$/.test(id)) return Astro.rewrite("/404");
+const [recipe, ingredients] = await Promise.all([
+  getJson<RecipeDetailOut>(Astro.request, `/recipes/${id}`),
+  getJson<IngredientOut[]>(Astro.request, "/ingredients"),
+]);
+if (recipe.kind === "unauthorized" || ingredients.kind === "unauthorized") {
+  return Astro.redirect(loginUrl(Astro.url), 302);
+}
+if (recipe.kind === "not_found") return Astro.rewrite("/404");
+const ok = recipe.kind === "ok" && ingredients.kind === "ok";
+if (!ok) Astro.response.status = 503;
+---
+<Admin title="Công thức">
+  <h1 class="mb-4 text-2xl font-bold">Công thức</h1>
+  {recipe.kind === "ok" && ingredients.kind === "ok" ? (
+    <RecipeForm recipe={recipe.data} ingredients={ingredients.data} role={role} />
+  ) : (
+    <Unavailable what="công thức này" />
+  )}
+</Admin>

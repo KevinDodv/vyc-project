@@ -1,0 +1,51 @@
+---
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { parseListQuery } from "../../../lib/admin/catalog";
+import {
+  filterGoodsTypes,
+  type GoodsTypeOut,
+  groupLabel,
+  yesNo,
+} from "../../../lib/admin/catalog-ph1a/goods-types";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const query = parseListQuery(Astro.url.searchParams);
+const res = await getJson<GoodsTypeOut[]>(Astro.request, "/goods-types");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+const rows = res.kind === "ok" ? filterGoodsTypes(res.data, query) : [];
+---
+<Admin title="Loại hàng hóa">
+  <h1 class="mb-4 text-2xl font-bold">Loại hàng hóa</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách loại hàng" />
+  ) : (
+    <CatalogList
+      basePath="/quan-ly/loai-hang"
+      role={role}
+      query={query}
+      rows={rows}
+      total={rows.length}
+      page={1}
+      pageSize={Math.max(rows.length, 1)}
+      caption="Loại hàng hóa"
+      searchPlaceholder="Gõ mã hoặc tên loại hàng để tìm"
+      columns={[
+        { key: "code", label: "Mã", mono: true },
+        { key: "name", label: "Tên" },
+        { key: "grp", label: "Nhóm", format: (v) => groupLabel(v) },
+        { key: "is_food", label: "Thực phẩm", format: (v) => yesNo(v) },
+        { key: "status", label: "Tình trạng" },
+      ]}
+    >
+      <p slot="note" class="text-sm opacity-70">
+        Loại hàng đã có sản phẩm hoặc nguyên liệu dùng thì không đổi nhóm được; muốn bỏ thì «Ngừng dùng».
+      </p>
+    </CatalogList>
+  )}
+</Admin>

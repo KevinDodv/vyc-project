@@ -1,0 +1,44 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { editFields, UNIT_NOTE } from "../../../lib/admin/catalog-recipes/ingredients";
+import type { IngredientOut } from "../../../lib/admin/catalog-recipes/model";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-recipes/server";
+import Unavailable from "../../../lib/admin/catalog-recipes/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const { id } = Astro.params;
+if (!id || !/^\d{1,18}$/.test(id)) return Astro.rewrite("/404");
+const res = await getJson<IngredientOut>(Astro.request, `/ingredients/${id}`);
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind === "not_found") return Astro.rewrite("/404");
+if (res.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Sửa phụ liệu">
+  <h1 class="mb-4 text-2xl font-bold">Sửa phụ liệu</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="phụ liệu này" />
+  ) : (
+    <CatalogForm
+      title={`${res.data.code} — ${res.data.name}`}
+      role={role}
+      fields={editFields(res.data)}
+      apiPath={`/ingredients/${res.data.id}`}
+      method="PATCH"
+      redirect="/quan-ly/phu-lieu"
+      backHref="/quan-ly/phu-lieu"
+      status={res.data.status === "INACTIVE" ? "INACTIVE" : "ACTIVE"}
+    >
+      <Fragment slot="banner">
+        <p class="alert alert-info" data-unit-note>{UNIT_NOTE}</p>
+        <p class="text-sm text-error" role="alert" data-error-for="status" hidden></p>
+      </Fragment>
+    </CatalogForm>
+  )}
+  <script>
+    import { bindUpperCaseCode } from "../../../lib/admin/catalog-recipes/ingredients";
+    bindUpperCaseCode();
+  </script>
+</Admin>

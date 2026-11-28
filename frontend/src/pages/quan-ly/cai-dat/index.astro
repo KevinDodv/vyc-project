@@ -1,0 +1,61 @@
+---
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { adminApi, callApi } from "../../../lib/admin/catalog-products/admin-api";
+import {
+  PRINT_FORMAT_OPTIONS,
+  SETTINGS_LIMITS,
+  settingsToInput,
+} from "../../../lib/admin/catalog-products/settings";
+
+export const prerender = false;
+
+const api = adminApi(Astro.request);
+const loaded = await callApi(() => api.GET("/api/v1/settings"));
+if (loaded.kind === "unavailable") Astro.response.status = 503;
+const v = loaded.kind === "ok" ? settingsToInput(loaded.data) : null;
+const L = SETTINGS_LIMITS;
+---
+<Admin title="Cài đặt">
+  <h1 class="mb-4 text-2xl font-bold">Cài đặt</h1>
+  {v ? (
+    <section class="card border border-base-300 bg-base-100">
+      <form class="card-body gap-4" novalidate aria-labelledby="settings-title" data-settings-form>
+        <h2 id="settings-title" class="card-title">Cấu hình hệ thống</h2>
+        <p data-form-error role="alert" class="alert alert-error" hidden></p>
+        <p data-saved-note role="status" class="alert alert-success" hidden>Đã lưu cài đặt.</p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <CatalogField name="scan_warning_threshold" label={L.scan_warning_threshold.label} required hint="Mã QR quét quá số lần này thì trang truy xuất hiện dòng cảnh báo.">
+            <input id="f-scan_warning_threshold" name="scan_warning_threshold" type="number" min={L.scan_warning_threshold.min} max={L.scan_warning_threshold.max} step="1" class="input w-full" value={v.scan_warning_threshold} data-label={L.scan_warning_threshold.label} aria-required="true" aria-describedby="f-scan_warning_threshold-hint f-scan_warning_threshold-error" />
+          </CatalogField>
+          <CatalogField name="price_deviation_pct" label={L.price_deviation_pct.label} required hint="Giá mua lệch bảng giá quá phần trăm này thì cảnh báo.">
+            <input id="f-price_deviation_pct" name="price_deviation_pct" type="number" min={L.price_deviation_pct.min} max={L.price_deviation_pct.max} step="1" class="input w-full" value={v.price_deviation_pct} data-label={L.price_deviation_pct.label} aria-required="true" aria-describedby="f-price_deviation_pct-hint f-price_deviation_pct-error" />
+          </CatalogField>
+          <CatalogField name="retain_default_months" label={L.retain_default_months.label} required hint="Dùng khi công thức không ghi số tháng giữ mẫu.">
+            <input id="f-retain_default_months" name="retain_default_months" type="number" min={L.retain_default_months.min} max={L.retain_default_months.max} step="1" class="input w-full" value={v.retain_default_months} data-label={L.retain_default_months.label} aria-required="true" aria-describedby="f-retain_default_months-hint f-retain_default_months-error" />
+          </CatalogField>
+          <CatalogField name="print_format" label="Khổ giấy in phiếu" required hint="Phiếu nhập và phiếu xuất.">
+            <select id="f-print_format" name="print_format" class="select w-full" data-label="Khổ giấy in" aria-required="true" aria-describedby="f-print_format-hint f-print_format-error">
+              {PRINT_FORMAT_OPTIONS.map((o) => (<option value={o.value} selected={o.value === v.print_format}>{o.label}</option>))}
+            </select>
+          </CatalogField>
+          <CatalogField name="label_width_mm" label={L.label_width_mm.label} required hint="Khổ tem lô và tem serial.">
+            <input id="f-label_width_mm" name="label_width_mm" type="number" min={L.label_width_mm.min} max={L.label_width_mm.max} step="1" class="input w-full" value={v.label_width_mm} data-label={L.label_width_mm.label} aria-required="true" aria-describedby="f-label_width_mm-hint f-label_width_mm-error" />
+          </CatalogField>
+          <CatalogField name="label_height_mm" label={L.label_height_mm.label} required>
+            <input id="f-label_height_mm" name="label_height_mm" type="number" min={L.label_height_mm.min} max={L.label_height_mm.max} step="1" class="input w-full" value={v.label_height_mm} data-label={L.label_height_mm.label} aria-required="true" aria-describedby="f-label_height_mm-error" />
+          </CatalogField>
+        </div>
+        <div class="card-actions justify-end">
+          <button type="submit" class="btn btn-primary" data-action="save">Lưu</button>
+        </div>
+      </form>
+      <script>
+        import { bindAllSettingsForms } from "../../../lib/admin/catalog-products/settings-form";
+        bindAllSettingsForms();
+      </script>
+    </section>
+  ) : (
+    <p role="alert" class="alert alert-error">Chưa tải được cài đặt. Bạn thử lại sau ít phút.</p>
+  )}
+</Admin>

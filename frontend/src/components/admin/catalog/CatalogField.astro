@@ -1,0 +1,28 @@
+---
+interface Props {
+  /** Tên trường của API; ô nhập bên trong phải có `id="f-<name>"` và `name="<name>"`. */
+  name: string;
+  label: string;
+  required?: boolean;
+  hint?: string;
+  /** Trải hết hai cột của lưới form. */
+  wide?: boolean;
+}
+
+const { name, label, required = false, hint, wide = false } = Astro.props;
+const id = `f-${name}`;
+---
+<div class:list={["flex flex-col gap-1", wide && "sm:col-span-2"]} data-field={name}>
+  <label class="label text-base-content" for={id}>
+    {label}
+    {required && (
+      <>
+        <span class="text-error" aria-hidden="true">*</span>
+        <span class="sr-only">(bắt buộc)</span>
+      </>
+    )}
+  </label>
+  <slot />
+  {hint && <small id={`${id}-hint`} class="text-sm opacity-70">{hint}</small>}
+  <p id={`${id}-error`} class="text-sm text-error" role="alert" data-error-for={name} hidden></p>
+</div>

@@ -1,0 +1,144 @@
+---
+// Form người bán: tạo (OWNER đủ trường; WORKSHOP thêm nhanh chỉ tên, kiểu, thôn, SĐT) và sửa (OWNER).
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import type { AdminRole } from "../../../lib/admin/catalog";
+import {
+  type AreaChoice,
+  canApprove,
+  canManageSuppliers,
+  KIND_OPTIONS,
+  SUPPLIERS_PATH,
+  type SupplierOut,
+  streamRule,
+} from "../../../lib/admin/catalog-suppliers/suppliers";
+
+interface Props {
+  mode: "create" | "edit";
+  role?: AdminRole;
+  areas: AreaChoice[];
+  supplier?: SupplierOut;
+  /** Số đồi đang dùng: quyết định có chọn được luồng kiểm soát hay không. */
+  activePlots: number;
+}
+const { mode, role, areas, supplier, activePlots } = Astro.props;
+
+const owner = canManageSuppliers(role);
+// Sửa chỉ OWNER; tạo thì WORKSHOP cũng được (thêm nhanh).
+const editable = mode === "create" ? role !== undefined : owner;
+const kind = supplier?.kind ?? "";
+const rule = streamRule(kind || "FARMER", activePlots);
+const streamValue = supplier?.stream === "CONTROLLED" && !rule.locked ? "CONTROLLED" : "GENERAL";
+const status = supplier?.status === "INACTIVE" ? "INACTIVE" : "ACTIVE";
+const id = "supplier-form";
+
+const ctl = (name: string, required = false, label = "") => ({
+  id: `sf-${name}`,
+  name,
+  disabled: !editable,
+  "data-label": label,
+  "data-required": required ? "" : undefined,
+  "aria-required": required ? ("true" as const) : undefined,
+  "aria-describedby": `sf-${name}-error`,
+});
+---
+<section class="card border border-base-300 bg-base-100">
+  <form
+    id={id}
+    class="card-body gap-4"
+    novalidate
+    aria-labelledby={`${id}-title`}
+    data-supplier-form
+    data-mode={mode}
+    data-owner={owner ? "1" : "0"}
+    data-supplier-id={supplier?.id}
+    data-active-plots={activePlots}
+  >
+    <h2 id={`${id}-title`} class="card-title">
+      {mode === "create" ? (owner ? "Thêm người bán" : "Thêm nhanh người bán") : `Người bán ${supplier?.code ?? ""}`}
+    </h2>
+    <slot name="banner" />
+    <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <CatalogField name="name" label="Tên người bán" required>
+        <input class="input w-full" type="text" maxlength="200" placeholder="Ví dụ: Nguyễn Văn Bình" value={supplier?.name ?? ""} {...ctl("name", true, "Tên người bán")} />
+      </CatalogField>
+
+      <CatalogField name="kind" label="Kiểu người bán" required>
+        <select class="select w-full" {...ctl("kind", true, "Kiểu người bán")}>
+          <option value="">— Chọn —</option>
+          {KIND_OPTIONS.map((o) => (
+            <option value={String(o.value)} selected={o.value === kind}>{o.label}</option>
+          ))}
+        </select>
+      </CatalogField>
+
+      <CatalogField
+        name="area_id"
+        label="Địa bàn"
+        required
+        hint="Hộ dân, gia đình: chọn thôn. Thương lái: chọn xã hoặc thôn."
+      >
+        <select class="select w-full" {...ctl("area_id", true, "Địa bàn")}>
+          <option value="">— Chọn —</option>
+          {areas.map((a) => (
+            <option value={String(a.id)} data-level={a.level} selected={a.id === supplier?.area_id}>{a.label}</option>
+          ))}
+        </select>
+      </CatalogField>
+
+      <CatalogField name="phone" label="Số điện thoại">
+        <input class="input w-full" type="text" inputmode="tel" maxlength="30" value={supplier?.phone ?? ""} {...ctl("phone", false, "Số điện thoại")} />
+      </CatalogField>
+
+      {owner && (
+        <CatalogField name="stream" label="Luồng thu mua" required>
+          <select class="select w-full" disabled={!editable || rule.locked} name="stream" id="sf-stream" data-label="Luồng thu mua" aria-describedby="sf-stream-hint sf-stream-error">
+            {rule.options.map((o) => (
+              <option value={o.value} disabled={o.disabled} selected={o.value === streamValue}>{o.label}</option>
+            ))}
+          </select>
+          <small id="sf-stream-hint" class="text-sm opacity-70" data-stream-hint hidden={rule.hint === ""}>{rule.hint}</small>
+        </CatalogField>
+      )}
+
+      {owner && (
+        <CatalogField name="public_consent" label="Cho khách thấy tên">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" class="checkbox" checked={supplier?.public_consent === true} {...ctl("public_consent", false, "Cho khách thấy tên")} />
+            <span class="text-sm">Đồng ý hiện tên người bán trên trang truy xuất công khai</span>
+          </label>
+        </CatalogField>
+      )}
+    </div>
+
+    {mode === "create" && (
+      <p class="text-sm opacity-70">
+        {owner
+          ? "Người bán mới luôn ở luồng thường. Lưu xong, thêm đồi quế ở trang người bán rồi mới chọn được luồng kiểm soát."
+          : "Người bán thêm nhanh sẽ chờ chủ duyệt; chủ bổ sung đồi quế và luồng thu mua sau."}
+      </p>
+    )}
+    {mode === "edit" && !owner && (
+      <p class="text-sm opacity-70">Chỉ chủ doanh nghiệp sửa và duyệt người bán; bạn chỉ xem.</p>
+    )}
+
+    <div class="card-actions items-center justify-end gap-2">
+      {mode === "edit" && owner && supplier && (
+        <button
+          type="button"
+          class:list={["btn mr-auto", status === "INACTIVE" ? "btn-outline" : "btn-error btn-outline"]}
+          data-action="deactivate"
+          data-next-status={status === "INACTIVE" ? "ACTIVE" : "INACTIVE"}
+        >{status === "INACTIVE" ? "Dùng lại" : "Ngừng dùng"}</button>
+      )}
+      {mode === "edit" && supplier && canApprove(role, supplier) && (
+        <button type="button" class="btn btn-secondary" data-action="approve">✔ Duyệt người bán</button>
+      )}
+      <a href={SUPPLIERS_PATH} class="btn btn-ghost">Đóng</a>
+      {editable && (
+        <button type="submit" class="btn btn-primary" data-action="save">{mode === "create" ? (owner ? "Lưu người bán" : "Lưu nhanh") : "Lưu"}</button>
+      )}
+    </div>
+  </form>
+</section>

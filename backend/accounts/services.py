@@ -1,4 +1,4 @@
-"""Đăng nhập, khoá đăng nhập và đăng xuất (backend.md 4.1, 5.2).
+"""Đăng nhập, khoá đăng nhập, đăng xuất (backend.md 4.1, 5.2); quản lý tài khoản (TK mục 5).
 
 Khoá đếm lần **sai** bằng `core.throttle` (cửa sổ trượt 15 phút):
 - `login:u:<sha256(username)>|<ip_hash>`: 5 lần sai thì khoá cặp tài khoản + IP đó;
@@ -10,14 +10,17 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from typing import Any
 
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest
 
-from accounts.models import User
-from core import throttle
+from accounts.models import User, UserStatus
+from core import audit, throttle
 from core.clientip import get_client_ip, ip_hash
 from core.errors import ApiError
+from core.roles import Actor, Role
 
 logger = logging.getLogger("vyc.accounts")
 
@@ -69,3 +72,91 @@ def login_user(request: HttpRequest, username: str, password: str) -> User:
 
 def logout_user(request: HttpRequest) -> None:
     logout(request)
+
+
+# ------------------------------------------------------------------ quản lý tài khoản (OWNER)
+
+PASSWORD_MIN_LENGTH = 8  # TK mục 5
+USER_UPDATABLE_FIELDS = frozenset({"full_name", "role", "status", "password"})
+
+
+@transaction.atomic
+def create_user(*, username: str, full_name: str, role: str, password: str, actor: Actor) -> User:
+    """Tạo tài khoản ACTIVE. Tên đăng nhập trùng (không phân biệt hoa thường) thì 409."""
+    if User.objects.filter(username__iexact=username).exists():
+        raise ApiError(
+            "USERNAME_TAKEN",
+            f"Tên đăng nhập «{username}» đã có người dùng",
+            status=409,
+            field="username",
+        )
+    try:
+        with transaction.atomic():  # savepoint: hai request tạo trùng cùng lúc
+            user = User.objects.create_user(
+                username, password, full_name=full_name, role=role, status=UserStatus.ACTIVE
+            )
+    except IntegrityError:
+        raise ApiError(
+            "USERNAME_TAKEN",
+            f"Tên đăng nhập «{username}» đã có người dùng",
+            status=409,
+            field="username",
+        ) from None
+    audit.record(actor, user, "CREATE")  # snapshot bỏ cột password
+    return user
+
+
+@transaction.atomic
+def update_user(*, user_id: int, changes: dict[str, Any], actor: Actor) -> tuple[User, bool]:
+    """Sửa họ tên, vai, trạng thái hoặc đặt lại mật khẩu (không đổi tên đăng nhập).
+
+    Trả (người dùng, đã đổi mật khẩu). Chặn: tự ngừng dùng chính mình; để hệ thống không còn
+    OWNER đang dùng. Mật khẩu đổi thì audit_log chỉ ghi lý do, không bao giờ ghi hash.
+    """
+    unknown = set(changes) - USER_UPDATABLE_FIELDS
+    if unknown:
+        raise ValueError(f"trường không sửa được: {sorted(unknown)}")
+    user = User.objects.select_for_update().get(pk=user_id)
+    new_password = changes.pop("password", None)
+    changes = {k: v for k, v in changes.items() if getattr(user, k) != v}
+    if not changes and new_password is None:
+        return user, False
+
+    if changes.get("status") == UserStatus.INACTIVE and user.pk == actor.pk:
+        raise ApiError(
+            "CANNOT_DEACTIVATE_SELF",
+            "Không tự ngừng dùng chính tài khoản của mình",
+            status=409,
+            field="status",
+        )
+    after_role = changes.get("role", user.role)
+    after_status = changes.get("status", user.status)
+    if user.role == Role.OWNER and (after_role != Role.OWNER or after_status != UserStatus.ACTIVE):
+        # Khoá các OWNER đang dùng khác để hai người không cùng hạ nhau xuống.
+        others = (
+            User.objects.select_for_update()
+            .filter(role=Role.OWNER, status=UserStatus.ACTIVE)
+            .exclude(pk=user.pk)
+        )
+        if not others.exists():
+            raise ApiError(
+                "LAST_OWNER",
+                "Phải còn ít nhất một chủ doanh nghiệp đang dùng",
+                status=409,
+                field="role" if after_role != Role.OWNER else "status",
+            )
+
+    before = audit.snapshot(user)
+    for name, value in changes.items():
+        setattr(user, name, value)
+    if new_password is not None:
+        user.set_password(new_password)
+    user.save()
+    audit.record(
+        actor,
+        user,
+        "UPDATE",
+        before=before,
+        reason="Đặt lại mật khẩu" if new_password is not None else None,
+    )
+    return user, new_password is not None

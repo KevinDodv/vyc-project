@@ -1,0 +1,178 @@
+---
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import { type AdminRole, type CatalogStatus, canEditCatalog, type FieldOption } from "../catalog";
+import { type GradeDraft, MAX_GRADES, type MaterialOut } from "./materials";
+
+interface Props {
+  role?: AdminRole;
+  /** Có khi sửa; không có khi tạo mới. */
+  material?: MaterialOut | null;
+  drafts: GradeDraft[];
+  goodsTypes: FieldOption[];
+  apiPath: string;
+  method?: "POST" | "PATCH";
+  redirect: string;
+  backHref: string;
+  title: string;
+}
+
+const {
+  role,
+  material = null,
+  drafts,
+  goodsTypes,
+  apiPath,
+  method = "POST",
+  redirect,
+  backHref,
+  title,
+} = Astro.props;
+
+const editable = canEditCatalog(role);
+const status: CatalogStatus | undefined =
+  material?.status === "INACTIVE" ? "INACTIVE" : material ? "ACTIVE" : undefined;
+const canDeactivate = editable && method === "PATCH" && status !== undefined;
+const reactivate = status === "INACTIVE";
+const locked = !editable;
+const id = "material-form";
+---
+<section class="card border border-base-300 bg-base-100">
+  <form
+    id={id}
+    class="card-body gap-4"
+    novalidate
+    aria-labelledby={`${id}-title`}
+    data-material-form
+    data-api-path={apiPath}
+    data-method={method}
+    data-redirect={redirect}
+    data-deactivate-path={canDeactivate ? apiPath : undefined}
+  >
+    <h2 id={`${id}-title`} class="card-title">{title}</h2>
+    <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <CatalogField name="code" label="Mã" required={method === "POST"} hint={method === "POST" ? "Chữ, số, gạch nối; không đổi được sau khi tạo" : undefined}>
+        <input
+          id="f-code" name="code" class="input w-full font-mono" maxlength="40"
+          value={material?.code ?? ""} disabled={locked || method === "PATCH"}
+          data-kind="text" data-label="Mã" data-required={method === "POST" ? "" : undefined}
+          aria-describedby="f-code-error"
+        />
+      </CatalogField>
+      <CatalogField name="name" label="Tên" required>
+        <input
+          id="f-name" name="name" class="input w-full" maxlength="200"
+          value={material?.name ?? ""} disabled={locked}
+          data-kind="text" data-label="Tên" data-required aria-required="true"
+          aria-describedby="f-name-error"
+        />
+      </CatalogField>
+      <CatalogField name="goods_type_id" label="Loại hàng" required>
+        <select
+          id="f-goods_type_id" name="goods_type_id" class="select w-full" disabled={locked}
+          data-kind="int" data-label="Loại hàng" data-required aria-required="true"
+          aria-describedby="f-goods_type_id-error"
+        >
+          <option value="">— Chọn —</option>
+          {goodsTypes.map((o) => (
+            <option value={String(o.value)} selected={material?.goods_type_id === o.value}>{o.label}</option>
+          ))}
+        </select>
+      </CatalogField>
+      <CatalogField name="sort_order" label="Thứ tự" hint="Số nhỏ hiện trước (0–9999)">
+        <input
+          id="f-sort_order" name="sort_order" type="number" min="0" max="9999" step="1" class="input w-full"
+          value={material?.sort_order ?? 0} disabled={locked}
+          data-kind="int" data-label="Thứ tự" aria-describedby="f-sort_order-hint f-sort_order-error"
+        />
+      </CatalogField>
+      <CatalogField name="image_url" label="Ảnh nút bấm" wide hint="Đường dẫn ảnh dạng /media/...; để trống nếu chưa có">
+        <input
+          id="f-image_url" name="image_url" class="input w-full" maxlength="300"
+          value={material?.image_url ?? ""} disabled={locked}
+          data-kind="text" data-label="Ảnh nút bấm" aria-describedby="f-image_url-hint f-image_url-error"
+        />
+      </CatalogField>
+    </div>
+
+    <fieldset class="flex flex-col gap-2" data-field="grades">
+      <legend class="label text-base-content">Hạng của nguyên liệu</legend>
+      <div class="overflow-x-auto rounded-box border border-base-300">
+        <table class="table" data-grade-table>
+          <caption class="sr-only">Các hạng</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="w-24">Bậc</th>
+              <th scope="col">Tên hạng</th>
+              <th scope="col" class="w-40">Tình trạng</th>
+            </tr>
+          </thead>
+          <tbody data-grade-rows>
+            {drafts.map((d, i) => (
+              <tr data-grade-row data-grade-id={d.id === null ? undefined : String(d.id)}>
+                <td>
+                  <input
+                    class="input input-sm w-20" inputmode="numeric" data-grade-rank value={d.rank}
+                    readonly={d.id !== null} disabled={locked} aria-label={`Bậc hạng ${i + 1}`}
+                  />
+                </td>
+                <td>
+                  <input
+                    class="input input-sm w-full" maxlength="200" data-grade-name value={d.name}
+                    disabled={locked} aria-label={`Tên hạng ${i + 1}`}
+                  />
+                </td>
+                <td>
+                  {d.id === null ? (
+                    <span class="text-sm opacity-70">Mới</span>
+                  ) : (
+                    <label class="flex items-center gap-2">
+                      <input type="checkbox" class="checkbox checkbox-sm" data-grade-active checked={d.status === "ACTIVE"} disabled={locked} />
+                      <span class="text-sm">Đang dùng</span>
+                    </label>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <template data-grade-template>
+        <tr data-grade-row>
+          <td><input class="input input-sm w-20" inputmode="numeric" data-grade-rank aria-label="Bậc hạng mới" /></td>
+          <td><input class="input input-sm w-full" maxlength="200" data-grade-name aria-label="Tên hạng mới" /></td>
+          <td>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="remove-grade">Bỏ dòng</button>
+          </td>
+        </tr>
+      </template>
+      <p id="f-grades-error" class="text-sm text-error" role="alert" data-error-for="grades" hidden></p>
+      <small class="text-sm opacity-70">Hạng đã lưu không đổi được bậc và không xóa; hạng đang có lô trong kho không ngừng dùng được. Tối đa {MAX_GRADES} hạng.</small>
+      {editable && (
+        <div><button type="button" class="btn btn-sm" data-action="add-grade">+ Thêm hạng</button></div>
+      )}
+    </fieldset>
+
+    <p class="text-sm opacity-70">
+      {editable ? "Không có nút Xóa: dùng «Ngừng dùng»." : "Chỉ chủ doanh nghiệp sửa được danh mục; bạn chỉ xem."}
+    </p>
+
+    <div class="card-actions items-center justify-end gap-2">
+      {canDeactivate && (
+        <button
+          type="button"
+          class:list={["btn mr-auto", reactivate ? "btn-outline" : "btn-error btn-outline"]}
+          data-action="deactivate"
+          data-next-status={reactivate ? "ACTIVE" : "INACTIVE"}
+        >{reactivate ? "Dùng lại" : "Ngừng dùng"}</button>
+      )}
+      <a href={backHref} class="btn btn-ghost">Đóng</a>
+      {editable && <button type="submit" class="btn btn-primary" data-action="save">Lưu</button>}
+    </div>
+  </form>
+  <script>
+    import { bindAllMaterialForms } from "./material-form";
+    bindAllMaterialForms();
+  </script>
+</section>

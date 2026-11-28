@@ -1,0 +1,33 @@
+---
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import MaterialForm from "../../../lib/admin/catalog-ph1a/MaterialForm.astro";
+import { type GoodsTypeLite, goodsTypeOptions } from "../../../lib/admin/catalog-ph1a/materials";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-ph1a/server";
+import Unavailable from "../../../lib/admin/catalog-ph1a/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canEditCatalog(role)) return Astro.redirect("/quan-ly/nguyen-lieu", 302);
+const goodsTypes = await getJson<GoodsTypeLite[]>(Astro.request, "/goods-types");
+if (goodsTypes.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (goodsTypes.kind !== "ok") Astro.response.status = 503;
+---
+<Admin title="Thêm nguyên liệu">
+  <h1 class="mb-4 text-2xl font-bold">Thêm nguyên liệu</h1>
+  {goodsTypes.kind !== "ok" ? (
+    <Unavailable what="danh sách loại hàng" />
+  ) : (
+    <MaterialForm
+      title="Nguyên liệu mới"
+      role={role}
+      drafts={[{ id: null, rank: "1", name: "", status: "ACTIVE" }]}
+      goodsTypes={goodsTypeOptions(goodsTypes.data)}
+      apiPath="/materials"
+      method="POST"
+      redirect="/quan-ly/nguyen-lieu"
+      backHref="/quan-ly/nguyen-lieu"
+    />
+  )}
+</Admin>

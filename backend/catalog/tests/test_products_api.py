@@ -9,7 +9,7 @@ import pytest
 from django.db import IntegrityError, transaction
 from django.test import Client
 
-from catalog.models import GoodsType, Product, SlugRedirect
+from catalog.models import GoodsType, Product, ProductStatus, Recipe, RecipeStatus, SlugRedirect
 from catalog.tests.conftest import IMAGE, make_product, product_payload
 from core.models import AuditLog
 
@@ -256,3 +256,127 @@ def test_slug_changed_back_removes_its_own_redirect(
     assert patch(owner_client, product.pk, {"slug": "slug-b"}).status_code == 200
     assert patch(owner_client, product.pk, {"slug": "slug-a"}).status_code == 200
     assert list(SlugRedirect.objects.values_list("old_slug", flat=True)) == ["slug-b"]
+
+
+# ------------------------------------------------------------------ nối công thức (PH1, BR-26)
+
+
+def _retire(code: str) -> None:
+    Recipe.objects.filter(code=code).update(status=RecipeStatus.RETIRED)
+
+
+def test_create_with_recipe_shelf_life_and_retention(
+    owner_client: Client, goods_type: GoodsType
+) -> None:
+    payload = product_payload(
+        goods_type, recipe_code="QC1", shelf_life_months=24, requires_retention_sample=True
+    )
+    r = post(owner_client, payload)
+    assert r.status_code == 201, r.content
+    data = body(r)
+    assert (data["recipe_code"], data["shelf_life_months"]) == ("QC1", 24)
+    assert data["requires_retention_sample"] is True
+    assert data["warnings"] == []
+    assert Product.objects.get(pk=data["id"]).recipe_code == "QC1"
+
+
+@pytest.mark.parametrize(
+    ("code", "error"),
+    [
+        ("NOPE", "RECIPE_NOT_ACTIVE"),  # không có công thức
+        ("TT1", "RECIPE_NOT_PRODUCT"),  # bán thành phẩm
+    ],
+)
+def test_create_rejects_bad_recipe_code(
+    owner_client: Client, goods_type: GoodsType, code: str, error: str
+) -> None:
+    r = post(owner_client, product_payload(goods_type, recipe_code=code))
+    assert (r.status_code, body(r)["code"]) == (400, error)
+    assert body(r)["details"]["field"] == "recipe_code"
+    assert not Product.objects.exists()
+
+
+def test_recipe_code_needs_active_version(owner_client: Client, goods_type: GoodsType) -> None:
+    Recipe.objects.filter(code="QC2").update(status=RecipeStatus.DRAFT)
+    r = post(owner_client, product_payload(goods_type, recipe_code="QC2"))
+    assert (r.status_code, body(r)["code"]) == (400, "RECIPE_NOT_ACTIVE")
+    _retire("QC1")
+    r = post(owner_client, product_payload(goods_type, recipe_code="QC1"))
+    assert (r.status_code, body(r)["code"]) == (400, "RECIPE_NOT_ACTIVE")
+
+
+def test_patch_recipe_code_set_change_and_clear(
+    owner_client: Client, goods_type: GoodsType
+) -> None:
+    pid = make_product(goods_type, status=ProductStatus.DRAFT).pk
+    r = patch(owner_client, pid, {"recipe_code": "NOPE"})
+    assert (r.status_code, body(r)["code"]) == (400, "RECIPE_NOT_ACTIVE")
+    assert Product.objects.get(pk=pid).recipe_code is None
+    assert patch(owner_client, pid, {"recipe_code": "QC1"}).status_code == 200
+    assert patch(owner_client, pid, {"recipe_code": "QC2"}).status_code == 200
+    r = patch(owner_client, pid, {"recipe_code": None})
+    assert (r.status_code, body(r)["recipe_code"]) == (200, None)
+
+
+def test_patch_other_fields_ignores_retired_recipe(
+    owner_client: Client, goods_type: GoodsType
+) -> None:
+    pid = make_product(goods_type, recipe_code="QC1").pk
+    _retire("QC1")
+    r = patch(owner_client, pid, {"shelf_life_months": 12, "requires_retention_sample": True})
+    assert r.status_code == 200, r.content
+    assert (body(r)["shelf_life_months"], body(r)["requires_retention_sample"]) == (12, True)
+    # gửi lại đúng recipe_code hiện tại không bị coi là đổi nên cũng không bị chặn
+    assert patch(owner_client, pid, {"recipe_code": "QC1", "name": "Tên mới"}).status_code == 200
+
+
+def test_published_product_warns_when_recipe_loses_active_version(
+    owner_client: Client, workshop_client: Client, goods_type: GoodsType
+) -> None:
+    pid = make_product(goods_type, recipe_code="QC1", status=ProductStatus.PUBLISHED).pk
+    ok = body(owner_client.get(f"{URL}/{pid}"))
+    assert ok["warnings"] == []
+
+    _retire("QC1")
+    for client in (owner_client, workshop_client):
+        data = body(client.get(f"{URL}/{pid}"))
+        assert [w["code"] for w in data["warnings"]] == ["RECIPE_NOT_ACTIVE"]
+        assert data["warnings"][0]["field"] == "recipe_code"
+        assert "QC1" in data["warnings"][0]["message"]
+        listed = body(client.get(URL))["items"][0]
+        assert [w["code"] for w in listed["warnings"]] == ["RECIPE_NOT_ACTIVE"]
+
+    # cảnh báo, không chặn: vẫn sửa và vẫn PUBLISHED
+    r = patch(owner_client, pid, {"name": "Tên khác"})
+    assert (r.status_code, body(r)["status"]) == (200, "PUBLISHED")
+    assert [w["code"] for w in body(r)["warnings"]] == ["RECIPE_NOT_ACTIVE"]
+
+
+def test_publish_with_retired_recipe_is_allowed_with_warning(
+    owner_client: Client, goods_type: GoodsType
+) -> None:
+    pid = make_product(goods_type, recipe_code="QC1", status=ProductStatus.DRAFT).pk
+    _retire("QC1")
+    r = patch(owner_client, pid, {"status": "PUBLISHED"})
+    assert (r.status_code, body(r)["status"]) == (200, "PUBLISHED")
+    assert [w["code"] for w in body(r)["warnings"]] == ["RECIPE_NOT_ACTIVE"]
+
+
+def test_no_warning_for_draft_hidden_or_without_recipe(
+    owner_client: Client, goods_type: GoodsType
+) -> None:
+    draft = make_product(goods_type, sku="A", slug="a", recipe_code="QC1", status="DRAFT")
+    hidden = make_product(goods_type, sku="B", slug="b", recipe_code="QC1", status="HIDDEN")
+    bare = make_product(goods_type, sku="C", slug="c", status=ProductStatus.PUBLISHED)
+    _retire("QC1")
+    for product in (draft, hidden, bare):
+        assert body(owner_client.get(f"{URL}/{product.pk}"))["warnings"] == []
+
+
+def test_active_new_version_clears_warning(owner_client: Client, goods_type: GoodsType) -> None:
+    pid = make_product(goods_type, recipe_code="QC1", status=ProductStatus.PUBLISHED).pk
+    r = owner_client.post(f"/api/v1/recipes/{Recipe.objects.get(code='QC1').pk}/new-version", {})
+    assert r.status_code == 201
+    new_id = body(r)["id"]
+    assert owner_client.post(f"/api/v1/recipes/{new_id}/activate", {}).status_code == 200
+    assert body(owner_client.get(f"{URL}/{pid}"))["warnings"] == []

@@ -1,0 +1,77 @@
+---
+// Giao diện danh sách người bán; dùng cho /quan-ly/nguoi-ban (tất cả) và /quan-ly/nguoi-ban/cho-duyet.
+// Lọc «Chờ duyệt» là một đường dẫn riêng để tìm kiếm và phân trang của CatalogList giữ nguyên bộ lọc.
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import type { ListQuery } from "../../../lib/admin/catalog";
+import type { SupplierListData } from "../../../lib/admin/catalog-suppliers/loaders";
+import {
+  canManageSuppliers,
+  canQuickAddSupplier,
+  PENDING_PATH,
+  SUPPLIER_COLUMNS,
+  SUPPLIERS_PATH,
+  toSupplierRow,
+} from "../../../lib/admin/catalog-suppliers/suppliers";
+
+interface Props {
+  data: Exclude<SupplierListData, { kind: "unauthorized" }>;
+  query: ListQuery;
+  pending?: boolean;
+}
+const { data, query, pending = false } = Astro.props;
+
+const role = Astro.locals.user?.role;
+const basePath = pending ? PENDING_PATH : SUPPLIERS_PATH;
+const title = pending ? "Người bán chờ duyệt" : "Người bán và đồi quế";
+const waiting = data.kind === "ok" ? data.waiting : null;
+---
+<Admin title={title}>
+  <div class="flex flex-wrap items-end justify-between gap-2">
+    <h1 class="text-2xl font-bold">{title}</h1>
+    {canQuickAddSupplier(role) && !canManageSuppliers(role) && (
+      <a href={`${SUPPLIERS_PATH}/moi`} class="btn btn-primary" data-quick-add>+ Thêm nhanh người bán</a>
+    )}
+  </div>
+
+  <div class="mt-4 flex flex-col gap-4 [&_td.font-mono]:whitespace-nowrap">
+    <nav class="join" aria-label="Bộ lọc duyệt">
+      <a
+        href={SUPPLIERS_PATH}
+        class:list={["btn btn-sm join-item", !pending && "btn-active"]}
+        aria-current={!pending ? "page" : undefined}
+      >Tất cả</a>
+      <a
+        href={PENDING_PATH}
+        class:list={["btn btn-sm join-item", pending && "btn-active"]}
+        aria-current={pending ? "page" : undefined}
+        data-filter="pending"
+      >Chờ duyệt{waiting !== null && ` (${waiting})`}</a>
+    </nav>
+
+    {data.kind !== "ok" ? (
+      <p role="alert" class="alert alert-error">Chưa tải được danh sách người bán, bạn tải lại trang sau ít phút.</p>
+    ) : (
+      <CatalogList
+        columns={SUPPLIER_COLUMNS}
+        rows={data.page.items.map(toSupplierRow)}
+        total={data.page.total}
+        page={query.page}
+        pageSize={query.pageSize}
+        basePath={basePath}
+        query={{ q: query.q, status: query.status }}
+        role={role}
+        rowHref={(row) => `${SUPPLIERS_PATH}/${row.id}`}
+        newHref={`${SUPPLIERS_PATH}/moi`}
+        searchPlaceholder="Gõ tên, mã, số điện thoại hoặc thôn để tìm"
+        emptyText={pending ? "Không có người bán nào chờ duyệt." : "Chưa có người bán nào khớp."}
+        caption="Danh sách người bán"
+      >
+        <p slot="note" class="text-sm opacity-70">
+          Thương lái luôn là luồng thường. Luồng kiểm soát chỉ chọn được khi người bán có ít nhất 1 đồi quế.
+          Người bán do xưởng thêm nhanh cần chủ duyệt.
+        </p>
+      </CatalogList>
+    )}
+  </div>
+</Admin>

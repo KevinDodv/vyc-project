@@ -1,0 +1,23 @@
+---
+import CatalogForm from "../../../components/admin/catalog/CatalogForm.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { canEditCatalog } from "../../../lib/admin/catalog";
+import { createFields } from "../../../lib/admin/catalog-ph1a/goods-types";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+if (!canEditCatalog(role)) return Astro.redirect("/quan-ly/loai-hang", 302);
+---
+<Admin title="Thêm loại hàng">
+  <h1 class="mb-4 text-2xl font-bold">Thêm loại hàng hóa</h1>
+  <CatalogForm
+    title="Loại hàng mới"
+    role={role}
+    fields={createFields()}
+    apiPath="/goods-types"
+    method="POST"
+    redirect="/quan-ly/loai-hang"
+    backHref="/quan-ly/loai-hang"
+  />
+</Admin>

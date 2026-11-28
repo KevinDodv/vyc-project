@@ -1,0 +1,60 @@
+---
+import CatalogList from "../../../components/admin/catalog/CatalogList.astro";
+import Admin from "../../../layouts/Admin.astro";
+import { DEFAULT_PAGE_SIZE, parseListQuery } from "../../../lib/admin/catalog";
+import { checkMark, densityText, UNIT_NOTE } from "../../../lib/admin/catalog-recipes/ingredients";
+import {
+  filterIngredients,
+  type IngredientOut,
+  ingredientKindLabel,
+  paginate,
+} from "../../../lib/admin/catalog-recipes/model";
+import { getJson, loginUrl } from "../../../lib/admin/catalog-recipes/server";
+import Unavailable from "../../../lib/admin/catalog-recipes/Unavailable.astro";
+
+export const prerender = false;
+
+const role = Astro.locals.user?.role;
+const query = parseListQuery(Astro.url.searchParams);
+const res = await getJson<IngredientOut[]>(Astro.request, "/ingredients");
+if (res.kind === "unauthorized") return Astro.redirect(loginUrl(Astro.url), 302);
+if (res.kind !== "ok") Astro.response.status = 503;
+const filtered = res.kind === "ok" ? filterIngredients(res.data, query) : [];
+const rows = paginate(filtered, query.page, query.pageSize || DEFAULT_PAGE_SIZE).map((i) => ({
+  id: i.id,
+  code: i.code,
+  name: i.name,
+  kind: i.kind,
+  density: i.density_g_ml,
+  track_stock: i.track_stock,
+  status: i.status === "INACTIVE" ? ("INACTIVE" as const) : ("ACTIVE" as const),
+}));
+---
+<Admin title="Phụ liệu">
+  <h1 class="mb-4 text-2xl font-bold">Phụ liệu</h1>
+  {res.kind !== "ok" ? (
+    <Unavailable what="danh sách phụ liệu" />
+  ) : (
+    <CatalogList
+      basePath="/quan-ly/phu-lieu"
+      role={role}
+      query={query}
+      rows={rows}
+      total={filtered.length}
+      page={query.page}
+      pageSize={query.pageSize}
+      caption="Phụ liệu"
+      searchPlaceholder="Gõ mã hoặc tên phụ liệu để tìm"
+      columns={[
+        { key: "code", label: "Mã", mono: true },
+        { key: "name", label: "Tên" },
+        { key: "kind", label: "Loại", format: (v) => ingredientKindLabel(v) },
+        { key: "density", label: "Tỷ trọng g/ml (tham khảo)", numeric: true, format: (v) => densityText(v) },
+        { key: "track_stock", label: "Theo dõi tồn", format: (v) => checkMark(v) },
+        { key: "status", label: "Tình trạng" },
+      ]}
+    >
+      <p slot="note" class="text-sm opacity-70" data-unit-note>{UNIT_NOTE}</p>
+    </CatalogList>
+  )}
+</Admin>

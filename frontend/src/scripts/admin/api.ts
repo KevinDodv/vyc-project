@@ -85,7 +85,10 @@ async function send(method: ApiMethod, path: string, body: unknown): Promise<Res
     if (token) headers[CSRF_HEADER] = token;
   }
   const init: RequestInit = { method, headers, credentials: "same-origin" };
-  if (body !== undefined) {
+  if (body instanceof FormData) {
+    // Tải file: để trình duyệt tự đặt Content-Type multipart kèm boundary.
+    init.body = body;
+  } else if (body !== undefined) {
     headers["Content-Type"] = "application/json";
     init.body = JSON.stringify(body);
   }

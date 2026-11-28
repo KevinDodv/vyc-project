@@ -108,8 +108,16 @@ class ProductPatch(Schema):
         return self.model_dump(exclude_unset=True)
 
 
+class ProductWarning(Schema):
+    """Cảnh báo không chặn, ví dụ công thức nối vào đã hết bản ACTIVE."""
+
+    code: str
+    message: str
+    field: str | None = None
+
+
 class ProductOut(Schema):
-    """Cho WORKSHOP: không có giá bán lẻ."""
+    """Cho WORKSHOP: không có giá bán lẻ. `warnings` rỗng khi sản phẩm không có vấn đề."""
 
     id: int
     sku: str
@@ -133,6 +141,7 @@ class ProductOut(Schema):
     status: str
     created_at: datetime
     updated_at: datetime
+    warnings: list[ProductWarning] = Field(default_factory=list)
 
 
 class ProductOwnerOut(ProductOut):

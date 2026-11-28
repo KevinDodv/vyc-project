@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import threading
 from datetime import date
 
@@ -42,8 +43,11 @@ def test_br20_code_patterns() -> None:
         assert codes.label_roll_code(d) == "CT-2611-01"
         assert codes.supplier_code("CQ") == "NCC-CQ-001"
         assert codes.plot_code("CQ", "012") == "D-CQ-012-01"
-        assert codes.customer_code() == "KH-0001"
-        assert codes.customer_code() == "KH-0002"
+        first = codes.customer_code()  # seed 0004 đã đẩy bộ đếm nên không đoán số tuyệt đối
+        second = codes.customer_code()
+    assert re.fullmatch(r"KH-\d{4,}", first)
+    assert re.fullmatch(r"KH-\d{4,}", second)
+    assert int(second[3:]) == int(first[3:]) + 1
 
 
 @pytest.mark.django_db

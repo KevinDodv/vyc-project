@@ -1,0 +1,218 @@
+---
+// Form sản phẩm đầy đủ (TK mục 5, dòng Sản phẩm): tab «Thông tin» và tab «Website».
+// Tên file bắt đầu bằng «_» nên Astro không coi là trang. Hành vi nằm ở lib/admin/catalog-products/product-edit.ts.
+import CatalogField from "../../../components/admin/catalog/CatalogField.astro";
+import {
+  BUY_CHANNELS,
+  type GoodsType,
+  PRODUCT_STATUS_FILTER,
+  type ProductOwner,
+  productToInput,
+  type RecipeOption,
+} from "../../../lib/admin/catalog-products/product";
+import { SEO_DESCRIPTION_LIMIT, SEO_TITLE_LIMIT } from "../../../lib/admin/catalog-products/seo";
+
+interface Props {
+  /** Có thì là form sửa; không có là form tạo. */
+  product?: ProductOwner;
+  goodsTypes: GoodsType[];
+  recipes: RecipeOption[];
+}
+
+const { product, goodsTypes, recipes } = Astro.props;
+const edit = product !== undefined;
+const initial = product ? productToInput(product) : null;
+const v = initial ?? {
+  sku: "",
+  name: "",
+  goods_type_id: "",
+  size_label: "",
+  unit: "",
+  recipe_code: "",
+  shelf_life_months: "",
+  requires_retention_sample: false,
+  retail_price: "",
+  featured_rank: "",
+  serial_tracked: true,
+  slug: "",
+  short_desc: "",
+  story_md: "",
+  usage_md: "",
+  seo_title: "",
+  seo_description: "",
+  status: "DRAFT",
+  images: [],
+  buy_links: [],
+};
+const statusOptions = PRODUCT_STATUS_FILTER.filter((o) => o.value !== "");
+const publicHref =
+  product && product.status === "PUBLISHED"
+    ? `/san-pham/${encodeURIComponent(product.slug)}`
+    : null;
+---
+<form
+  id="product-edit"
+  class="card border border-base-300 bg-base-100"
+  novalidate
+  aria-labelledby="product-edit-title"
+  data-product-form
+  data-mode={edit ? "edit" : "create"}
+  data-id={product?.id}
+  data-initial={initial ? JSON.stringify(initial) : undefined}
+>
+  <div class="card-body gap-4">
+    <h2 id="product-edit-title" class="card-title">{edit ? `Sửa sản phẩm ${product.sku}` : "Thêm sản phẩm"}</h2>
+    <p data-form-error role="alert" class="alert alert-error" hidden></p>
+
+    <div role="tablist" aria-label="Nhóm trường" class="flex flex-wrap gap-2">
+      <button type="button" role="tab" id="tab-general" aria-controls="panel-general" class="btn btn-sm btn-primary" data-tab="general" aria-selected="true">
+        Thông tin <span class="text-error" data-tab-flag hidden aria-label="có lỗi">●</span>
+      </button>
+      <button type="button" role="tab" id="tab-website" aria-controls="panel-website" class="btn btn-sm btn-ghost" data-tab="website" aria-selected="false">
+        Website <span class="text-error" data-tab-flag hidden aria-label="có lỗi">●</span>
+      </button>
+    </div>
+
+    <div id="panel-general" role="tabpanel" aria-labelledby="tab-general" data-panel="general" class="grid gap-4 sm:grid-cols-2">
+      <CatalogField name="sku" label="Mã SKU" required>
+        <input id="f-sku" name="sku" class="input w-full font-mono" maxlength="40" value={v.sku} placeholder="Q100" data-label="Mã SKU" aria-required="true" aria-describedby="f-sku-error" />
+      </CatalogField>
+      <CatalogField name="name" label="Tên sản phẩm" required>
+        <input id="f-name" name="name" class="input w-full" maxlength="200" value={v.name} placeholder="Tinh dầu quế Văn Yên 10 ml" data-label="Tên sản phẩm" aria-required="true" aria-describedby="f-name-error" />
+      </CatalogField>
+      <CatalogField name="goods_type_id" label="Loại hàng" required>
+        <select id="f-goods_type_id" name="goods_type_id" class="select w-full" data-label="Loại hàng" aria-required="true" aria-describedby="f-goods_type_id-error">
+          <option value="">— Chọn —</option>
+          {goodsTypes.map((g) => (
+            <option value={String(g.id)} selected={String(g.id) === v.goods_type_id}>{g.name}{g.status === "ACTIVE" ? "" : " (ngừng dùng)"}</option>
+          ))}
+        </select>
+      </CatalogField>
+      <CatalogField name="size_label" label="Quy cách" required>
+        <input id="f-size_label" name="size_label" class="input w-full" maxlength="200" value={v.size_label} placeholder="10 ml" data-label="Quy cách" aria-required="true" aria-describedby="f-size_label-error" />
+      </CatalogField>
+      <CatalogField name="unit" label="Đơn vị tính" required>
+        <input id="f-unit" name="unit" class="input w-full" maxlength="200" value={v.unit} placeholder="chai" data-label="Đơn vị tính" aria-required="true" aria-describedby="f-unit-error" />
+      </CatalogField>
+      <CatalogField name="recipe_code" label="Mã công thức" hint="Chọn từ danh mục công thức đang dùng; để trống với sản phẩm không có công thức (trà, ống quế).">
+        <select id="f-recipe_code" name="recipe_code" class="select w-full" data-label="Mã công thức" aria-describedby="f-recipe_code-hint f-recipe_code-error">
+          <option value="">— Không nối công thức —</option>
+          {recipes.map((r) => (
+            <option value={r.value} selected={r.value === v.recipe_code}>{r.label}</option>
+          ))}
+        </select>
+      </CatalogField>
+      <CatalogField name="shelf_life_months" label="Hạn dùng (tháng)" hint="Để trống thì lô thành phẩm của sản phẩm này phải nhập hạn dùng tay (BR-11).">
+        <input id="f-shelf_life_months" name="shelf_life_months" class="input w-full" type="number" min="1" max="240" step="1" value={v.shelf_life_months} data-label="Hạn dùng (tháng)" aria-describedby="f-shelf_life_months-hint f-shelf_life_months-error" />
+      </CatalogField>
+      <CatalogField name="retail_price" label="Giá bán lẻ (đồng)" hint="Để trống nếu chưa niêm yết giá. Xưởng không thấy giá này.">
+        <input id="f-retail_price" name="retail_price" class="input w-full" type="number" min="0" step="1" value={v.retail_price} data-label="Giá bán lẻ" aria-describedby="f-retail_price-hint f-retail_price-error" />
+      </CatalogField>
+      <CatalogField name="requires_retention_sample" label="Bắt buộc lưu mẫu" hint="Lô thành phẩm của sản phẩm này sẽ vào danh sách «Lô chưa lưu mẫu» (BR-29).">
+        <input id="f-requires_retention_sample" name="requires_retention_sample" type="checkbox" class="checkbox" checked={v.requires_retention_sample} data-label="Bắt buộc lưu mẫu" aria-describedby="f-requires_retention_sample-hint f-requires_retention_sample-error" />
+      </CatalogField>
+      <CatalogField name="serial_tracked" label="Truy xuất QR từng chai/túi" hint="Bỏ chọn nếu sản phẩm chỉ truy xuất theo lô.">
+        <input id="f-serial_tracked" name="serial_tracked" type="checkbox" class="checkbox" checked={v.serial_tracked} data-label="Truy xuất QR" aria-describedby="f-serial_tracked-hint f-serial_tracked-error" />
+      </CatalogField>
+    </div>
+
+    <div id="panel-website" role="tabpanel" aria-labelledby="tab-website" data-panel="website" class="grid gap-4 sm:grid-cols-2" hidden>
+      <CatalogField name="slug" label="Slug (đường dẫn)" required wide hint={edit ? "Đổi slug thì đường dẫn cũ tự chuyển hướng 301 sang đường dẫn mới." : "Tự sinh từ tên sản phẩm, bạn sửa lại được. Chữ thường không dấu, số và dấu gạch nối."}>
+        <div class="join w-full">
+          <input id="f-slug" name="slug" class="input join-item w-full font-mono" maxlength="120" value={v.slug} placeholder="tinh-dau-que-van-yen-10ml" data-label="Slug" aria-required="true" aria-describedby="f-slug-hint f-slug-error" />
+          <button type="button" class="btn join-item" data-slug-regen>Sinh lại từ tên</button>
+        </div>
+      </CatalogField>
+      {edit && (
+        <CatalogField name="status" label="Trạng thái" hint={publicHref ? undefined : "«Đã đăng» thì sản phẩm hiện ở trang công khai."}>
+          <select id="f-status" name="status" class="select w-full" data-label="Trạng thái" aria-describedby="f-status-error">
+            {statusOptions.map((o) => (<option value={o.value} selected={o.value === v.status}>{o.label}</option>))}
+          </select>
+          {publicHref && <a href={publicHref} class="link text-sm" target="_blank" rel="noopener">Xem trang công khai {publicHref}</a>}
+        </CatalogField>
+      )}
+      <CatalogField name="featured_rank" label="Thứ tự nổi bật" hint="Số nhỏ hiện trước trên trang chủ. Để trống nếu không nổi bật.">
+        <input id="f-featured_rank" name="featured_rank" class="input w-full" type="number" min="1" max="999" step="1" value={v.featured_rank} data-label="Thứ tự nổi bật" aria-describedby="f-featured_rank-hint f-featured_rank-error" />
+      </CatalogField>
+      <CatalogField name="short_desc" label="Mô tả ngắn" wide>
+        <textarea id="f-short_desc" name="short_desc" class="textarea w-full" rows="2" maxlength="500" data-label="Mô tả ngắn" aria-describedby="f-short_desc-error">{v.short_desc}</textarea>
+      </CatalogField>
+      <CatalogField name="story_md" label="Câu chuyện" wide hint="Viết bằng Markdown; không chèn ảnh trực tiếp.">
+        <textarea id="f-story_md" name="story_md" class="textarea w-full" rows="5" maxlength="20000" data-label="Câu chuyện" aria-describedby="f-story_md-hint f-story_md-error">{v.story_md}</textarea>
+      </CatalogField>
+      <CatalogField name="usage_md" label="Cách dùng" wide>
+        <textarea id="f-usage_md" name="usage_md" class="textarea w-full" rows="4" maxlength="20000" data-label="Cách dùng" aria-describedby="f-usage_md-error">{v.usage_md}</textarea>
+      </CatalogField>
+      <CatalogField name="seo_title" label="Tiêu đề SEO" wide hint={`Nên không quá ${SEO_TITLE_LIMIT.soft} ký tự, tối đa ${SEO_TITLE_LIMIT.hard}. Trống thì dùng «tên | thương hiệu».`}>
+        <input id="f-seo_title" name="seo_title" class="input w-full" value={v.seo_title} data-label="Tiêu đề SEO" aria-describedby="f-seo_title-hint f-seo_title-counter f-seo_title-error" />
+        <p id="f-seo_title-counter" class="text-sm" data-seo-counter="seo_title" aria-live="polite"></p>
+      </CatalogField>
+      <CatalogField name="seo_description" label="Mô tả SEO" wide hint={`Nên không quá ${SEO_DESCRIPTION_LIMIT.soft} ký tự, tối đa ${SEO_DESCRIPTION_LIMIT.hard}.`}>
+        <textarea id="f-seo_description" name="seo_description" class="textarea w-full" rows="3" data-label="Mô tả SEO" aria-describedby="f-seo_description-hint f-seo_description-counter f-seo_description-error">{v.seo_description}</textarea>
+        <p id="f-seo_description-counter" class="text-sm" data-seo-counter="seo_description" aria-live="polite"></p>
+      </CatalogField>
+
+      <fieldset class="flex flex-col gap-2 sm:col-span-2" data-field="images">
+        <legend class="label text-base-content">Ảnh sản phẩm</legend>
+        <ul class="flex flex-col gap-2" data-images data-initial-images={JSON.stringify(initial?.images ?? [])}></ul>
+        <p class="text-sm opacity-70" data-images-empty>Chưa có ảnh.</p>
+        <template data-image-template>
+          <li class="flex flex-wrap items-center gap-2 rounded-box border border-base-300 p-2" data-image-row>
+            <img alt="" width="56" height="56" class="size-14 rounded object-cover" data-image-thumb />
+            <label class="flex min-w-48 flex-1 flex-col gap-1">
+              <span class="text-sm"><span data-image-title>Mô tả ảnh (alt)</span> <span class="text-error" aria-hidden="true">*</span><span class="sr-only">(bắt buộc)</span></span>
+              <input class="input w-full" maxlength="200" data-image-alt aria-required="true" aria-describedby="f-images-error" />
+            </label>
+            <div class="flex gap-1">
+              <button type="button" class="btn btn-sm btn-ghost" data-image-up><span aria-hidden="true">↑</span></button>
+              <button type="button" class="btn btn-sm btn-ghost" data-image-down><span aria-hidden="true">↓</span></button>
+              <button type="button" class="btn btn-sm btn-ghost text-error" data-image-remove>Gỡ ảnh</button>
+            </div>
+          </li>
+        </template>
+        <label for="f-image-file" class="text-sm">Tải ảnh lên</label>
+        <input id="f-image-file" type="file" class="w-full rounded-field border border-base-300 p-2 text-sm file:mr-3 file:cursor-pointer file:rounded-field file:border-0 file:bg-base-200 file:px-3 file:py-2 file:font-semibold" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="f-image-file-hint" data-image-file />
+        <small id="f-image-file-hint" class="text-sm opacity-70">Ảnh JPEG, PNG hoặc WebP, tối đa 10 MB mỗi ảnh. Mỗi ảnh bắt buộc có mô tả (alt) để người khiếm thị và công cụ tìm kiếm hiểu ảnh. Ảnh đứng đầu danh sách hiện trước. Bấm «Lưu» để ghi thay đổi vào sản phẩm.</small>
+        <p class="text-sm" role="status" data-image-upload-status></p>
+        <p class="whitespace-pre-line text-sm text-error" role="alert" data-image-upload-error hidden></p>
+        <p id="f-images-error" class="text-sm text-error" role="alert" data-error-for="images" hidden></p>
+      </fieldset>
+
+      <fieldset class="flex flex-col gap-2 sm:col-span-2" data-field="buy_links">
+        <legend class="label text-base-content">Link mua hàng</legend>
+        <div class="flex flex-col gap-2" data-buylinks>
+          {initial?.buy_links.map((link) => (
+            <div class="flex flex-wrap gap-2" data-buylink-row>
+              <select class="select w-40" aria-label="Kênh bán">
+                {BUY_CHANNELS.map((c) => (<option value={c.value} selected={c.value === link.channel}>{c.label}</option>))}
+              </select>
+              <input class="input min-w-0 flex-1" type="url" value={link.url} placeholder="https://" aria-label="Địa chỉ link mua" />
+              <button type="button" class="btn btn-ghost text-error" data-remove-row>Gỡ</button>
+            </div>
+          ))}
+        </div>
+        <div><button type="button" class="btn btn-sm" data-add-buylink>+ Thêm link mua</button></div>
+        <template data-buylink-template>
+          <div class="flex flex-wrap gap-2" data-buylink-row>
+            <select class="select w-40" aria-label="Kênh bán">
+              {BUY_CHANNELS.map((c) => (<option value={c.value}>{c.label}</option>))}
+            </select>
+            <input class="input min-w-0 flex-1" type="url" placeholder="https://" aria-label="Địa chỉ link mua" />
+            <button type="button" class="btn btn-ghost text-error" data-remove-row>Gỡ</button>
+          </div>
+        </template>
+        <p id="f-buy_links-error" class="text-sm text-error" role="alert" data-error-for="buy_links" hidden></p>
+      </fieldset>
+    </div>
+
+    <p class="text-sm opacity-70">Không có nút Xóa: sản phẩm không dùng nữa thì đổi trạng thái sang «Đang ẩn».</p>
+    <div class="card-actions items-center justify-end gap-2">
+      <a href="/quan-ly/san-pham" class="btn btn-ghost">Đóng</a>
+      <button type="submit" class="btn btn-primary" data-action="save">Lưu</button>
+    </div>
+  </div>
+  <script>
+    import { bindAllProductForms } from "../../../lib/admin/catalog-products/product-edit";
+    bindAllProductForms();
+  </script>
+</form>
